@@ -148,24 +148,11 @@ fn call<T: Decode, RW: Read + Write>(
     };
     let request = krpc::Request { calls: vec![call] };
 
-    eprintln!("sending call...");
-    let mut buf = vec![];
-    request.encode_with_len(&mut buf)?;
-    dbg!(&buf);
-    let check = krpc::Request::decode_with_len(buf.as_slice())?;
-    dbg!(check);
-    buf.clear();
     request.encode_with_len(&mut stream)?;
     stream.flush()?;
-    eprintln!("sent");
-    eprintln!("waiting for response...");
-    stream.read_to_end(&mut buf)?;
-    dbg!(buf);
-    panic!();
     let krpc::Response { error, mut results } =
         Decode::decode_with_len(&mut stream)?;
-    eprintln!("got response");
-    
+
     if let Some(error) = error {
         return Ok(Err(error));
     }
