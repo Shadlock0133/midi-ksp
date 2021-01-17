@@ -1,16 +1,11 @@
-use std::path::PathBuf;
+use std::{fs::{read_to_string, write}, path::PathBuf};
+
+use protobuf_but_worse::{codegen, protobuf_parser};
 
 fn main() {
-    let out_dir = PathBuf::from(std::env::var("OUT_DIR").unwrap());
-    protobuf_codegen_pure::Codegen::new()
-        .out_dir(out_dir)
-        .include(".")
-        .input("./krpc.proto")
-        .customize(protobuf_codegen_pure::Customize {
-            expose_fields: Some(true),
-            lite_runtime: Some(true),
-            ..Default::default()
-        })
-        .run()
-        .unwrap();
+    let file = read_to_string("krpc.proto").unwrap();
+    let proto = protobuf_parser::FileDescriptor::parse(&file).unwrap();
+    let code = codegen::gen_proto(&proto).unwrap();
+    let out_file = PathBuf::from(std::env::var("OUT_DIR").unwrap()).join("krpc.rs");
+    write(out_file, code).unwrap();
 }

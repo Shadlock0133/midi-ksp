@@ -12,3 +12,4 @@ minifb = "0.19.1"
 ctrlc = "3.1.7"
 thiserror = "1.0.23"
 krpc = { path = "./krpc" }
+protobuf-but-worse = { path = "../protobuf-but-worse" }

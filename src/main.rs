@@ -1,22 +1,16 @@
 use std::{
+    io::{Read, Write},
     net::TcpStream,
     sync::atomic::{AtomicBool, Ordering},
     // time::Duration,
 };
 
 use krpc::{
-    connection_request::Type,
-    connection_response::Status,
-    protobuf::{
-        self, CodedInputStream, CodedOutputStream, Message, ProtobufResult,
-    },
-    Argument, ConnectionRequest, ConnectionResponse, Procedure,
+    connection_request::Type, connection_response::Status, Argument,
+    ConnectionRequest, ConnectionResponse, Procedure,
 };
 use midi::{AxiomAirController, Channel, MidiMessageIn};
-use protobuf::{
-    well_known_types::{BoolValue, Empty, Value},
-    MessageDyn,
-};
+use protobuf_but_worse::encoding::*;
 
 // const TIMEOUT: Duration = Duration::from_secs(4);
 
@@ -34,26 +28,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut stream = TcpStream::connect("127.0.0.1:50000")?;
     // stream.set_read_timeout(Some(TIMEOUT))?;
     // stream.set_write_timeout(Some(TIMEOUT))?;
-    let mut stream2 = stream.try_clone()?;
-    let mut read = CodedInputStream::new(&mut stream2);
-    let mut write = CodedOutputStream::new(&mut stream);
     println!("TCP connected.");
 
     let crq = ConnectionRequest {
-        client_name: "midi".to_string(),
-        field_type: protobuf::ProtobufEnumOrUnknown::new(Type::RPC),
-        ..Default::default()
+        r#type: Some(Type::Rpc),
+        client_name: Some("midi".to_string()),
+        client_identifier: None,
     };
-    crq.write_length_delimited_to(&mut write)?;
-    write.flush()?;
+    crq.encode_with_len(&mut stream)?;
+    stream.flush()?;
     eprintln!("Sent");
 
-    let crp = read_packet::<ConnectionResponse>(&mut read)?;
+    let crp = ConnectionResponse::decode_with_len(&mut stream)?;
 
     eprintln!("Response: {:?}", crp);
-    assert_eq!(crp.status.unwrap(), Status::OK);
+    assert!(matches!(crp.status, Some(Status::Ok) | None));
     let services: krpc::Services =
-        call(&mut write, &mut read, "KRPC", "GetServices", &[])?.unwrap();
+        call(&mut stream, "KRPC", "GetServices", &[])?.unwrap();
     eprintln!("{:#?}", procedure_info(&services, "KRPC", "get_Paused"));
     // eprintln!(
     //     "{:#?}",
@@ -75,11 +66,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             match e {
                 (1, MidiMessageIn::ControlChange(Channel::Ch1, 64, 127)) => {
                     let is_paused: bool =
-                        call(&mut write, &mut read, "KRPC", "get_Paused", &[])?
-                            .unwrap();
-                    let _: Empty = call(
-                        &mut write,
-                        &mut read,
+                        call(&mut stream, "KRPC", "get_Paused", &[])?.unwrap();
+                    let _: () = call(
+                        &mut stream,
                         "KRPC",
                         "set_Paused",
                         &[&!is_paused],
@@ -96,12 +85,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn read_packet<M: Message>(read: &mut CodedInputStream) -> ProtobufResult<M> {
-    let len = read.read_uint32()?;
-    let bytes = read.read_raw_bytes(len)?;
-    M::parse_from_bytes(&bytes)
-}
-
 fn list_procedures<'a>(
     services: &'a krpc::Services,
     module: &str,
@@ -109,65 +92,92 @@ fn list_procedures<'a>(
     services
         .services
         .iter()
-        .find(|x| x.name == module)
+        .find(|x| x.name.as_ref().map(|name| name == module).unwrap_or(false))
         .unwrap()
         .procedures
         .iter()
-        .map(|x| x.name.as_str())
+        .filter_map(|x| x.name.as_ref().map(|name| name.as_str()))
         .collect()
 }
 
 fn procedure_info<'a>(
     services: &'a krpc::Services,
     module: &str,
-    name: &str,
+    procedure: &str,
 ) -> &'a Procedure {
     services
         .services
         .iter()
-        .find(|x| x.name == module)
+        .find(|x| x.name.as_ref().map(|name| name == module).unwrap_or(false))
         .unwrap()
         .procedures
         .iter()
-        .find(|x| x.name == name)
+        .find(|x| {
+            x.name
+                .as_ref()
+                .map(|name| name == procedure)
+                .unwrap_or(false)
+        })
         .unwrap()
 }
 
-fn call<R: Message>(
-    write: &mut CodedOutputStream,
-    read: &mut CodedInputStream,
+fn call<T: Decode, RW: Read + Write>(
+    mut stream: RW,
     service: impl Into<String>,
     procedure: impl Into<String>,
-    arguments: &[&dyn MessageDyn],
-) -> ProtobufResult<Result<R, krpc::Error>> {
-    let service = service.into();
-    let procedure = procedure.into();
+    arguments: &[&dyn EncodeDyn],
+) -> EncodingResult<Result<T, krpc::Error>> {
+    let service = Some(service.into());
+    let procedure = Some(procedure.into());
     let arguments = arguments
         .iter()
         .enumerate()
         .map(|(i, x)| {
             Ok(Argument {
-                position: i as u32,
-                value: x.write_to_bytes_dyn()?,
+                position: Some(i as u32),
+                value: Some(x.encode_to_vec()?),
             })
         })
-        .collect::<ProtobufResult<_>>()?;
+        .collect::<EncodingResult<_>>()?;
     let call = krpc::ProcedureCall {
         service,
         procedure,
         arguments,
-        ..Default::default()
+        procedure_id: None,
+        service_id: None,
     };
     let request = krpc::Request { calls: vec![call] };
-    request.write_length_delimited_to(write)?;
-    write.flush()?;
-    let krpc::Response { error, mut results } = read_packet(read)?;
-    if let Some(error) = error.into_option() {
+
+    eprintln!("sending call...");
+    let mut buf = vec![];
+    request.encode_with_len(&mut buf)?;
+    dbg!(&buf);
+    let check = krpc::Request::decode_with_len(buf.as_slice())?;
+    dbg!(check);
+    buf.clear();
+    request.encode_with_len(&mut stream)?;
+    stream.flush()?;
+    eprintln!("sent");
+    eprintln!("waiting for response...");
+    stream.read_to_end(&mut buf)?;
+    dbg!(buf);
+    panic!();
+    let krpc::Response { error, mut results } =
+        Decode::decode_with_len(&mut stream)?;
+    eprintln!("got response");
+    
+    if let Some(error) = error {
         return Ok(Err(error));
     }
     let result = results.remove(0);
-    if let Some(error) = result.error.into_option() {
+    if let Some(error) = result.error {
         return Ok(Err(error));
     }
-    R::parse_from_bytes(&result.value).map(Ok)
+    T::decode(
+        result
+            .value
+            .ok_or(EncodingError::MissingField(!0))?
+            .as_slice(),
+    )
+    .map(Ok)
 }
