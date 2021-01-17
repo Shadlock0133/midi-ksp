@@ -7,9 +7,8 @@ fn main() {
         .include(".")
         .input("./krpc.proto")
         .customize(protobuf_codegen_pure::Customize {
-            serde_derive: Some(true),
             expose_fields: Some(true),
-            gen_mod_rs: Some(true),
+            lite_runtime: Some(true),
             ..Default::default()
         })
         .run()

@@ -255,7 +255,6 @@ dependencies = [
  "krpc",
  "midir",
  "minifb",
- "protobuf",
  "thiserror",
 ]
 
@@ -396,24 +395,18 @@ dependencies = [
 
 [[package]]
 name = "protobuf"
-version = "2.18.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da78e04bc0e40f36df43ecc6575e4f4b180e8156c4efd73f13d5619479b05696"
+version = "3.0.0-pre"
 
 [[package]]
 name = "protobuf-codegen"
-version = "2.18.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "49b2b929363268881afe6d24351e8b711ea5a1901a5e1549d3723ebcc5d3696d"
+version = "3.0.0-pre"
 dependencies = [
  "protobuf",
 ]
 
 [[package]]
 name = "protobuf-codegen-pure"
-version = "2.18.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02a4b843fcc85f42b9f717a34481b9a323527f1b6ac62b20776514c044fc7da9"
+version = "3.0.0-pre"
 dependencies = [
  "protobuf",
  "protobuf-codegen",

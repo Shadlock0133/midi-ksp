@@ -120,12 +120,12 @@ impl AxiomAirController {
         println!("Opening connection");
         let midi1 = connect_input("Axiom AIR Mini 32 MIDI In", move |_, message, _| {
             if let Ok(message) = MidiMessageIn::parse(message) {
-                sender.send((1, message)).unwrap();
+                let _ = sender.send((1, message));
             }
         })?;
         let midi2 = connect_input("Axiom AIR Mini 32 HyperCtrl", move |_, message, _| {
             if let Ok(message) = MidiMessageIn::parse(message) {
-                sender2.send((2, message)).unwrap();
+                let _ = sender2.send((2, message));
             }
         })?;
         Ok((

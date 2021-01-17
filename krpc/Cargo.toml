@@ -7,7 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-protobuf = "2.3"
+protobuf = { path = "../../rust-protobuf/protobuf" }
 
 [build-dependencies]
-protobuf-codegen-pure = "2.3"
+protobuf-codegen-pure = { path = "../../rust-protobuf/protobuf-codegen-pure" }

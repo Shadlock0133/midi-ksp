@@ -11,5 +11,4 @@ midir = "0.7.0"
 minifb = "0.19.1"
 ctrlc = "3.1.7"
 thiserror = "1.0.23"
-protobuf = "2.3"
 krpc = { path = "./krpc" }
