@@ -3,9 +3,10 @@ use std::{
     net::{TcpStream, ToSocketAddrs},
 };
 
-use krpc::{
+use krpc_proto::{
     connection_request::Type, connection_response::Status, Argument,
-    ConnectionRequest, ConnectionResponse, Procedure, Services,
+    ConnectionRequest, ConnectionResponse, Error, Procedure, ProcedureCall,
+    Request, Response, Services,
 };
 use protobuf_but_worse::encoding::*;
 
@@ -14,6 +15,8 @@ pub struct KrpcConnection {
 }
 
 impl KrpcConnection {
+    /// Connects to KRPC server, sends connection request,
+    /// and checks response status
     pub fn connect<A: ToSocketAddrs>(
         addr: A,
         name: impl Into<String>,
@@ -35,29 +38,32 @@ impl KrpcConnection {
         Ok(Self { stream })
     }
 
-    pub fn get_paused(&mut self) -> EncodingResult<Result<bool, krpc::Error>> {
+    pub fn get_paused(&mut self) -> EncodingResult<Result<bool, Error>> {
         self.call("KRPC", "get_Paused", &[])
     }
 
-    pub fn pause(
-        &mut self,
-        value: bool,
-    ) -> EncodingResult<Result<(), krpc::Error>> {
+    pub fn pause(&mut self, value: bool) -> EncodingResult<Result<(), Error>> {
         self.call("KRPC", "set_Paused", &[&value])
     }
 
-    pub fn get_services(
-        &mut self,
-    ) -> EncodingResult<Result<Services, krpc::Error>> {
+    pub fn get_services(&mut self) -> EncodingResult<Result<Services, Error>> {
         self.call("KRPC", "GetServices", &[])
     }
 
+    pub fn set_throttle(&mut self) -> EncodingResult<Result<Services, Error>> {
+        self.call("KRPC", "GetServices", &[])
+    }
+
+    /// Performs a remote procedure call
+    /// Returns double Result, because
+    /// EncodingError is a connection error and
+    /// krpc_proto::Error is a server error
     pub fn call<T: Decode>(
         &mut self,
         service: impl Into<String>,
         procedure: impl Into<String>,
         arguments: &[&dyn EncodeDyn],
-    ) -> EncodingResult<Result<T, krpc::Error>> {
+    ) -> EncodingResult<Result<T, Error>> {
         let service = Some(service.into());
         let procedure = Some(procedure.into());
         let arguments = arguments
@@ -70,18 +76,18 @@ impl KrpcConnection {
                 })
             })
             .collect::<EncodingResult<_>>()?;
-        let call = krpc::ProcedureCall {
+        let call = ProcedureCall {
             service,
             procedure,
             arguments,
             procedure_id: None,
             service_id: None,
         };
-        let request = krpc::Request { calls: vec![call] };
+        let request = Request { calls: vec![call] };
 
         request.encode_with_len(&mut self.stream)?;
         self.stream.flush()?;
-        let krpc::Response { error, mut results } =
+        let Response { error, mut results } =
             Decode::decode_with_len(&mut self.stream)?;
 
         if let Some(error) = error {
@@ -153,7 +159,7 @@ pub fn print_procedure_signature(procedure: &Procedure) -> String {
     res
 }
 
-pub fn dump_procs_sigs(services: &krpc::Services) -> String {
+pub fn dump_procs_sigs(services: &Services) -> String {
     use std::fmt::Write;
     let mut res = String::new();
     for service in &services.services {
