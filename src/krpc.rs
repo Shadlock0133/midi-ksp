@@ -141,13 +141,14 @@ impl Control<'_> {
         &mut self,
         value: f32,
     ) -> EncodingResult<Result<(), Error>> {
-        self.krpc
-            .call("SpaceCenter", "Control_set_Throttle", &[&self.class, &value])
+        self.krpc.call(
+            "SpaceCenter",
+            "Control_set_Throttle",
+            &[&self.class, &value],
+        )
     }
 
-    pub fn get_throttle(
-        &mut self,
-    ) -> EncodingResult<Result<f32, Error>> {
+    pub fn get_throttle(&mut self) -> EncodingResult<Result<f32, Error>> {
         self.krpc
             .call("SpaceCenter", "Control_get_Throttle", &[&self.class])
     }

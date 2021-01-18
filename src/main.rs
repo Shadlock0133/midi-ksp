@@ -1,7 +1,7 @@
 use std::sync::atomic::{AtomicBool, Ordering};
 
 use midi::{
-    axiom::{AxiomAirController, AxiomMessage, Button, Channel, MidiMessage},
+    axiom::{AxiomAirController, AxiomMessage, Button},
     krpc::{dump_procs_sigs, KrpcConnection},
 };
 
@@ -18,16 +18,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     })?;
 
-    let mut krpc = KrpcConnection::connect("127.0.0.1:50000", "midi")?;
-    println!("TCP connected.");
-
     match std::env::args().nth(1).as_deref() {
         Some("dump_services") => {
+            let mut krpc = KrpcConnection::connect("127.0.0.1:50000", "midi")?;
+            println!("TCP connected.");
             // Get list of available procedures on server and dump it to file
             let services = krpc.get_services()?.unwrap();
             std::fs::write("procs.rs", dump_procs_sigs(&services))?;
+            println!("Done.");
         }
         Some("run") => {
+            let mut krpc = KrpcConnection::connect("127.0.0.1:50000", "midi")?;
+            println!("TCP connected.");
             let (controller, recv) = AxiomAirController::new()?;
             println!("Midi controller connected.");
 
