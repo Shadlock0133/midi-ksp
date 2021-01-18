@@ -1,4 +1,8 @@
-use std::{sync::atomic::{AtomicBool, Ordering}, time::{Duration, Instant}};
+use std::{
+    net::{Ipv4Addr, SocketAddrV4},
+    sync::atomic::{AtomicBool, Ordering},
+    time::{Duration, Instant},
+};
 
 use midi::{
     axiom::{AxiomAirController, AxiomMessage, Button},
@@ -35,14 +39,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn run() -> Result<(), Box<dyn std::error::Error>> {
-    let mut krpc = KrpcConnection::connect("127.0.0.1:50000", "midi")?;
+    let socket_addr = SocketAddrV4::new(Ipv4Addr::LOCALHOST, 50000).into();
+    let mut krpc = KrpcConnection::connect_timeout(
+        &socket_addr,
+        Duration::from_secs(3),
+        "midi",
+    )?;
     println!("TCP connected.");
     let (controller, recv) = AxiomAirController::new()?;
     println!("Midi controller connected.");
 
-    // TODO: make struct for this pattern?
-    let mut current_throttle = 0;
-    let mut set_throttle = 0;
+    let mut throttle = Cache::new(0);
 
     let mut timer = Instant::now();
     while !STOP.load(Ordering::SeqCst) {
@@ -58,17 +65,16 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                     let throttle = control.get_throttle()?.unwrap();
                     println!("Throttle: {}", throttle);
                 }
-                AxiomMessage::Knob(1, v) => set_throttle = v,
+                AxiomMessage::Knob(1, v) => throttle.set(v),
                 _ => (),
             }
         }
         // Batch network calls
         if timer.elapsed() > Duration::from_secs(1) / 60 {
-            if set_throttle != current_throttle {
+            if let Some(throttle) = throttle.get() {
                 let mut vessel = krpc.get_active_vessel()?.unwrap();
                 let mut control = vessel.get_control()?.unwrap();
-                control.set_throttle(set_throttle as f32 / 127.0)?.unwrap();
-                current_throttle = set_throttle;
+                control.set_throttle(throttle as f32 / 127.0)?.unwrap();
             }
             timer = Instant::now();
         }
@@ -76,4 +82,44 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
 
     controller.close()?;
     Ok(())
+}
+
+struct Cache<T> {
+    current: T,
+    new: T,
+}
+
+impl<T> Cache<T> {
+    pub fn new(value: T) -> Self
+    where
+        T: Clone,
+    {
+        Self {
+            current: value.clone(),
+            new: value,
+        }
+    }
+
+    pub fn set(&mut self, value: T) {
+        self.new = value;
+    }
+
+    pub fn has_changed(&self) -> bool
+    where
+        T: PartialEq,
+    {
+        self.current != self.new
+    }
+
+    pub fn get(&mut self) -> Option<T>
+    where
+        T: Clone + PartialEq,
+    {
+        if self.has_changed() {
+            self.current = self.new.clone();
+            Some(self.new.clone())
+        } else {
+            None
+        }
+    }
 }

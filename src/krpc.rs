@@ -1,7 +1,4 @@
-use std::{
-    io::Write,
-    net::{TcpStream, ToSocketAddrs},
-};
+use std::{io::Write, net::{SocketAddr, TcpStream, ToSocketAddrs}, time::Duration};
 
 use krpc_proto::{
     connection_request::Type, connection_response::Status, Argument,
@@ -22,6 +19,30 @@ impl KrpcConnection {
         name: impl Into<String>,
     ) -> Result<Self, EncodingError> {
         let mut stream = TcpStream::connect(addr)?;
+        let crq = ConnectionRequest {
+            r#type: Some(Type::Rpc),
+            client_name: Some(name.into()),
+            client_identifier: None,
+        };
+        crq.encode_with_len(&mut stream)?;
+        stream.flush()?;
+        let crp = ConnectionResponse::decode_with_len(&mut stream)?;
+        if !matches!(crp.status, Some(Status::Ok) | None) {
+            let io_error = std::io::ErrorKind::ConnectionRefused.into();
+            return Err(EncodingError::Io(io_error)
+                .context(crp.message.unwrap_or_default()));
+        }
+        Ok(Self { stream })
+    }
+
+    /// Connects to KRPC server, sends connection request,
+    /// and checks response status
+    pub fn connect_timeout(
+        addr: &SocketAddr,
+        timeout: Duration,
+        name: impl Into<String>,
+    ) -> Result<Self, EncodingError> {
+        let mut stream = TcpStream::connect_timeout(addr, timeout)?;
         let crq = ConnectionRequest {
             r#type: Some(Type::Rpc),
             client_name: Some(name.into()),
