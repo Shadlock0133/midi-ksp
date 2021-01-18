@@ -45,7 +45,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     assert!(matches!(crp.status, Some(Status::Ok) | None));
     let services: krpc::Services =
         call(&mut stream, "KRPC", "GetServices", &[])?.unwrap();
-    eprintln!("{:#?}", procedure_info(&services, "KRPC", "get_Paused"));
+    print_procedure_info(get_procedure_info(&services, "KRPC", "get_Paused"));
+    print_procedure_info(get_procedure_info(&services, "KRPC", "set_Paused"));
     // eprintln!(
     //     "{:#?}",
     //     procedure_info(&services, "SpaceCenter", "Vessel_get_Control")
@@ -83,42 +84,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     controller.close()?;
 
     Ok(())
-}
-
-fn list_procedures<'a>(
-    services: &'a krpc::Services,
-    module: &str,
-) -> Vec<&'a str> {
-    services
-        .services
-        .iter()
-        .find(|x| x.name.as_ref().map(|name| name == module).unwrap_or(false))
-        .unwrap()
-        .procedures
-        .iter()
-        .filter_map(|x| x.name.as_ref().map(|name| name.as_str()))
-        .collect()
-}
-
-fn procedure_info<'a>(
-    services: &'a krpc::Services,
-    module: &str,
-    procedure: &str,
-) -> &'a Procedure {
-    services
-        .services
-        .iter()
-        .find(|x| x.name.as_ref().map(|name| name == module).unwrap_or(false))
-        .unwrap()
-        .procedures
-        .iter()
-        .find(|x| {
-            x.name
-                .as_ref()
-                .map(|name| name == procedure)
-                .unwrap_or(false)
-        })
-        .unwrap()
 }
 
 fn call<T: Decode, RW: Read + Write>(
@@ -160,11 +125,70 @@ fn call<T: Decode, RW: Read + Write>(
     if let Some(error) = result.error {
         return Ok(Err(error));
     }
-    T::decode(
-        result
-            .value
-            .ok_or(EncodingError::MissingField(!0))?
-            .as_slice(),
-    )
-    .map(Ok)
+    T::decode(result.value.as_deref().unwrap_or_default()).map(Ok)
+}
+
+fn _list_procedures<'a>(
+    services: &'a krpc::Services,
+    module: &str,
+) -> Vec<&'a str> {
+    services
+        .services
+        .iter()
+        .find(|x| x.name.as_ref().map(|name| name == module).unwrap_or(false))
+        .unwrap()
+        .procedures
+        .iter()
+        .filter_map(|x| x.name.as_ref().map(|name| name.as_str()))
+        .collect()
+}
+
+fn get_procedure_info<'a>(
+    services: &'a krpc::Services,
+    module: &str,
+    procedure: &str,
+) -> &'a Procedure {
+    services
+        .services
+        .iter()
+        .find(|x| x.name.as_ref().map(|name| name == module).unwrap_or(false))
+        .unwrap()
+        .procedures
+        .iter()
+        .find(|x| {
+            x.name
+                .as_ref()
+                .map(|name| name == procedure)
+                .unwrap_or(false)
+        })
+        .unwrap()
+}
+
+fn print_procedure_info(procedure: &Procedure) {
+    println!(
+        "// {:?}",
+        procedure.documentation.as_deref().unwrap_or_default()
+    );
+    print!("proc {}(", procedure.name.as_ref().unwrap());
+    if let Some(param) = &procedure.parameters.first() {
+        print!(
+            "{}: {:?}",
+            param.name.as_ref().unwrap(),
+            param.r#type.as_ref().unwrap().code.as_ref().unwrap()
+        );
+        for param in &procedure.parameters[1..] {
+            print!(
+                ", {}: {:?}",
+                param.name.as_ref().unwrap(),
+                param.r#type.as_ref().unwrap().code.as_ref().unwrap()
+            );
+        }
+    }
+    print!(")");
+    if let Some(ret) =
+        procedure.return_type.as_ref().and_then(|x| x.code.as_ref())
+    {
+        print!(" -> {:?}", ret);
+    }
+    println!(";");
 }
