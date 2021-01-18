@@ -3,7 +3,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use midi::{AxiomAirController, Channel, MidiMessageIn};
+use midi::midi::{AxiomAirController, Channel, MidiMessageIn};
 use minifb::{Key, Window, WindowOptions};
 
 static STOP: AtomicBool = AtomicBool::new(false);
