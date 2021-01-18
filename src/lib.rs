@@ -1,2 +1,2 @@
-pub mod midi;
+pub mod axiom;
 pub mod krpc;

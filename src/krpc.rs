@@ -38,7 +38,7 @@ impl KrpcConnection {
         Ok(Self { stream })
     }
 
-    pub fn get_paused(&mut self) -> EncodingResult<Result<bool, Error>> {
+    pub fn is_paused(&mut self) -> EncodingResult<Result<bool, Error>> {
         self.call("KRPC", "get_Paused", &[])
     }
 
@@ -50,8 +50,14 @@ impl KrpcConnection {
         self.call("KRPC", "GetServices", &[])
     }
 
-    pub fn set_throttle(&mut self) -> EncodingResult<Result<Services, Error>> {
-        self.call("KRPC", "GetServices", &[])
+    pub fn get_active_vessel(
+        &mut self,
+    ) -> EncodingResult<Result<Vessel, Error>> {
+        self.call("SpaceCenter", "get_ActiveVessel", &[])
+            .map(move |r| {
+                let class = r?;
+                Ok(Vessel { krpc: self, class })
+            })
     }
 
     /// Performs a remote procedure call
@@ -98,6 +104,67 @@ impl KrpcConnection {
             return Ok(Err(error));
         }
         T::decode(result.value.as_deref().unwrap_or_default()).map(Ok)
+    }
+}
+
+pub struct Vessel<'a> {
+    krpc: &'a mut KrpcConnection,
+    class: Class,
+}
+
+impl Vessel<'_> {
+    pub fn name(&mut self) -> EncodingResult<Result<String, Error>> {
+        self.krpc
+            .call("SpaceCenter", "Vessel_get_Name", &[&self.class])
+    }
+
+    pub fn get_control(&mut self) -> EncodingResult<Result<Control, Error>> {
+        self.krpc
+            .call("SpaceCenter", "Vessel_get_Control", &[&self.class])
+            .map(move |r| {
+                let class = r?;
+                Ok(Control {
+                    krpc: &mut *self.krpc,
+                    class,
+                })
+            })
+    }
+}
+
+pub struct Control<'a> {
+    krpc: &'a mut KrpcConnection,
+    class: Class,
+}
+
+impl Control<'_> {
+    pub fn set_throttle(
+        &mut self,
+        value: f32,
+    ) -> EncodingResult<Result<(), Error>> {
+        self.krpc
+            .call("SpaceCenter", "Control_set_Throttle", &[&self.class, &value])
+    }
+
+    pub fn get_throttle(
+        &mut self,
+    ) -> EncodingResult<Result<f32, Error>> {
+        self.krpc
+            .call("SpaceCenter", "Control_get_Throttle", &[&self.class])
+    }
+}
+
+struct Class(Varint<u64>);
+impl Decode for Class {
+    fn decode<R: std::io::Read>(r: R) -> Result<Self, EncodingError> {
+        <Varint<u64>>::decode(r).map(Class)
+    }
+}
+impl Encode for Class {
+    fn size(&self) -> u32 {
+        self.0.size()
+    }
+    fn encode<W: std::io::Write>(&self, w: W) -> Result<(), EncodingError> {
+        self.0.encode(w)
     }
 }
 

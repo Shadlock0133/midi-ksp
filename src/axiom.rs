@@ -48,13 +48,13 @@ impl Channel {
 }
 
 #[derive(Debug, Clone, Copy)]
-pub enum MidiMessageIn {
+pub enum MidiMessage {
     SysEx,
     Note(Channel, u8, u8),
     ControlChange(Channel, u8, u8),
 }
 
-impl MidiMessageIn {
+impl MidiMessage {
     fn parse(data: &[u8]) -> Result<Self, ()> {
         match data {
             [op @ 0b10010000..=0b10011111, a, b] => {
@@ -66,6 +66,74 @@ impl MidiMessageIn {
             [240, .., 247] => Ok(Self::SysEx),
             _ => Err(()),
         }
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum Button {
+    Pressed,
+    Released,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum AxiomMessage {
+    Piano(u8, u8),
+    // first value in range 1..=8
+    Pad(u8, u8),
+    // first value in range 1..=8
+    Knob(u8, u8),
+
+    Sustain(Button),
+    Center(Button),
+    Left(Button),
+    Right(Button),
+    Up(Button),
+    Down(Button),
+    Stop(Button),
+    Play(Button),
+    Record(Button),
+}
+
+impl AxiomMessage {
+    fn parse(port: usize, msg: MidiMessage) -> Result<Self, ()> {
+        Ok(match (port, msg) {
+            (1, MidiMessage::Note(Channel::Ch1, k, v)) => Self::Piano(k, v),
+            (1, MidiMessage::ControlChange(Channel::Ch1, 64, 127)) => {
+                Self::Sustain(Button::Pressed)
+            }
+            (1, MidiMessage::ControlChange(Channel::Ch1, 64, 0)) => {
+                Self::Sustain(Button::Released)
+            }
+            (2, MidiMessage::ControlChange(Channel::Ch16, k, 127)) => match k {
+                98 => Self::Center(Button::Pressed),
+                99 => Self::Left(Button::Pressed),
+                100 => Self::Right(Button::Pressed),
+                101 => Self::Up(Button::Pressed),
+                102 => Self::Down(Button::Pressed),
+                116 => Self::Stop(Button::Pressed),
+                117 => Self::Play(Button::Pressed),
+                118 => Self::Record(Button::Pressed),
+                _ => Err(())?,
+            },
+            (2, MidiMessage::ControlChange(Channel::Ch16, k, 0)) => match k {
+                98 => Self::Center(Button::Released),
+                99 => Self::Left(Button::Released),
+                100 => Self::Right(Button::Released),
+                101 => Self::Up(Button::Released),
+                102 => Self::Down(Button::Released),
+                116 => Self::Stop(Button::Released),
+                117 => Self::Play(Button::Released),
+                118 => Self::Record(Button::Released),
+                _ => Err(())?,
+            },
+            (2, MidiMessage::Note(Channel::Ch16, k @ 81..=88, v)) => {
+                Self::Pad(k - 80, v)
+            }
+            (2, MidiMessage::ControlChange(Channel::Ch16, k @ 33..=40, v)) => {
+                Self::Knob(k - 32, v)
+            }
+            _ => Err(())?,
+        })
     }
 }
 
@@ -113,10 +181,9 @@ pub struct AxiomAirController {
 }
 
 impl AxiomAirController {
-    pub fn new() -> Result<
-        (Self, Receiver<(usize, MidiMessageIn)>),
-        Box<dyn std::error::Error>,
-    > {
+    pub fn new(
+    ) -> Result<(Self, Receiver<AxiomMessage>), Box<dyn std::error::Error>>
+    {
         let midi_out = MidiOutput::new("test")?;
         let out_port =
             get_output_port(&midi_out, "Axiom AIR Mini 32 HyperCtrl")?;
@@ -131,16 +198,20 @@ impl AxiomAirController {
         let midi1 = connect_input(
             "Axiom AIR Mini 32 MIDI In",
             move |_, message, _| {
-                if let Ok(message) = MidiMessageIn::parse(message) {
-                    let _ = sender.send((1, message));
+                if let Ok(message) = MidiMessage::parse(message) {
+                    if let Ok(message) = AxiomMessage::parse(1, message) {
+                        let _ = sender.send(message);
+                    }
                 }
             },
         )?;
         let midi2 = connect_input(
             "Axiom AIR Mini 32 HyperCtrl",
             move |_, message, _| {
-                if let Ok(message) = MidiMessageIn::parse(message) {
-                    let _ = sender2.send((2, message));
+                if let Ok(message) = MidiMessage::parse(message) {
+                    if let Ok(message) = AxiomMessage::parse(2, message) {
+                        let _ = sender2.send(message);
+                    }
                 }
             },
         )?;
