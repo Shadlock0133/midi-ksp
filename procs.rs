@@ -1,4 +1,5 @@
-/// Main kRPC service, used by clients to interact with basic server functionality.
+/// Main kRPC service, used by clients to interact with basic server
+/// functionality.
 mod KRPC {
     /// A server side expression.
     struct Expression;
@@ -6,11 +7,12 @@ mod KRPC {
     /// A server side expression.
     struct Type;
 
-    /// The game scene. See <see cref="M:KRPC.CurrentGameScene" />.
+    /// The game scene. See KRPC.CurrentGameScene.
     enum GameScene {
         /// The game scene showing the Kerbal Space Center buildings.
         SpaceCenter = 0,
-        /// The game scene showing a vessel in flight (or on the launchpad/runway).
+        /// The game scene showing a vessel in flight (or on the
+        /// launchpad/runway).
         Flight = 1,
         /// The tracking station.
         TrackingStation = 2,
@@ -30,8 +32,10 @@ mod KRPC {
     /// Returns some information about the server, such as the version.
     fn GetStatus() -> Status;
 
-    /// Returns information on all services, procedures, classes, properties etc. provided by the server.
-    /// Can be used by client libraries to automatically create functionality such as stubs.
+    /// Returns information on all services, procedures, classes, properties
+    /// etc. provided by the server.
+    /// Can be used by client libraries to automatically create functionality
+    /// such as stubs.
     fn GetServices() -> Services;
 
     /// Add a streaming request and return its identifier.
@@ -304,7 +308,8 @@ mod KRPC {
     /// 
     /// <param name="arg">The tuple, list or dictionary.</param>
     /// <param name="index">The index of the element to access.
-    /// A zero indexed integer for a tuple or list, or a key for a dictionary.</param>
+    /// A zero indexed integer for a tuple or list, or a key for a
+    /// dictionary.</param>
     fn Expression_static_Get(arg: Class, index: Class) -> Class;
 
     /// Number of elements in a collection.
@@ -420,7 +425,8 @@ mod KRPC {
     /// The ordered collection.
     /// 
     /// <param name="arg">The collection to order.</param>
-    /// <param name="key">A function that takes a value from the collection and generates a key to sort on.</param>
+    /// <param name="key">A function that takes a value from the collection and
+    /// generates a key to sort on.</param>
     fn Expression_static_OrderBy(arg: Class, key: Class) -> Class;
 
     /// Determine whether all items in a collection satisfy a boolean predicate.
@@ -433,7 +439,8 @@ mod KRPC {
     /// <param name="predicate">The predicate function.</param>
     fn Expression_static_All(arg: Class, predicate: Class) -> Class;
 
-    /// Determine whether any item in a collection satisfies a boolean predicate.
+    /// Determine whether any item in a collection satisfies a boolean
+    /// predicate.
     /// 
     /// # Returns
     /// 
@@ -466,27 +473,30 @@ mod KRPC {
 /// For drawing and interacting with the user interface, see the UI service.
 /// </remarks>
 mod Drawing {
-    /// A line. Created using <see cref="M:Drawing.AddLine" />.
+    /// A line. Created using Drawing.AddLine.
     struct Line;
 
-    /// A polygon. Created using <see cref="M:Drawing.AddPolygon" />.
+    /// A polygon. Created using Drawing.AddPolygon.
     struct Polygon;
 
-    /// Text. Created using <see cref="M:Drawing.AddText" />.
+    /// Text. Created using Drawing.AddText.
     struct Text;
 
     /// Draw a line in the scene.
     /// 
     /// <param name="start">Position of the start of the line.</param>
     /// <param name="end">Position of the end of the line.</param>
-    /// <param name="referenceFrame">Reference frame that the positions are in.</param>
+    /// <param name="referenceFrame">Reference frame that the positions are
+    /// in.</param>
     /// <param name="visible">Whether the line is visible.</param>
     fn AddLine(start: Tuple, end: Tuple, referenceFrame: Class, visible: Bool) -> Class;
 
-    /// Draw a direction vector in the scene, from the center of mass of the active vessel.
+    /// Draw a direction vector in the scene, from the center of mass of the
+    /// active vessel.
     /// 
     /// <param name="direction">Direction to draw the line in.</param>
-    /// <param name="referenceFrame">Reference frame that the direction is in.</param>
+    /// <param name="referenceFrame">Reference frame that the direction is
+    /// in.</param>
     /// <param name="length">The length of the line.</param>
     /// <param name="visible">Whether the line is visible.</param>
     fn AddDirection(direction: Tuple, referenceFrame: Class, length: Float, visible: Bool) -> Class;
@@ -494,14 +504,16 @@ mod Drawing {
     /// Draw a polygon in the scene, defined by a list of vertices.
     /// 
     /// <param name="vertices">Vertices of the polygon.</param>
-    /// <param name="referenceFrame">Reference frame that the vertices are in.</param>
+    /// <param name="referenceFrame">Reference frame that the vertices are
+    /// in.</param>
     /// <param name="visible">Whether the polygon is visible.</param>
     fn AddPolygon(vertices: List, referenceFrame: Class, visible: Bool) -> Class;
 
     /// Draw text in the scene.
     /// 
     /// <param name="text">The string to draw.</param>
-    /// <param name="referenceFrame">Reference frame that the text position is in.</param>
+    /// <param name="referenceFrame">Reference frame that the text position is
+    /// in.</param>
     /// <param name="position">Position of the text.</param>
     /// <param name="rotation">Rotation of the text, as a quaternion.</param>
     /// <param name="visible">Whether the text is visible.</param>
@@ -509,7 +521,8 @@ mod Drawing {
 
     /// Remove all objects being drawn.
     /// 
-    /// <param name="clientOnly">If true, only remove objects created by the calling client.</param>
+    /// <param name="clientOnly">If true, only remove objects created by the
+    /// calling client.</param>
     fn Clear(clientOnly: Bool);
 
     /// Remove the object.
@@ -695,35 +708,41 @@ mod Drawing {
 }
 
 /// This service provides functionality to interact with
-/// <a href="https://forum.kerbalspaceprogram.com/index.php?/topic/104535-112-magic-smoke-industries-infernal-robotics-202/">Infernal Robotics</a>.
+/// <a
+/// href="https://forum.kerbalspaceprogram.com/index.php?/topic/104535-112-magic-smoke-industries-infernal-robotics-202/">Infernal Robotics</a>.
+/// 
 mod InfernalRobotics {
     /// Represents a servo. Obtained using
-    /// <see cref="M:InfernalRobotics.ServoGroup.Servos" />,
-    /// <see cref="M:InfernalRobotics.ServoGroup.ServoWithName" />
-    /// or <see cref="M:InfernalRobotics.ServoWithName" />.
+    /// InfernalRobotics.ServoGroup.Servos,
+    /// InfernalRobotics.ServoGroup.ServoWithName
+    /// or InfernalRobotics.ServoWithName.
     struct Servo;
 
-    /// A group of servos, obtained by calling <see cref="M:InfernalRobotics.ServoGroups" />
-    /// or <see cref="M:InfernalRobotics.ServoGroupWithName" />. Represents the "Servo Groups"
+    /// A group of servos, obtained by calling InfernalRobotics.ServoGroups
+    /// or InfernalRobotics.ServoGroupWithName. Represents the "Servo Groups"
     /// in the InfernalRobotics UI.
     struct ServoGroup;
 
-    /// A list of all the servo groups in the given <paramref name="vessel" />.
+    /// A list of all the servo groups in the given <paramref name="vessel.
     fn ServoGroups(vessel: Class) -> List;
 
-    /// Returns the servo group in the given <paramref name="vessel" /> with the given <paramref name="name" />,
-    /// or <c>null</c> if none exists. If multiple servo groups have the same name, only one of them is returned.
+    /// Returns the servo group in the given <paramref name="vessel with the
+    /// given <paramref name="name,
+    /// or <c>null</c> if none exists. If multiple servo groups have the same
+    /// name, only one of them is returned.
     /// 
     /// <param name="vessel">Vessel to check.</param>
     /// <param name="name">Name of servo group to find.</param>
-    fn ServoGroupWithName(vessel: Class, name: String) -> Class;
+    fn ServoGroupWithName(vessel: Class, name: String) -> Option<Class>;
 
-    /// Returns the servo in the given <paramref name="vessel" /> with the given <paramref name="name" /> or
-    /// <c>null</c> if none exists. If multiple servos have the same name, only one of them is returned.
+    /// Returns the servo in the given <paramref name="vessel with the given
+    /// <paramref name="name or
+    /// <c>null</c> if none exists. If multiple servos have the same name, only
+    /// one of them is returned.
     /// 
     /// <param name="vessel">Vessel to check.</param>
     /// <param name="name">Name of the servo to find.</param>
-    fn ServoWithName(vessel: Class, name: String) -> Class;
+    fn ServoWithName(vessel: Class, name: String) -> Option<Class>;
 
     /// Whether Infernal Robotics is installed.
     fn get_Available() -> Bool;
@@ -746,8 +765,8 @@ mod InfernalRobotics {
     /// Moves the servo to the previous preset.
     fn Servo_MovePrevPreset(this: Class);
 
-    /// Moves the servo to <paramref name="position" /> and sets the
-    /// speed multiplier to <paramref name="speed" />.
+    /// Moves the servo to <paramref name="position and sets the
+    /// speed multiplier to <paramref name="speed.
     /// 
     /// <param name="position">The position to move the servo to.</param>
     /// <param name="speed">Speed multiplier for the movement.</param>
@@ -828,11 +847,11 @@ mod InfernalRobotics {
     /// Whether the servos axis is inverted.
     fn Servo_set_IsAxisInverted(this: Class, value: Bool);
 
-    /// Returns the servo with the given <paramref name="name" /> from this group,
+    /// Returns the servo with the given <paramref name="name from this group,
     /// or <c>null</c> if none exists.
     /// 
     /// <param name="name">Name of servo to find.</param>
-    fn ServoGroup_ServoWithName(this: Class, name: String) -> Class;
+    fn ServoGroup_ServoWithName(this: Class, name: String) -> Option<Class>;
 
     /// Moves all of the servos in the group to the right.
     fn ServoGroup_MoveRight(this: Class);
@@ -891,12 +910,14 @@ mod InfernalRobotics {
 }
 
 /// This service provides functionality to interact with
-/// <a href="https://forum.kerbalspaceprogram.com/index.php?/topic/22809-13x-kerbal-alarm-clock-v3850-may-30/">Kerbal Alarm Clock</a>.
+/// <a
+/// href="https://forum.kerbalspaceprogram.com/index.php?/topic/22809-13x-kerbal-alarm-clock-v3850-may-30/">Kerbal Alarm Clock</a>.
+/// 
 mod KerbalAlarmClock {
     /// Represents an alarm. Obtained by calling
-    /// <see cref="M:KerbalAlarmClock.Alarms" />,
-    /// <see cref="M:KerbalAlarmClock.AlarmWithName" /> or
-    /// <see cref="M:KerbalAlarmClock.AlarmsWithType" />.
+    /// KerbalAlarmClock.Alarms,
+    /// KerbalAlarmClock.AlarmWithName or
+    /// KerbalAlarmClock.AlarmsWithType.
     struct Alarm;
 
     /// The action performed by an alarm when it fires.
@@ -917,58 +938,71 @@ mod KerbalAlarmClock {
 
     /// The type of an alarm.
     enum AlarmType {
-        /// An alarm for a specific date/time or a specific period in the future.
+        /// An alarm for a specific date/time or a specific period in the
+        /// future.
         Raw = 0,
-        /// An alarm based on the next maneuver node on the current ships flight path.
-        /// This node will be stored and can be restored when you come back to the ship.
+        /// An alarm based on the next maneuver node on the current ships
+        /// flight path.
+        /// This node will be stored and can be restored when you come back to
+        /// the ship.
         Maneuver = 1,
-        /// See <see cref="M:KerbalAlarmClock.AlarmType.Maneuver" />.
+        /// See KerbalAlarmClock.AlarmType.Maneuver.
         ManeuverAuto = 2,
         /// An alarm for furthest part of the orbit from the planet.
         Apoapsis = 3,
         /// An alarm for nearest part of the orbit from the planet.
         Periapsis = 4,
-        /// Ascending node for the targeted object, or equatorial ascending node.
+        /// Ascending node for the targeted object, or equatorial ascending
+        /// node.
         AscendingNode = 5,
-        /// Descending node for the targeted object, or equatorial descending node.
+        /// Descending node for the targeted object, or equatorial descending
+        /// node.
         DescendingNode = 6,
-        /// An alarm based on the closest approach of this vessel to the targeted
+        /// An alarm based on the closest approach of this vessel to the
+        /// targeted
         /// vessel, some number of orbits into the future.
         Closest = 7,
-        /// An alarm based on the expiry or deadline of contracts in career modes.
+        /// An alarm based on the expiry or deadline of contracts in career
+        /// modes.
         Contract = 8,
-        /// See <see cref="M:KerbalAlarmClock.AlarmType.Contract" />.
+        /// See KerbalAlarmClock.AlarmType.Contract.
         ContractAuto = 9,
         /// An alarm that is attached to a crew member.
         Crew = 10,
-        /// An alarm that is triggered when a selected target comes within a chosen distance.
+        /// An alarm that is triggered when a selected target comes within a
+        /// chosen distance.
         Distance = 11,
-        /// An alarm based on the time in the "Earth" alternative Universe (aka the Real World).
+        /// An alarm based on the time in the "Earth" alternative Universe (aka
+        /// the Real World).
         EarthTime = 12,
-        /// An alarm that fires as your landed craft passes under the orbit of your target.
+        /// An alarm that fires as your landed craft passes under the orbit of
+        /// your target.
         LaunchRendevous = 13,
-        /// An alarm manually based on when the next SOI point is on the flight path
-        /// or set to continually monitor the active flight path and add alarms as it
+        /// An alarm manually based on when the next SOI point is on the flight
+        /// path
+        /// or set to continually monitor the active flight path and add alarms
+        /// as it
         /// detects SOI changes.
         SOIChange = 14,
-        /// See <see cref="M:KerbalAlarmClock.AlarmType.SOIChange" />.
+        /// See KerbalAlarmClock.AlarmType.SOIChange.
         SOIChangeAuto = 15,
-        /// An alarm based on Interplanetary Transfer Phase Angles, i.e. when should
+        /// An alarm based on Interplanetary Transfer Phase Angles, i.e. when
+        /// should
         /// I launch to planet X? Based on Kosmo Not's post and used in Olex's
         /// Calculator.
         Transfer = 16,
-        /// See <see cref="M:KerbalAlarmClock.AlarmType.Transfer" />.
+        /// See KerbalAlarmClock.AlarmType.Transfer.
         TransferModelled = 17,
     }
 
-    /// Get the alarm with the given <paramref name="name" />, or <c>null</c>
+    /// Get the alarm with the given <paramref name="name, or <c>null</c>
     /// if no alarms have that name. If more than one alarm has the name,
     /// only returns one of them.
     /// 
     /// <param name="name">Name of the alarm to search for.</param>
-    fn AlarmWithName(name: String) -> Class;
+    fn AlarmWithName(name: String) -> Option<Class>;
 
-    /// Get a list of alarms of the specified <paramref name="type" />.
+    /// Get a list of alarms of the specified <paramref name="type.
     /// 
     /// <param name="type">Type of alarm to return.</param>
     fn AlarmsWithType(r#type: Enumeration) -> List;
@@ -1061,16 +1095,19 @@ mod KerbalAlarmClock {
 }
 
 /// This service provides functionality to interact with
-/// <a href="https://forum.kerbalspaceprogram.com/index.php?/topic/139167-13-remotetech-v188-2017-09-03/">RemoteTech</a>.
+/// <a
+/// href="https://forum.kerbalspaceprogram.com/index.php?/topic/139167-13-remotetech-v188-2017-09-03/">RemoteTech</a>.
+/// 
 mod RemoteTech {
-    /// A RemoteTech antenna. Obtained by calling <see cref="M:RemoteTech.Comms.Antennas" /> or <see cref="M:RemoteTech.Antenna" />.
+    /// A RemoteTech antenna. Obtained by calling RemoteTech.Comms.Antennas or
+    /// RemoteTech.Antenna.
     struct Antenna;
 
     /// Communications for a vessel.
     struct Comms;
 
     /// The type of object an antenna is targetting.
-    /// See <see cref="M:RemoteTech.Antenna.Target" />.
+    /// See RemoteTech.Antenna.Target.
     enum Target {
         /// The active vessel.
         ActiveVessel = 0,
@@ -1084,7 +1121,8 @@ mod RemoteTech {
         None = 4,
     }
 
-    /// Get a communications object, representing the communication capability of a particular vessel.
+    /// Get a communications object, representing the communication capability
+    /// of a particular vessel.
     fn Comms(vessel: Class) -> Class;
 
     /// Get the antenna object for a particular part.
@@ -1103,15 +1141,21 @@ mod RemoteTech {
     fn Antenna_get_HasConnection(this: Class) -> Bool;
 
     /// The object that the antenna is targetting.
-    /// This property can be used to set the target to <see cref="M:RemoteTech.Target.None" /> or <see cref="M:RemoteTech.Target.ActiveVessel" />.
-    /// To set the target to a celestial body, ground station or vessel see <see cref="M:RemoteTech.Antenna.TargetBody" />,
-    /// <see cref="M:RemoteTech.Antenna.TargetGroundStation" /> and <see cref="M:RemoteTech.Antenna.TargetVessel" />.
+    /// This property can be used to set the target to RemoteTech.Target.None
+    /// or RemoteTech.Target.ActiveVessel.
+    /// To set the target to a celestial body, ground station or vessel see
+    /// RemoteTech.Antenna.TargetBody,
+    /// RemoteTech.Antenna.TargetGroundStation and
+    /// RemoteTech.Antenna.TargetVessel.
     fn Antenna_get_Target(this: Class) -> Enumeration;
 
     /// The object that the antenna is targetting.
-    /// This property can be used to set the target to <see cref="M:RemoteTech.Target.None" /> or <see cref="M:RemoteTech.Target.ActiveVessel" />.
-    /// To set the target to a celestial body, ground station or vessel see <see cref="M:RemoteTech.Antenna.TargetBody" />,
-    /// <see cref="M:RemoteTech.Antenna.TargetGroundStation" /> and <see cref="M:RemoteTech.Antenna.TargetVessel" />.
+    /// This property can be used to set the target to RemoteTech.Target.None
+    /// or RemoteTech.Target.ActiveVessel.
+    /// To set the target to a celestial body, ground station or vessel see
+    /// RemoteTech.Antenna.TargetBody,
+    /// RemoteTech.Antenna.TargetGroundStation and
+    /// RemoteTech.Antenna.TargetVessel.
     fn Antenna_set_Target(this: Class, value: Enumeration);
 
     /// The celestial body the antenna is targetting.
@@ -1155,7 +1199,8 @@ mod RemoteTech {
     /// The shortest signal delay to the vessel, in seconds.
     fn Comms_get_SignalDelay(this: Class) -> Double;
 
-    /// The signal delay between the vessel and the closest ground station, in seconds.
+    /// The signal delay between the vessel and the closest ground station, in
+    /// seconds.
     fn Comms_get_SignalDelayToGroundStation(this: Class) -> Double;
 
     /// The antennas for this vessel.
@@ -1163,51 +1208,58 @@ mod RemoteTech {
 
 }
 
-/// Provides functionality to interact with Kerbal Space Program. This includes controlling
-/// the active vessel, managing its resources, planning maneuver nodes and auto-piloting.
+/// Provides functionality to interact with Kerbal Space Program. This includes
+/// controlling
+/// the active vessel, managing its resources, planning maneuver nodes and
+/// auto-piloting.
 mod SpaceCenter {
     /// Provides basic auto-piloting utilities for a vessel.
-    /// Created by calling <see cref="M:SpaceCenter.Vessel.AutoPilot" />.
+    /// Created by calling SpaceCenter.Vessel.AutoPilot.
     /// 
     /// <remarks>
-    /// If a client engages the auto-pilot and then closes its connection to the server,
-    /// the auto-pilot will be disengaged and its target reference frame, direction and roll
+    /// If a client engages the auto-pilot and then closes its connection to
+    /// the server,
+    /// the auto-pilot will be disengaged and its target reference frame,
+    /// direction and roll
     /// reset to default.
     /// </remarks>
     struct AutoPilot;
 
     /// Controls the game's camera.
-    /// Obtained by calling <see cref="M:SpaceCenter.Camera" />.
+    /// Obtained by calling SpaceCenter.Camera.
     struct Camera;
 
     /// Represents a celestial body (such as a planet or moon).
-    /// See <see cref="M:SpaceCenter.Bodies" />.
+    /// See SpaceCenter.Bodies.
     struct CelestialBody;
 
-    /// Represents a communication node in the network. For example, a vessel or the KSC.
+    /// Represents a communication node in the network. For example, a vessel
+    /// or the KSC.
     struct CommLink;
 
-    /// Represents a communication node in the network. For example, a vessel or the KSC.
+    /// Represents a communication node in the network. For example, a vessel
+    /// or the KSC.
     struct CommNode;
 
     /// Used to interact with CommNet for a given vessel.
-    /// Obtained by calling <see cref="M:SpaceCenter.Vessel.Comms" />.
+    /// Obtained by calling SpaceCenter.Vessel.Comms.
     struct Comms;
 
-    /// A contract. Can be accessed using <see cref="M:SpaceCenter.ContractManager" />.
+    /// A contract. Can be accessed using SpaceCenter.ContractManager.
     struct Contract;
 
     /// Contracts manager.
-    /// Obtained by calling <see cref="M:SpaceCenter.ContractManager" />.
+    /// Obtained by calling SpaceCenter.ContractManager.
     struct ContractManager;
 
-    /// A contract parameter. See <see cref="M:SpaceCenter.Contract.Parameters" />.
+    /// A contract parameter. See SpaceCenter.Contract.Parameters.
     struct ContractParameter;
 
     /// Used to manipulate the controls of a vessel. This includes adjusting the
-    /// throttle, enabling/disabling systems such as SAS and RCS, or altering the
+    /// throttle, enabling/disabling systems such as SAS and RCS, or altering
+    /// the
     /// direction in which the vessel is pointing.
-    /// Obtained by calling <see cref="M:SpaceCenter.Vessel.Control" />.
+    /// Obtained by calling SpaceCenter.Vessel.Control.
     /// 
     /// <remarks>
     /// Control inputs (such as pitch, yaw and roll) are zeroed when all clients
@@ -1215,141 +1267,167 @@ mod SpaceCenter {
     /// </remarks>
     struct Control;
 
-    /// Represents crew in a vessel. Can be obtained using <see cref="M:SpaceCenter.Vessel.Crew" />.
+    /// Represents crew in a vessel. Can be obtained using
+    /// SpaceCenter.Vessel.Crew.
     struct CrewMember;
 
-    /// Used to get flight telemetry for a vessel, by calling <see cref="M:SpaceCenter.Vessel.Flight" />.
-    /// All of the information returned by this class is given in the reference frame
+    /// Used to get flight telemetry for a vessel, by calling
+    /// SpaceCenter.Vessel.Flight.
+    /// All of the information returned by this class is given in the reference
+    /// frame
     /// passed to that method.
-    /// Obtained by calling <see cref="M:SpaceCenter.Vessel.Flight" />.
+    /// Obtained by calling SpaceCenter.Vessel.Flight.
     /// 
     /// <remarks>
-    /// To get orbital information, such as the apoapsis or inclination, see <see cref="T:SpaceCenter.Orbit" />.
+    /// To get orbital information, such as the apoapsis or inclination, see
+    /// <see cref="T:SpaceCenter.Orbit.
     /// </remarks>
     struct Flight;
 
-    /// Represents a maneuver node. Can be created using <see cref="M:SpaceCenter.Control.AddNode" />.
+    /// Represents a maneuver node. Can be created using
+    /// SpaceCenter.Control.AddNode.
     struct Node;
 
-    /// Describes an orbit. For example, the orbit of a vessel, obtained by calling
-    /// <see cref="M:SpaceCenter.Vessel.Orbit" />, or a celestial body, obtained by calling
-    /// <see cref="M:SpaceCenter.CelestialBody.Orbit" />.
+    /// Describes an orbit. For example, the orbit of a vessel, obtained by
+    /// calling
+    /// SpaceCenter.Vessel.Orbit, or a celestial body, obtained by calling
+    /// SpaceCenter.CelestialBody.Orbit.
     struct Orbit;
 
-    /// An antenna. Obtained by calling <see cref="M:SpaceCenter.Part.Antenna" />.
+    /// An antenna. Obtained by calling SpaceCenter.Part.Antenna.
     struct Antenna;
 
-    /// A cargo bay. Obtained by calling <see cref="M:SpaceCenter.Part.CargoBay" />.
+    /// A cargo bay. Obtained by calling SpaceCenter.Part.CargoBay.
     struct CargoBay;
 
-    /// An aerodynamic control surface. Obtained by calling <see cref="M:SpaceCenter.Part.ControlSurface" />.
+    /// An aerodynamic control surface. Obtained by calling
+    /// SpaceCenter.Part.ControlSurface.
     struct ControlSurface;
 
-    /// A decoupler. Obtained by calling <see cref="M:SpaceCenter.Part.Decoupler" />
+    /// A decoupler. Obtained by calling SpaceCenter.Part.Decoupler
     struct Decoupler;
 
-    /// A docking port. Obtained by calling <see cref="M:SpaceCenter.Part.DockingPort" />
+    /// A docking port. Obtained by calling SpaceCenter.Part.DockingPort
     struct DockingPort;
 
     /// An engine, including ones of various types.
-    /// For example liquid fuelled gimballed engines, solid rocket boosters and jet engines.
-    /// Obtained by calling <see cref="M:SpaceCenter.Part.Engine" />.
+    /// For example liquid fuelled gimballed engines, solid rocket boosters and
+    /// jet engines.
+    /// Obtained by calling SpaceCenter.Part.Engine.
     /// 
     /// <remarks>
-    /// For RCS thrusters <see cref="M:SpaceCenter.Part.RCS" />.
+    /// For RCS thrusters SpaceCenter.Part.RCS.
     /// </remarks>
     struct Engine;
 
-    /// Obtained by calling <see cref="M:SpaceCenter.Part.Experiment" />.
+    /// Obtained by calling SpaceCenter.Part.Experiment.
     struct Experiment;
 
-    /// A fairing. Obtained by calling <see cref="M:SpaceCenter.Part.Fairing" />.
+    /// A fairing. Obtained by calling SpaceCenter.Part.Fairing.
     struct Fairing;
 
-    /// Obtained by calling <see cref="M:SpaceCenter.Part.AddForce" />.
+    /// Obtained by calling SpaceCenter.Part.AddForce.
     struct Force;
 
-    /// An air intake. Obtained by calling <see cref="M:SpaceCenter.Part.Intake" />.
+    /// An air intake. Obtained by calling SpaceCenter.Part.Intake.
     struct Intake;
 
-    /// A launch clamp. Obtained by calling <see cref="M:SpaceCenter.Part.LaunchClamp" />.
+    /// A launch clamp. Obtained by calling SpaceCenter.Part.LaunchClamp.
     struct LaunchClamp;
 
-    /// A landing leg. Obtained by calling <see cref="M:SpaceCenter.Part.Leg" />.
+    /// A landing leg. Obtained by calling SpaceCenter.Part.Leg.
     struct Leg;
 
-    /// A light. Obtained by calling <see cref="M:SpaceCenter.Part.Light" />.
+    /// A light. Obtained by calling SpaceCenter.Part.Light.
     struct Light;
 
-    /// This can be used to interact with a specific part module. This includes part modules in
+    /// This can be used to interact with a specific part module. This includes
+    /// part modules in
     /// stock KSP, and those added by mods.
     /// 
     /// In KSP, each part has zero or more
-    /// <a href="https://wiki.kerbalspaceprogram.com/wiki/CFG_File_Documentation#MODULES">PartModules</a>
-    /// associated with it. Each one contains some of the functionality of the part.
-    /// For example, an engine has a "ModuleEngines" part module that contains all the
+    /// <a
+    /// href="https://wiki.kerbalspaceprogram.com/wiki/CFG_File_Documentation#MODULES">PartModules</a>
+    /// 
+    /// associated with it. Each one contains some of the functionality of the
+    /// part.
+    /// For example, an engine has a "ModuleEngines" part module that contains
+    /// all the
     /// functionality of an engine.
     struct Module;
 
-    /// A parachute. Obtained by calling <see cref="M:SpaceCenter.Part.Parachute" />.
+    /// A parachute. Obtained by calling SpaceCenter.Part.Parachute.
     struct Parachute;
 
     /// Represents an individual part. Vessels are made up of multiple parts.
-    /// Instances of this class can be obtained by several methods in <see cref="T:SpaceCenter.Parts" />.
+    /// Instances of this class can be obtained by several methods in <see
+    /// cref="T:SpaceCenter.Parts.
     struct Part;
 
     /// Instances of this class are used to interact with the parts of a vessel.
-    /// An instance can be obtained by calling <see cref="M:SpaceCenter.Vessel.Parts" />.
+    /// An instance can be obtained by calling SpaceCenter.Vessel.Parts.
     struct Parts;
 
-    /// A propellant for an engine. Obtains by calling <see cref="M:SpaceCenter.Engine.Propellants" />.
+    /// A propellant for an engine. Obtains by calling
+    /// SpaceCenter.Engine.Propellants.
     struct Propellant;
 
-    /// An RCS block or thruster. Obtained by calling <see cref="M:SpaceCenter.Part.RCS" />.
+    /// An RCS block or thruster. Obtained by calling SpaceCenter.Part.RCS.
     struct RCS;
 
-    /// A radiator. Obtained by calling <see cref="M:SpaceCenter.Part.Radiator" />.
+    /// A radiator. Obtained by calling SpaceCenter.Part.Radiator.
     struct Radiator;
 
-    /// A reaction wheel. Obtained by calling <see cref="M:SpaceCenter.Part.ReactionWheel" />.
+    /// A reaction wheel. Obtained by calling SpaceCenter.Part.ReactionWheel.
     struct ReactionWheel;
 
-    /// A resource converter. Obtained by calling <see cref="M:SpaceCenter.Part.ResourceConverter" />.
+    /// A resource converter. Obtained by calling
+    /// SpaceCenter.Part.ResourceConverter.
     struct ResourceConverter;
 
-    /// A resource harvester (drill). Obtained by calling <see cref="M:SpaceCenter.Part.ResourceHarvester" />.
+    /// A resource harvester (drill). Obtained by calling
+    /// SpaceCenter.Part.ResourceHarvester.
     struct ResourceHarvester;
 
-    /// Obtained by calling <see cref="M:SpaceCenter.Experiment.Data" />.
+    /// Obtained by calling SpaceCenter.Experiment.Data.
     struct ScienceData;
 
-    /// Obtained by calling <see cref="M:SpaceCenter.Experiment.ScienceSubject" />.
+    /// Obtained by calling SpaceCenter.Experiment.ScienceSubject.
     struct ScienceSubject;
 
-    /// A sensor, such as a thermometer. Obtained by calling <see cref="M:SpaceCenter.Part.Sensor" />.
+    /// A sensor, such as a thermometer. Obtained by calling
+    /// SpaceCenter.Part.Sensor.
     struct Sensor;
 
-    /// A solar panel. Obtained by calling <see cref="M:SpaceCenter.Part.SolarPanel" />.
+    /// A solar panel. Obtained by calling SpaceCenter.Part.SolarPanel.
     struct SolarPanel;
 
-    /// The component of an <see cref="T:SpaceCenter.Engine" /> or <see cref="T:SpaceCenter.RCS" /> part that generates thrust.
-    /// Can obtained by calling <see cref="M:SpaceCenter.Engine.Thrusters" /> or <see cref="M:SpaceCenter.RCS.Thrusters" />.
+    /// The component of an <see cref="T:SpaceCenter.Engine or <see
+    /// cref="T:SpaceCenter.RCS part that generates thrust.
+    /// Can obtained by calling SpaceCenter.Engine.Thrusters or
+    /// SpaceCenter.RCS.Thrusters.
     /// 
     /// <remarks>
     /// Engines can consist of multiple thrusters.
-    /// For example, the S3 KS-25x4 "Mammoth" has four rocket nozzels, and so consists of
+    /// For example, the S3 KS-25x4 "Mammoth" has four rocket nozzels, and so
+    /// consists of
     /// four thrusters.
     /// </remarks>
     struct Thruster;
 
     /// A wheel. Includes landing gear and rover wheels.
-    /// Obtained by calling <see cref="M:SpaceCenter.Part.Wheel" />.
-    /// Can be used to control the motors, steering and deployment of wheels, among other things.
+    /// Obtained by calling SpaceCenter.Part.Wheel.
+    /// Can be used to control the motors, steering and deployment of wheels,
+    /// among other things.
     struct Wheel;
 
     /// Represents a reference frame for positions, rotations and
     /// velocities. Contains:
-    /// <list type="bullet"><item><description>The position of the origin.</description></item><item><description>The directions of the x, y and z axes.</description></item><item><description>The linear velocity of the frame.</description></item><item><description>The angular velocity of the frame.</description></item></list>
+    /// <list type="bullet"><item><description>The position of the
+    /// origin.</description></item><item><description>The directions of the x,
+    /// y and z axes.</description></item><item><description>The linear
+    /// velocity of the frame.</description></item><item><description>The
+    /// angular velocity of the frame.</description></item></list>
     /// <remarks>
     /// This class does not contain any properties or methods. It is only
     /// used as a parameter to other functions.
@@ -1357,32 +1435,38 @@ mod SpaceCenter {
     struct ReferenceFrame;
 
     /// An individual resource stored within a part.
-    /// Created using methods in the <see cref="T:SpaceCenter.Resources" /> class.
+    /// Created using methods in the <see cref="T:SpaceCenter.Resources class.
     struct Resource;
 
     /// Transfer resources between parts.
     struct ResourceTransfer;
 
-    /// Represents the collection of resources stored in a vessel, stage or part.
-    /// Created by calling <see cref="M:SpaceCenter.Vessel.Resources" />,
-    /// <see cref="M:SpaceCenter.Vessel.ResourcesInDecoupleStage" /> or
-    /// <see cref="M:SpaceCenter.Part.Resources" />.
+    /// Represents the collection of resources stored in a vessel, stage or
+    /// part.
+    /// Created by calling SpaceCenter.Vessel.Resources,
+    /// SpaceCenter.Vessel.ResourcesInDecoupleStage or
+    /// SpaceCenter.Part.Resources.
     struct Resources;
 
-    /// These objects are used to interact with vessels in KSP. This includes getting
-    /// orbital and flight data, manipulating control inputs and managing resources.
-    /// Created using <see cref="M:SpaceCenter.ActiveVessel" /> or <see cref="M:SpaceCenter.Vessels" />.
+    /// These objects are used to interact with vessels in KSP. This includes
+    /// getting
+    /// orbital and flight data, manipulating control inputs and managing
+    /// resources.
+    /// Created using SpaceCenter.ActiveVessel or SpaceCenter.Vessels.
     struct Vessel;
 
-    /// Represents a waypoint. Can be created using <see cref="M:SpaceCenter.WaypointManager.AddWaypoint" />.
+    /// Represents a waypoint. Can be created using
+    /// SpaceCenter.WaypointManager.AddWaypoint.
     struct Waypoint;
 
-    /// Waypoints are the location markers you can see on the map view showing you where contracts are targeted for.
-    /// With this structure, you can obtain coordinate data for the locations of these waypoints.
-    /// Obtained by calling <see cref="M:SpaceCenter.WaypointManager" />.
+    /// Waypoints are the location markers you can see on the map view showing
+    /// you where contracts are targeted for.
+    /// With this structure, you can obtain coordinate data for the locations
+    /// of these waypoints.
+    /// Obtained by calling SpaceCenter.WaypointManager.
     struct WaypointManager;
 
-    /// See <see cref="M:SpaceCenter.Camera.Mode" />.
+    /// See SpaceCenter.Camera.Mode.
     enum CameraMode {
         /// The camera is showing the active vessel, in "auto" mode.
         Automatic = 0,
@@ -1401,7 +1485,7 @@ mod SpaceCenter {
     }
 
     /// The type of a communication link.
-    /// See <see cref="M:SpaceCenter.CommLink.Type" />.
+    /// See SpaceCenter.CommLink.Type.
     enum CommLinkType {
         /// Link is to a base station on Kerbin.
         Home = 0,
@@ -1411,7 +1495,7 @@ mod SpaceCenter {
         Relay = 2,
     }
 
-    /// The state of a contract. See <see cref="M:SpaceCenter.Contract.State" />.
+    /// The state of a contract. See SpaceCenter.Contract.State.
     enum ContractState {
         /// The contract is active.
         Active = 0,
@@ -1435,16 +1519,17 @@ mod SpaceCenter {
         Withdrawn = 9,
     }
 
-    /// See <see cref="M:SpaceCenter.Control.InputMode" />.
+    /// See SpaceCenter.Control.InputMode.
     enum ControlInputMode {
         /// Control inputs are added to the vessels current control inputs.
         Additive = 0,
-        /// Control inputs (when they are non-zero) override the vessels current control inputs.
+        /// Control inputs (when they are non-zero) override the vessels
+        /// current control inputs.
         Override = 1,
     }
 
     /// The control source of a vessel.
-    /// See <see cref="M:SpaceCenter.Control.Source" />.
+    /// See SpaceCenter.Control.Source.
     enum ControlSource {
         /// Vessel is controlled by a Kerbal.
         Kerbal = 0,
@@ -1455,7 +1540,7 @@ mod SpaceCenter {
     }
 
     /// The control state of a vessel.
-    /// See <see cref="M:SpaceCenter.Control.State" />.
+    /// See SpaceCenter.Control.State.
     enum ControlState {
         /// Full controllable.
         Full = 0,
@@ -1466,7 +1551,7 @@ mod SpaceCenter {
     }
 
     /// The type of a crew member.
-    /// See <see cref="M:SpaceCenter.CrewMember.Type" />.
+    /// See SpaceCenter.CrewMember.Type.
     enum CrewMemberType {
         /// An applicant for crew.
         Applicant = 0,
@@ -1479,7 +1564,7 @@ mod SpaceCenter {
     }
 
     /// The game mode.
-    /// Returned by <see cref="T:SpaceCenter.GameMode" />
+    /// Returned by <see cref="T:SpaceCenter.GameMode
     enum GameMode {
         /// Sandbox mode.
         Sandbox = 0,
@@ -1499,7 +1584,7 @@ mod SpaceCenter {
         ScenarioNonResumable = 7,
     }
 
-    /// The state of an antenna. See <see cref="M:SpaceCenter.Antenna.State" />.
+    /// The state of an antenna. See SpaceCenter.Antenna.State.
     enum AntennaState {
         /// Antenna is fully deployed.
         Deployed = 0,
@@ -1513,7 +1598,7 @@ mod SpaceCenter {
         Broken = 4,
     }
 
-    /// The state of a cargo bay. See <see cref="M:SpaceCenter.CargoBay.State" />.
+    /// The state of a cargo bay. See SpaceCenter.CargoBay.State.
     enum CargoBayState {
         /// Cargo bay is fully open.
         Open = 0,
@@ -1525,7 +1610,7 @@ mod SpaceCenter {
         Closing = 3,
     }
 
-    /// The state of a docking port. See <see cref="M:SpaceCenter.DockingPort.State" />.
+    /// The state of a docking port. See SpaceCenter.DockingPort.State.
     enum DockingPortState {
         /// The docking port is ready to dock to another docking port.
         Ready = 0,
@@ -1533,11 +1618,12 @@ mod SpaceCenter {
         /// another part (from the VAB/SPH).
         Docked = 1,
         /// The docking port is very close to another docking port,
-        /// but has not docked. It is using magnetic force to acquire a solid dock.
+        /// but has not docked. It is using magnetic force to acquire a solid
+        /// dock.
         Docking = 2,
         /// The docking port has just been undocked from another docking port,
         /// and is disabled until it moves away by a sufficient distance
-        /// (<see cref="M:SpaceCenter.DockingPort.ReengageDistance" />).
+        /// (SpaceCenter.DockingPort.ReengageDistance).
         Undocking = 3,
         /// The docking port has a shield, and the shield is closed.
         Shielded = 4,
@@ -1545,7 +1631,7 @@ mod SpaceCenter {
         Moving = 5,
     }
 
-    /// The state of a landing leg. See <see cref="M:SpaceCenter.Leg.State" />.
+    /// The state of a landing leg. See SpaceCenter.Leg.State.
     enum LegState {
         /// Landing leg is fully deployed.
         Deployed = 0,
@@ -1559,7 +1645,8 @@ mod SpaceCenter {
         Broken = 4,
     }
 
-    /// The state of the motor on a powered wheel. See <see cref="M:SpaceCenter.Wheel.MotorState" />.
+    /// The state of the motor on a powered wheel. See
+    /// SpaceCenter.Wheel.MotorState.
     enum MotorState {
         /// The motor is idle.
         Idle = 0,
@@ -1573,7 +1660,7 @@ mod SpaceCenter {
         NotEnoughResources = 4,
     }
 
-    /// The state of a parachute. See <see cref="M:SpaceCenter.Parachute.State" />.
+    /// The state of a parachute. See SpaceCenter.Parachute.State.
     enum ParachuteState {
         /// The parachute is safely tucked away inside its housing.
         Stowed = 0,
@@ -1591,7 +1678,7 @@ mod SpaceCenter {
         Cut = 5,
     }
 
-    /// The state of a radiator. <see cref="T:SpaceCenter.RadiatorState" />
+    /// The state of a radiator. <see cref="T:SpaceCenter.RadiatorState
     enum RadiatorState {
         /// Radiator is fully extended.
         Extended = 0,
@@ -1605,7 +1692,8 @@ mod SpaceCenter {
         Broken = 4,
     }
 
-    /// The state of a resource converter. See <see cref="M:SpaceCenter.ResourceConverter.State" />.
+    /// The state of a resource converter. See
+    /// SpaceCenter.ResourceConverter.State.
     enum ResourceConverterState {
         /// Converter is running.
         Running = 0,
@@ -1618,11 +1706,13 @@ mod SpaceCenter {
         /// At preset resource capacity.
         Capacity = 4,
         /// Unknown state. Possible with modified resource converters.
-        /// In this case, check <see cref="M:SpaceCenter.ResourceConverter.StatusInfo" /> for more information.
+        /// In this case, check SpaceCenter.ResourceConverter.StatusInfo for
+        /// more information.
         Unknown = 5,
     }
 
-    /// The state of a resource harvester. See <see cref="M:SpaceCenter.ResourceHarvester.State" />.
+    /// The state of a resource harvester. See
+    /// SpaceCenter.ResourceHarvester.State.
     enum ResourceHarvesterState {
         /// The drill is deploying.
         Deploying = 0,
@@ -1636,7 +1726,7 @@ mod SpaceCenter {
         Active = 4,
     }
 
-    /// The state of a solar panel. See <see cref="M:SpaceCenter.SolarPanel.State" />.
+    /// The state of a solar panel. See SpaceCenter.SolarPanel.State.
     enum SolarPanelState {
         /// Solar panel is fully extended.
         Extended = 0,
@@ -1650,7 +1740,7 @@ mod SpaceCenter {
         Broken = 4,
     }
 
-    /// The state of a wheel. See <see cref="M:SpaceCenter.Wheel.State" />.
+    /// The state of a wheel. See SpaceCenter.Wheel.State.
     enum WheelState {
         /// Wheel is fully deployed.
         Deployed = 0,
@@ -1664,21 +1754,25 @@ mod SpaceCenter {
         Broken = 4,
     }
 
-    /// The way in which a resource flows between parts. See <see cref="M:SpaceCenter.Resources.FlowMode" />.
+    /// The way in which a resource flows between parts. See
+    /// SpaceCenter.Resources.FlowMode.
     enum ResourceFlowMode {
-        /// The resource flows to any part in the vessel. For example, electric charge.
+        /// The resource flows to any part in the vessel. For example, electric
+        /// charge.
         Vessel = 0,
-        /// The resource flows from parts in the first stage, followed by the second,
+        /// The resource flows from parts in the first stage, followed by the
+        /// second,
         /// and so on. For example, mono-propellant.
         Stage = 1,
-        /// The resource flows between adjacent parts within the vessel. For example,
+        /// The resource flows between adjacent parts within the vessel. For
+        /// example,
         /// liquid fuel or oxidizer.
         Adjacent = 2,
         /// The resource does not flow. For example, solid fuel.
         None = 3,
     }
 
-    /// The behavior of the SAS auto-pilot. See <see cref="M:SpaceCenter.AutoPilot.SASMode" />.
+    /// The behavior of the SAS auto-pilot. See SpaceCenter.AutoPilot.SASMode.
     enum SASMode {
         /// Stability assist mode. Dampen out any rotation.
         StabilityAssist = 0,
@@ -1703,7 +1797,7 @@ mod SpaceCenter {
     }
 
     /// The mode of the speed reported in the navball.
-    /// See <see cref="M:SpaceCenter.Control.SpeedMode" />.
+    /// See SpaceCenter.Control.SpeedMode.
     enum SpeedMode {
         /// Speed is relative to the vessel's orbit.
         Orbit = 0,
@@ -1714,7 +1808,7 @@ mod SpaceCenter {
     }
 
     /// The situation a vessel is in.
-    /// See <see cref="M:SpaceCenter.Vessel.Situation" />.
+    /// See SpaceCenter.Vessel.Situation.
     enum VesselSituation {
         /// Vessel is awaiting launch.
         PreLaunch = 0,
@@ -1735,7 +1829,7 @@ mod SpaceCenter {
     }
 
     /// The type of a vessel.
-    /// See <see cref="M:SpaceCenter.Vessel.Type" />.
+    /// See SpaceCenter.Vessel.Type.
     enum VesselType {
         /// Base.
         Base = 0,
@@ -1758,7 +1852,7 @@ mod SpaceCenter {
     }
 
     /// The time warp mode.
-    /// Returned by <see cref="T:SpaceCenter.WarpMode" />
+    /// Returned by <see cref="T:SpaceCenter.WarpMode
     enum WarpMode {
         /// Time warp is active, and in regular "on-rails" mode.
         Rails = 0,
@@ -1771,7 +1865,7 @@ mod SpaceCenter {
     /// Clears the current target.
     fn ClearTarget();
 
-    /// Returns a list of vessels from the given <paramref name="craftDirectory" />
+    /// Returns a list of vessels from the given <paramref name="craftDirectory
     /// that can be launched.
     /// 
     /// <param name="craftDirectory">Name of the directory in the current saves
@@ -1783,9 +1877,11 @@ mod SpaceCenter {
     /// <param name="craftDirectory">Name of the directory in the current saves
     /// "Ships" directory, that contains the craft file.
     /// For example <c>"VAB"</c> or <c>"SPH"</c>.</param>
-    /// <param name="name">Name of the vessel to launch. This is the name of the ".craft" file
+    /// <param name="name">Name of the vessel to launch. This is the name of
+    /// the ".craft" file
     /// in the save directory, without the ".craft" file extension.</param>
-    /// <param name="launchSite">Name of the launch site. For example <c>"LaunchPad"</c> or
+    /// <param name="launchSite">Name of the launch site. For example
+    /// <c>"LaunchPad"</c> or
     /// <c>"Runway"</c>.</param>
     /// <param name="recover">If true and there is a vessel on the launch site,
     /// recover it before launching.</param>
@@ -1800,7 +1896,8 @@ mod SpaceCenter {
     /// <param name="recover">If true and there is a vessel on the launch pad,
     /// recover it before launching.</param>
     /// <remarks>
-    /// This is equivalent to calling <see cref="M:SpaceCenter.LaunchVessel" /> with the craft directory
+    /// This is equivalent to calling SpaceCenter.LaunchVessel with the craft
+    /// directory
     /// set to "VAB" and the launch site set to "LaunchPad".
     /// Throws an exception if any of the games pre-flight checks fail.
     /// </remarks>
@@ -1812,7 +1909,8 @@ mod SpaceCenter {
     /// <param name="recover">If true and there is a vessel on the runway,
     /// recover it before launching.</param>
     /// <remarks>
-    /// This is equivalent to calling <see cref="M:SpaceCenter.LaunchVessel" /> with the craft directory
+    /// This is equivalent to calling SpaceCenter.LaunchVessel with the craft
+    /// directory
     /// set to "SPH" and the launch site set to "Runway".
     /// Throws an exception if any of the games pre-flight checks fail.
     /// </remarks>
@@ -1824,45 +1922,54 @@ mod SpaceCenter {
     fn Save(name: String);
 
     /// Load the game with the given name.
-    /// This will create a load a save file called <c>name.sfs</c> from the folder of the
+    /// This will create a load a save file called <c>name.sfs</c> from the
+    /// folder of the
     /// current save game.
     fn Load(name: String);
 
     /// Save a quicksave.
     /// 
     /// <remarks>
-    /// This is the same as calling <see cref="M:SpaceCenter.Save" /> with the name "quicksave".
+    /// This is the same as calling SpaceCenter.Save with the name "quicksave".
     /// </remarks>
     fn Quicksave();
 
     /// Load a quicksave.
     /// 
     /// <remarks>
-    /// This is the same as calling <see cref="M:SpaceCenter.Load" /> with the name "quicksave".
+    /// This is the same as calling SpaceCenter.Load with the name "quicksave".
     /// </remarks>
     fn Quickload();
 
-    /// Returns <c>true</c> if regular "on-rails" time warp can be used, at the specified warp
-    /// <paramref name="factor" />. The maximum time warp rate is limited by various things,
+    /// Returns <c>true</c> if regular "on-rails" time warp can be used, at the
+    /// specified warp
+    /// <paramref name="factor. The maximum time warp rate is limited by
+    /// various things,
     /// including how close the active vessel is to a planet. See
-    /// <a href="https://wiki.kerbalspaceprogram.com/wiki/Time_warp">the KSP wiki</a>
+    /// <a href="https://wiki.kerbalspaceprogram.com/wiki/Time_warp">the KSP
+    /// wiki</a>
     /// for details.
     /// 
     /// <param name="factor">The warp factor to check.</param>
     fn CanRailsWarpAt(factor: Sint32) -> Bool;
 
-    /// Uses time acceleration to warp forward to a time in the future, specified
-    /// by universal time <paramref name="ut" />. This call blocks until the desired
-    /// time is reached. Uses regular "on-rails" or physical time warp as appropriate.
-    /// For example, physical time warp is used when the active vessel is traveling
+    /// Uses time acceleration to warp forward to a time in the future,
+    /// specified
+    /// by universal time <paramref name="ut. This call blocks until the desired
+    /// time is reached. Uses regular "on-rails" or physical time warp as
+    /// appropriate.
+    /// For example, physical time warp is used when the active vessel is
+    /// traveling
     /// through an atmosphere. When using regular "on-rails" time warp, the warp
-    /// rate is limited by <paramref name="maxRailsRate" />, and when using physical
-    /// time warp, the warp rate is limited by <paramref name="maxPhysicsRate" />.
+    /// rate is limited by <paramref name="maxRailsRate, and when using physical
+    /// time warp, the warp rate is limited by <paramref name="maxPhysicsRate.
     /// 
     /// <param name="ut">The universal time to warp to, in seconds.</param>
-    /// <param name="maxRailsRate">The maximum warp rate in regular "on-rails" time warp.
+    /// <param name="maxRailsRate">The maximum warp rate in regular "on-rails"
+    /// time warp.
     /// </param>
-    /// <param name="maxPhysicsRate">The maximum warp rate in physical time warp.</param>
+    /// <param name="maxPhysicsRate">The maximum warp rate in physical time
+    /// warp.</param>
     /// # Returns
     /// 
     /// When the time warp is complete.
@@ -1871,77 +1978,88 @@ mod SpaceCenter {
     /// Converts a position from one reference frame to another.
     /// 
     /// <param name="position">Position, as a vector, in reference frame
-    /// <paramref name="from" />.</param>
+    /// <paramref name="from.</param>
     /// <param name="from">The reference frame that the position is in.</param>
     /// <param name="to">The reference frame to covert the position to.</param>
     /// # Returns
     /// 
     /// The corresponding position, as a vector, in reference frame
-    /// <paramref name="to" />.
+    /// <paramref name="to.
     fn TransformPosition(position: Tuple, from: Class, to: Class) -> Tuple;
 
     /// Converts a direction from one reference frame to another.
     /// 
     /// <param name="direction">Direction, as a vector, in reference frame
-    /// <paramref name="from" />. </param>
+    /// <paramref name="from. </param>
     /// <param name="from">The reference frame that the direction is in.</param>
     /// <param name="to">The reference frame to covert the direction to.</param>
     /// # Returns
     /// 
     /// The corresponding direction, as a vector, in reference frame
-    /// <paramref name="to" />.
+    /// <paramref name="to.
     fn TransformDirection(direction: Tuple, from: Class, to: Class) -> Tuple;
 
     /// Converts a rotation from one reference frame to another.
     /// 
-    /// <param name="rotation">Rotation, as a quaternion of the form <math>(x, y, z, w)</math>,
-    /// in reference frame <paramref name="from" />.</param>
+    /// <param name="rotation">Rotation, as a quaternion of the form <math>(x,
+    /// y, z, w)</math>,
+    /// in reference frame <paramref name="from.</param>
     /// <param name="from">The reference frame that the rotation is in.</param>
     /// <param name="to">The reference frame to covert the rotation to.</param>
     /// # Returns
     /// 
     /// The corresponding rotation, as a quaternion of the form
-    /// <math>(x, y, z, w)</math>, in reference frame <paramref name="to" />.
+    /// <math>(x, y, z, w)</math>, in reference frame <paramref name="to.
     fn TransformRotation(rotation: Tuple, from: Class, to: Class) -> Tuple;
 
-    /// Converts a velocity (acting at the specified position) from one reference frame
-    /// to another. The position is required to take the relative angular velocity of the
+    /// Converts a velocity (acting at the specified position) from one
+    /// reference frame
+    /// to another. The position is required to take the relative angular
+    /// velocity of the
     /// reference frames into account.
     /// 
     /// <param name="position">Position, as a vector, in reference frame
-    /// <paramref name="from" />.</param>
-    /// <param name="velocity">Velocity, as a vector that points in the direction of travel and
+    /// <paramref name="from.</param>
+    /// <param name="velocity">Velocity, as a vector that points in the
+    /// direction of travel and
     /// whose magnitude is the speed in meters per second, in reference frame
-    /// <paramref name="from" />.</param>
-    /// <param name="from">The reference frame that the position and velocity are in.</param>
+    /// <paramref name="from.</param>
+    /// <param name="from">The reference frame that the position and velocity
+    /// are in.</param>
     /// <param name="to">The reference frame to covert the velocity to.</param>
     /// # Returns
     /// 
     /// The corresponding velocity, as a vector, in reference frame
-    /// <paramref name="to" />.
+    /// <paramref name="to.
     fn TransformVelocity(position: Tuple, velocity: Tuple, from: Class, to: Class) -> Tuple;
 
-    /// Cast a ray from a given position in a given direction, and return the distance to the hit point.
+    /// Cast a ray from a given position in a given direction, and return the
+    /// distance to the hit point.
     /// If no hit occurs, returns infinity.
     /// 
-    /// <param name="position">Position, as a vector, of the origin of the ray.</param>
+    /// <param name="position">Position, as a vector, of the origin of the
+    /// ray.</param>
     /// <param name="direction">Direction of the ray, as a unit vector.</param>
-    /// <param name="referenceFrame">The reference frame that the position and direction are in.</param>
+    /// <param name="referenceFrame">The reference frame that the position and
+    /// direction are in.</param>
     /// # Returns
     /// 
     /// The distance to the hit, in meters, or infinity if there was no hit.
     fn RaycastDistance(position: Tuple, direction: Tuple, referenceFrame: Class) -> Double;
 
-    /// Cast a ray from a given position in a given direction, and return the part that it hits.
+    /// Cast a ray from a given position in a given direction, and return the
+    /// part that it hits.
     /// If no hit occurs, returns <c>null</c>.
     /// 
-    /// <param name="position">Position, as a vector, of the origin of the ray.</param>
+    /// <param name="position">Position, as a vector, of the origin of the
+    /// ray.</param>
     /// <param name="direction">Direction of the ray, as a unit vector.</param>
-    /// <param name="referenceFrame">The reference frame that the position and direction are in.</param>
+    /// <param name="referenceFrame">The reference frame that the position and
+    /// direction are in.</param>
     /// # Returns
     /// 
     /// The part that was hit or <c>null</c> if there was no hit.
-    fn RaycastPart(position: Tuple, direction: Tuple, referenceFrame: Class) -> Class;
+    fn RaycastPart(position: Tuple, direction: Tuple, referenceFrame: Class) -> Option<Class>;
 
     /// The current mode the game is in.
     fn get_GameMode() -> Enumeration;
@@ -1969,19 +2087,19 @@ mod SpaceCenter {
     fn get_Bodies() -> Dictionary;
 
     /// The currently targeted celestial body.
-    fn get_TargetBody() -> Class;
+    fn get_TargetBody() -> Option<Class>;
 
     /// The currently targeted celestial body.
     fn set_TargetBody(value: Class);
 
     /// The currently targeted vessel.
-    fn get_TargetVessel() -> Class;
+    fn get_TargetVessel() -> Option<Class>;
 
     /// The currently targeted vessel.
     fn set_TargetVessel(value: Class);
 
     /// The currently targeted docking port.
-    fn get_TargetDockingPort() -> Class;
+    fn get_TargetDockingPort() -> Option<Class>;
 
     /// The currently targeted docking port.
     fn set_TargetDockingPort(value: Class);
@@ -2010,13 +2128,16 @@ mod SpaceCenter {
     /// The current universal time in seconds.
     fn get_UT() -> Double;
 
-    /// The value of the <a href="https://en.wikipedia.org/wiki/Gravitational_constant">
+    /// The value of the <a
+    /// href="https://en.wikipedia.org/wiki/Gravitational_constant">
     /// gravitational constant</a> G in <math>N(m/kg)^2</math>.
     fn get_G() -> Double;
 
-    /// The current time warp mode. Returns <see cref="M:SpaceCenter.WarpMode.None" /> if time
-    /// warp is not active, <see cref="M:SpaceCenter.WarpMode.Rails" /> if regular "on-rails" time warp
-    /// is active, or <see cref="M:SpaceCenter.WarpMode.Physics" /> if physical time warp is active.
+    /// The current time warp mode. Returns SpaceCenter.WarpMode.None if time
+    /// warp is not active, SpaceCenter.WarpMode.Rails if regular "on-rails"
+    /// time warp
+    /// is active, or SpaceCenter.WarpMode.Physics if physical time warp is
+    /// active.
     fn get_WarpMode() -> Enumeration;
 
     /// The current warp rate. This is the rate at which time is passing for
@@ -2026,10 +2147,11 @@ mod SpaceCenter {
     fn get_WarpRate() -> Float;
 
     /// The current warp factor. This is the index of the rate at which time
-    /// is passing for either regular "on-rails" or physical time warp. Returns 0
+    /// is passing for either regular "on-rails" or physical time warp. Returns
+    /// 0
     /// if time warp is not active. When in on-rails time warp, this is equal to
-    /// <see cref="M:SpaceCenter.RailsWarpFactor" />, and in physics time warp, this is equal to
-    /// <see cref="M:SpaceCenter.PhysicsWarpFactor" />.
+    /// SpaceCenter.RailsWarpFactor, and in physics time warp, this is equal to
+    /// SpaceCenter.PhysicsWarpFactor.
     fn get_WarpFactor() -> Float;
 
     /// The time warp rate, using regular "on-rails" time warp. A value between
@@ -2038,7 +2160,8 @@ mod SpaceCenter {
     /// 
     /// If requested time warp factor cannot be set, it will be set to the next
     /// lowest possible value. For example, if the vessel is too close to a
-    /// planet. See <a href="https://wiki.kerbalspaceprogram.com/wiki/Time_warp">
+    /// planet. See <a
+    /// href="https://wiki.kerbalspaceprogram.com/wiki/Time_warp">
     /// the KSP wiki</a> for details.
     fn get_RailsWarpFactor() -> Sint32;
 
@@ -2048,7 +2171,8 @@ mod SpaceCenter {
     /// 
     /// If requested time warp factor cannot be set, it will be set to the next
     /// lowest possible value. For example, if the vessel is too close to a
-    /// planet. See <a href="https://wiki.kerbalspaceprogram.com/wiki/Time_warp">
+    /// planet. See <a
+    /// href="https://wiki.kerbalspaceprogram.com/wiki/Time_warp">
     /// the KSP wiki</a> for details.
     fn set_RailsWarpFactor(value: Sint32);
 
@@ -2062,11 +2186,14 @@ mod SpaceCenter {
 
     /// The current maximum regular "on-rails" warp factor that can be set.
     /// A value between 0 and 7 inclusive. See
-    /// <a href="https://wiki.kerbalspaceprogram.com/wiki/Time_warp">the KSP wiki</a>
+    /// <a href="https://wiki.kerbalspaceprogram.com/wiki/Time_warp">the KSP
+    /// wiki</a>
     /// for details.
     fn get_MaximumRailsWarpFactor() -> Sint32;
 
-    /// Whether <a href="https://forum.kerbalspaceprogram.com/index.php?/topic/19321-130-ferram-aerospace-research-v0159-liebe-82117/">Ferram Aerospace Research</a> is installed.
+    /// Whether <a
+    /// href="https://forum.kerbalspaceprogram.com/index.php?/topic/19321-130-ferram-aerospace-research-v0159-liebe-82117/">Ferram Aerospace Research</a> is installed.
+    /// 
     fn get_FARAvailable() -> Bool;
 
     /// Engage the auto-pilot.
@@ -2076,18 +2203,23 @@ mod SpaceCenter {
     fn AutoPilot_Disengage(this: Class);
 
     /// Blocks until the vessel is pointing in the target direction and has
-    /// the target roll (if set). Throws an exception if the auto-pilot has not been engaged.
+    /// the target roll (if set). Throws an exception if the auto-pilot has not
+    /// been engaged.
     fn AutoPilot_Wait(this: Class);
 
     /// Set target pitch and heading angles.
     /// 
-    /// <param name="pitch">Target pitch angle, in degrees between -90° and +90°.</param>
-    /// <param name="heading">Target heading angle, in degrees between 0° and 360°.</param>
+    /// <param name="pitch">Target pitch angle, in degrees between -90° and
+    /// +90°.</param>
+    /// <param name="heading">Target heading angle, in degrees between 0° and
+    /// 360°.</param>
     fn AutoPilot_TargetPitchAndHeading(this: Class, pitch: Float, heading: Float);
 
     /// The error, in degrees, between the direction the ship has been asked
-    /// to point in and the direction it is pointing in. Throws an exception if the auto-pilot
-    /// has not been engaged and SAS is not enabled or is in stability assist mode.
+    /// to point in and the direction it is pointing in. Throws an exception if
+    /// the auto-pilot
+    /// has not been engaged and SAS is not enabled or is in stability assist
+    /// mode.
     fn AutoPilot_get_Error(this: Class) -> Float;
 
     /// The error, in degrees, between the vessels current and target pitch.
@@ -2099,23 +2231,30 @@ mod SpaceCenter {
     fn AutoPilot_get_HeadingError(this: Class) -> Float;
 
     /// The error, in degrees, between the vessels current and target roll.
-    /// Throws an exception if the auto-pilot has not been engaged or no target roll is set.
+    /// Throws an exception if the auto-pilot has not been engaged or no target
+    /// roll is set.
     fn AutoPilot_get_RollError(this: Class) -> Float;
 
-    /// The reference frame for the target direction (<see cref="M:SpaceCenter.AutoPilot.TargetDirection" />).
+    /// The reference frame for the target direction
+    /// (SpaceCenter.AutoPilot.TargetDirection).
     /// 
     /// <remarks>
-    /// An error will be thrown if this property is set to a reference frame that rotates with
-    /// the vessel being controlled, as it is impossible to rotate the vessel in such a
+    /// An error will be thrown if this property is set to a reference frame
+    /// that rotates with
+    /// the vessel being controlled, as it is impossible to rotate the vessel
+    /// in such a
     /// reference frame.
     /// </remarks>
     fn AutoPilot_get_ReferenceFrame(this: Class) -> Class;
 
-    /// The reference frame for the target direction (<see cref="M:SpaceCenter.AutoPilot.TargetDirection" />).
+    /// The reference frame for the target direction
+    /// (SpaceCenter.AutoPilot.TargetDirection).
     /// 
     /// <remarks>
-    /// An error will be thrown if this property is set to a reference frame that rotates with
-    /// the vessel being controlled, as it is impossible to rotate the vessel in such a
+    /// An error will be thrown if this property is set to a reference frame
+    /// that rotates with
+    /// the vessel being controlled, as it is impossible to rotate the vessel
+    /// in such a
     /// reference frame.
     /// </remarks>
     fn AutoPilot_set_ReferenceFrame(this: Class, value: Class);
@@ -2139,117 +2278,146 @@ mod SpaceCenter {
     fn AutoPilot_set_TargetRoll(this: Class, value: Float);
 
     /// Direction vector corresponding to the target pitch and heading.
-    /// This is in the reference frame specified by <see cref="T:SpaceCenter.ReferenceFrame" />.
+    /// This is in the reference frame specified by <see
+    /// cref="T:SpaceCenter.ReferenceFrame.
     fn AutoPilot_get_TargetDirection(this: Class) -> Tuple;
 
     /// Direction vector corresponding to the target pitch and heading.
-    /// This is in the reference frame specified by <see cref="T:SpaceCenter.ReferenceFrame" />.
+    /// This is in the reference frame specified by <see
+    /// cref="T:SpaceCenter.ReferenceFrame.
     fn AutoPilot_set_TargetDirection(this: Class, value: Tuple);
 
     /// The state of SAS.
     /// 
-    /// <remarks>Equivalent to <see cref="M:SpaceCenter.Control.SAS" /></remarks>
+    /// <remarks>Equivalent to SpaceCenter.Control.SAS</remarks>
     fn AutoPilot_get_SAS(this: Class) -> Bool;
 
     /// The state of SAS.
     /// 
-    /// <remarks>Equivalent to <see cref="M:SpaceCenter.Control.SAS" /></remarks>
+    /// <remarks>Equivalent to SpaceCenter.Control.SAS</remarks>
     fn AutoPilot_set_SAS(this: Class, value: Bool);
 
-    /// The current <see cref="T:SpaceCenter.SASMode" />.
-    /// These modes are equivalent to the mode buttons to the left of the navball that appear
+    /// The current <see cref="T:SpaceCenter.SASMode.
+    /// These modes are equivalent to the mode buttons to the left of the
+    /// navball that appear
     /// when SAS is enabled.
     /// 
-    /// <remarks>Equivalent to <see cref="M:SpaceCenter.Control.SASMode" /></remarks>
+    /// <remarks>Equivalent to SpaceCenter.Control.SASMode</remarks>
     fn AutoPilot_get_SASMode(this: Class) -> Enumeration;
 
-    /// The current <see cref="T:SpaceCenter.SASMode" />.
-    /// These modes are equivalent to the mode buttons to the left of the navball that appear
+    /// The current <see cref="T:SpaceCenter.SASMode.
+    /// These modes are equivalent to the mode buttons to the left of the
+    /// navball that appear
     /// when SAS is enabled.
     /// 
-    /// <remarks>Equivalent to <see cref="M:SpaceCenter.Control.SASMode" /></remarks>
+    /// <remarks>Equivalent to SpaceCenter.Control.SASMode</remarks>
     fn AutoPilot_set_SASMode(this: Class, value: Enumeration);
 
-    /// The threshold at which the autopilot will try to match the target roll angle, if any.
+    /// The threshold at which the autopilot will try to match the target roll
+    /// angle, if any.
     /// Defaults to 5 degrees.
     fn AutoPilot_get_RollThreshold(this: Class) -> Double;
 
-    /// The threshold at which the autopilot will try to match the target roll angle, if any.
+    /// The threshold at which the autopilot will try to match the target roll
+    /// angle, if any.
     /// Defaults to 5 degrees.
     fn AutoPilot_set_RollThreshold(this: Class, value: Double);
 
-    /// The maximum amount of time that the vessel should need to come to a complete stop.
+    /// The maximum amount of time that the vessel should need to come to a
+    /// complete stop.
     /// This determines the maximum angular velocity of the vessel.
-    /// A vector of three stopping times, in seconds, one for each of the pitch, roll
+    /// A vector of three stopping times, in seconds, one for each of the
+    /// pitch, roll
     /// and yaw axes. Defaults to 0.5 seconds for each axis.
     fn AutoPilot_get_StoppingTime(this: Class) -> Tuple;
 
-    /// The maximum amount of time that the vessel should need to come to a complete stop.
+    /// The maximum amount of time that the vessel should need to come to a
+    /// complete stop.
     /// This determines the maximum angular velocity of the vessel.
-    /// A vector of three stopping times, in seconds, one for each of the pitch, roll
+    /// A vector of three stopping times, in seconds, one for each of the
+    /// pitch, roll
     /// and yaw axes. Defaults to 0.5 seconds for each axis.
     fn AutoPilot_set_StoppingTime(this: Class, value: Tuple);
 
-    /// The time the vessel should take to come to a stop pointing in the target direction.
+    /// The time the vessel should take to come to a stop pointing in the
+    /// target direction.
     /// This determines the angular acceleration used to decelerate the vessel.
-    /// A vector of three times, in seconds, one for each of the pitch, roll and yaw axes.
+    /// A vector of three times, in seconds, one for each of the pitch, roll
+    /// and yaw axes.
     /// Defaults to 5 seconds for each axis.
     fn AutoPilot_get_DecelerationTime(this: Class) -> Tuple;
 
-    /// The time the vessel should take to come to a stop pointing in the target direction.
+    /// The time the vessel should take to come to a stop pointing in the
+    /// target direction.
     /// This determines the angular acceleration used to decelerate the vessel.
-    /// A vector of three times, in seconds, one for each of the pitch, roll and yaw axes.
+    /// A vector of three times, in seconds, one for each of the pitch, roll
+    /// and yaw axes.
     /// Defaults to 5 seconds for each axis.
     fn AutoPilot_set_DecelerationTime(this: Class, value: Tuple);
 
     /// The angle at which the autopilot considers the vessel to be pointing
     /// close to the target.
-    /// This determines the midpoint of the target velocity attenuation function.
-    /// A vector of three angles, in degrees, one for each of the pitch, roll and yaw axes.
+    /// This determines the midpoint of the target velocity attenuation
+    /// function.
+    /// A vector of three angles, in degrees, one for each of the pitch, roll
+    /// and yaw axes.
     /// Defaults to 1° for each axis.
     fn AutoPilot_get_AttenuationAngle(this: Class) -> Tuple;
 
     /// The angle at which the autopilot considers the vessel to be pointing
     /// close to the target.
-    /// This determines the midpoint of the target velocity attenuation function.
-    /// A vector of three angles, in degrees, one for each of the pitch, roll and yaw axes.
+    /// This determines the midpoint of the target velocity attenuation
+    /// function.
+    /// A vector of three angles, in degrees, one for each of the pitch, roll
+    /// and yaw axes.
     /// Defaults to 1° for each axis.
     fn AutoPilot_set_AttenuationAngle(this: Class, value: Tuple);
 
-    /// Whether the rotation rate controllers PID parameters should be automatically tuned
-    /// using the vessels moment of inertia and available torque. Defaults to <c>true</c>.
-    /// See <see cref="M:SpaceCenter.AutoPilot.TimeToPeak" /> and <see cref="M:SpaceCenter.AutoPilot.Overshoot" />.
+    /// Whether the rotation rate controllers PID parameters should be
+    /// automatically tuned
+    /// using the vessels moment of inertia and available torque. Defaults to
+    /// <c>true</c>.
+    /// See SpaceCenter.AutoPilot.TimeToPeak and
+    /// SpaceCenter.AutoPilot.Overshoot.
     fn AutoPilot_get_AutoTune(this: Class) -> Bool;
 
-    /// Whether the rotation rate controllers PID parameters should be automatically tuned
-    /// using the vessels moment of inertia and available torque. Defaults to <c>true</c>.
-    /// See <see cref="M:SpaceCenter.AutoPilot.TimeToPeak" /> and <see cref="M:SpaceCenter.AutoPilot.Overshoot" />.
+    /// Whether the rotation rate controllers PID parameters should be
+    /// automatically tuned
+    /// using the vessels moment of inertia and available torque. Defaults to
+    /// <c>true</c>.
+    /// See SpaceCenter.AutoPilot.TimeToPeak and
+    /// SpaceCenter.AutoPilot.Overshoot.
     fn AutoPilot_set_AutoTune(this: Class, value: Bool);
 
     /// The target time to peak used to autotune the PID controllers.
-    /// A vector of three times, in seconds, for each of the pitch, roll and yaw axes.
+    /// A vector of three times, in seconds, for each of the pitch, roll and
+    /// yaw axes.
     /// Defaults to 3 seconds for each axis.
     fn AutoPilot_get_TimeToPeak(this: Class) -> Tuple;
 
     /// The target time to peak used to autotune the PID controllers.
-    /// A vector of three times, in seconds, for each of the pitch, roll and yaw axes.
+    /// A vector of three times, in seconds, for each of the pitch, roll and
+    /// yaw axes.
     /// Defaults to 3 seconds for each axis.
     fn AutoPilot_set_TimeToPeak(this: Class, value: Tuple);
 
     /// The target overshoot percentage used to autotune the PID controllers.
-    /// A vector of three values, between 0 and 1, for each of the pitch, roll and yaw axes.
+    /// A vector of three values, between 0 and 1, for each of the pitch, roll
+    /// and yaw axes.
     /// Defaults to 0.01 for each axis.
     fn AutoPilot_get_Overshoot(this: Class) -> Tuple;
 
     /// The target overshoot percentage used to autotune the PID controllers.
-    /// A vector of three values, between 0 and 1, for each of the pitch, roll and yaw axes.
+    /// A vector of three values, between 0 and 1, for each of the pitch, roll
+    /// and yaw axes.
     /// Defaults to 0.01 for each axis.
     fn AutoPilot_set_Overshoot(this: Class, value: Tuple);
 
     /// Gains for the pitch PID controller.
     /// 
     /// <remarks>
-    /// When <see cref="M:SpaceCenter.AutoPilot.AutoTune" /> is true, these values are updated automatically,
+    /// When SpaceCenter.AutoPilot.AutoTune is true, these values are updated
+    /// automatically,
     /// which will overwrite any manual changes.
     /// </remarks>
     fn AutoPilot_get_PitchPIDGains(this: Class) -> Tuple;
@@ -2257,7 +2425,8 @@ mod SpaceCenter {
     /// Gains for the pitch PID controller.
     /// 
     /// <remarks>
-    /// When <see cref="M:SpaceCenter.AutoPilot.AutoTune" /> is true, these values are updated automatically,
+    /// When SpaceCenter.AutoPilot.AutoTune is true, these values are updated
+    /// automatically,
     /// which will overwrite any manual changes.
     /// </remarks>
     fn AutoPilot_set_PitchPIDGains(this: Class, value: Tuple);
@@ -2265,7 +2434,8 @@ mod SpaceCenter {
     /// Gains for the roll PID controller.
     /// 
     /// <remarks>
-    /// When <see cref="M:SpaceCenter.AutoPilot.AutoTune" /> is true, these values are updated automatically,
+    /// When SpaceCenter.AutoPilot.AutoTune is true, these values are updated
+    /// automatically,
     /// which will overwrite any manual changes.
     /// </remarks>
     fn AutoPilot_get_RollPIDGains(this: Class) -> Tuple;
@@ -2273,7 +2443,8 @@ mod SpaceCenter {
     /// Gains for the roll PID controller.
     /// 
     /// <remarks>
-    /// When <see cref="M:SpaceCenter.AutoPilot.AutoTune" /> is true, these values are updated automatically,
+    /// When SpaceCenter.AutoPilot.AutoTune is true, these values are updated
+    /// automatically,
     /// which will overwrite any manual changes.
     /// </remarks>
     fn AutoPilot_set_RollPIDGains(this: Class, value: Tuple);
@@ -2281,7 +2452,8 @@ mod SpaceCenter {
     /// Gains for the yaw PID controller.
     /// 
     /// <remarks>
-    /// When <see cref="M:SpaceCenter.AutoPilot.AutoTune" /> is true, these values are updated automatically,
+    /// When SpaceCenter.AutoPilot.AutoTune is true, these values are updated
+    /// automatically,
     /// which will overwrite any manual changes.
     /// </remarks>
     fn AutoPilot_get_YawPIDGains(this: Class) -> Tuple;
@@ -2289,7 +2461,8 @@ mod SpaceCenter {
     /// Gains for the yaw PID controller.
     /// 
     /// <remarks>
-    /// When <see cref="M:SpaceCenter.AutoPilot.AutoTune" /> is true, these values are updated automatically,
+    /// When SpaceCenter.AutoPilot.AutoTune is true, these values are updated
+    /// automatically,
     /// which will overwrite any manual changes.
     /// </remarks>
     fn AutoPilot_set_YawPIDGains(this: Class, value: Tuple);
@@ -2301,11 +2474,13 @@ mod SpaceCenter {
     fn Camera_set_Mode(this: Class, value: Enumeration);
 
     /// The pitch of the camera, in degrees.
-    /// A value between <see cref="M:SpaceCenter.Camera.MinPitch" /> and <see cref="M:SpaceCenter.Camera.MaxPitch" />
+    /// A value between SpaceCenter.Camera.MinPitch and
+    /// SpaceCenter.Camera.MaxPitch
     fn Camera_get_Pitch(this: Class) -> Float;
 
     /// The pitch of the camera, in degrees.
-    /// A value between <see cref="M:SpaceCenter.Camera.MinPitch" /> and <see cref="M:SpaceCenter.Camera.MaxPitch" />
+    /// A value between SpaceCenter.Camera.MinPitch and
+    /// SpaceCenter.Camera.MaxPitch
     fn Camera_set_Pitch(this: Class, value: Float);
 
     /// The heading of the camera, in degrees.
@@ -2315,11 +2490,13 @@ mod SpaceCenter {
     fn Camera_set_Heading(this: Class, value: Float);
 
     /// The distance from the camera to the subject, in meters.
-    /// A value between <see cref="M:SpaceCenter.Camera.MinDistance" /> and <see cref="M:SpaceCenter.Camera.MaxDistance" />.
+    /// A value between SpaceCenter.Camera.MinDistance and
+    /// SpaceCenter.Camera.MaxDistance.
     fn Camera_get_Distance(this: Class) -> Float;
 
     /// The distance from the camera to the subject, in meters.
-    /// A value between <see cref="M:SpaceCenter.Camera.MinDistance" /> and <see cref="M:SpaceCenter.Camera.MaxDistance" />.
+    /// A value between SpaceCenter.Camera.MinDistance and
+    /// SpaceCenter.Camera.MaxDistance.
     fn Camera_set_Distance(this: Class, value: Float);
 
     /// The minimum pitch of the camera.
@@ -2340,7 +2517,7 @@ mod SpaceCenter {
     /// In map mode, the celestial body that the camera is focussed on.
     /// Returns <c>null</c> if the camera is not focussed on a celestial body.
     /// Returns an error is the camera is not in map mode.
-    fn Camera_get_FocussedBody(this: Class) -> Class;
+    fn Camera_get_FocussedBody(this: Class) -> Option<Class>;
 
     /// In map mode, the celestial body that the camera is focussed on.
     /// Returns <c>null</c> if the camera is not focussed on a celestial body.
@@ -2350,7 +2527,7 @@ mod SpaceCenter {
     /// In map mode, the vessel that the camera is focussed on.
     /// Returns <c>null</c> if the camera is not focussed on a vessel.
     /// Returns an error is the camera is not in map mode.
-    fn Camera_get_FocussedVessel(this: Class) -> Class;
+    fn Camera_get_FocussedVessel(this: Class) -> Option<Class>;
 
     /// In map mode, the vessel that the camera is focussed on.
     /// Returns <c>null</c> if the camera is not focussed on a vessel.
@@ -2360,7 +2537,7 @@ mod SpaceCenter {
     /// In map mode, the maneuver node that the camera is focussed on.
     /// Returns <c>null</c> if the camera is not focussed on a maneuver node.
     /// Returns an error is the camera is not in map mode.
-    fn Camera_get_FocussedNode(this: Class) -> Class;
+    fn Camera_get_FocussedNode(this: Class) -> Option<Class>;
 
     /// In map mode, the maneuver node that the camera is focussed on.
     /// Returns <c>null</c> if the camera is not focussed on a maneuver node.
@@ -2391,11 +2568,14 @@ mod SpaceCenter {
     /// 
     /// <param name="latitude">Latitude in degrees.</param>
     /// <param name="longitude">Longitude in degrees.</param>
-    /// <param name="referenceFrame">Reference frame for the returned position vector.</param>
+    /// <param name="referenceFrame">Reference frame for the returned position
+    /// vector.</param>
     fn CelestialBody_MSLPosition(this: Class, latitude: Double, longitude: Double, referenceFrame: Class) -> Tuple;
 
-    /// The position of the surface at the given latitude and longitude, in the given
-    /// reference frame. When over water, this is the position of the surface of the water.
+    /// The position of the surface at the given latitude and longitude, in the
+    /// given
+    /// reference frame. When over water, this is the position of the surface
+    /// of the water.
     /// 
     /// # Returns
     /// 
@@ -2403,11 +2583,14 @@ mod SpaceCenter {
     /// 
     /// <param name="latitude">Latitude in degrees.</param>
     /// <param name="longitude">Longitude in degrees.</param>
-    /// <param name="referenceFrame">Reference frame for the returned position vector.</param>
+    /// <param name="referenceFrame">Reference frame for the returned position
+    /// vector.</param>
     fn CelestialBody_SurfacePosition(this: Class, latitude: Double, longitude: Double, referenceFrame: Class) -> Tuple;
 
-    /// The position of the surface at the given latitude and longitude, in the given
-    /// reference frame. When over water, this is the position at the bottom of the sea-bed.
+    /// The position of the surface at the given latitude and longitude, in the
+    /// given
+    /// reference frame. When over water, this is the position at the bottom of
+    /// the sea-bed.
     /// 
     /// # Returns
     /// 
@@ -2415,10 +2598,12 @@ mod SpaceCenter {
     /// 
     /// <param name="latitude">Latitude in degrees.</param>
     /// <param name="longitude">Longitude in degrees.</param>
-    /// <param name="referenceFrame">Reference frame for the returned position vector.</param>
+    /// <param name="referenceFrame">Reference frame for the returned position
+    /// vector.</param>
     fn CelestialBody_BedrockPosition(this: Class, latitude: Double, longitude: Double, referenceFrame: Class) -> Tuple;
 
-    /// The position at the given latitude, longitude and altitude, in the given reference frame.
+    /// The position at the given latitude, longitude and altitude, in the
+    /// given reference frame.
     /// 
     /// # Returns
     /// 
@@ -2427,41 +2612,52 @@ mod SpaceCenter {
     /// <param name="latitude">Latitude in degrees.</param>
     /// <param name="longitude">Longitude in degrees.</param>
     /// <param name="altitude">Altitude in meters above sea level.</param>
-    /// <param name="referenceFrame">Reference frame for the returned position vector.</param>
+    /// <param name="referenceFrame">Reference frame for the returned position
+    /// vector.</param>
     fn CelestialBody_PositionAtAltitude(this: Class, latitude: Double, longitude: Double, altitude: Double, referenceFrame: Class) -> Tuple;
 
     /// The latitude of the given position, in the given reference frame.
     /// 
     /// <param name="position">Position as a vector.</param>
-    /// <param name="referenceFrame">Reference frame for the position vector.</param>
+    /// <param name="referenceFrame">Reference frame for the position
+    /// vector.</param>
     fn CelestialBody_LatitudeAtPosition(this: Class, position: Tuple, referenceFrame: Class) -> Double;
 
     /// The longitude of the given position, in the given reference frame.
     /// 
     /// <param name="position">Position as a vector.</param>
-    /// <param name="referenceFrame">Reference frame for the position vector.</param>
+    /// <param name="referenceFrame">Reference frame for the position
+    /// vector.</param>
     fn CelestialBody_LongitudeAtPosition(this: Class, position: Tuple, referenceFrame: Class) -> Double;
 
-    /// The altitude, in meters, of the given position in the given reference frame.
+    /// The altitude, in meters, of the given position in the given reference
+    /// frame.
     /// 
     /// <param name="position">Position as a vector.</param>
-    /// <param name="referenceFrame">Reference frame for the position vector.</param>
+    /// <param name="referenceFrame">Reference frame for the position
+    /// vector.</param>
     fn CelestialBody_AltitudeAtPosition(this: Class, position: Tuple, referenceFrame: Class) -> Double;
 
     /// The atmospheric density at the given position, in <math>kg/m^3</math>,
     /// in the given reference frame.
     /// 
-    /// <param name="position">The position vector at which to measure the density.</param>
-    /// <param name="referenceFrame">Reference frame that the position vector is in.</param>
+    /// <param name="position">The position vector at which to measure the
+    /// density.</param>
+    /// <param name="referenceFrame">Reference frame that the position vector
+    /// is in.</param>
     fn CelestialBody_AtmosphericDensityAtPosition(this: Class, position: Tuple, referenceFrame: Class) -> Double;
 
-    /// The temperature on the body at the given position, in the given reference frame.
+    /// The temperature on the body at the given position, in the given
+    /// reference frame.
     /// 
     /// <param name="position">Position as a vector.</param>
-    /// <param name="referenceFrame">The reference frame that the position is in.</param>
+    /// <param name="referenceFrame">The reference frame that the position is
+    /// in.</param>
     /// <remarks>
-    /// This calculation is performed using the bodies current position, which means that
-    /// the value could be wrong if you want to know the temperature in the far future.
+    /// This calculation is performed using the bodies current position, which
+    /// means that
+    /// the value could be wrong if you want to know the temperature in the far
+    /// future.
     /// </remarks>
     fn CelestialBody_TemperatureAt(this: Class, position: Tuple, referenceFrame: Class) -> Double;
 
@@ -2469,10 +2665,13 @@ mod SpaceCenter {
     /// altitude above sea level, in meters.
     /// 
     /// <remarks>
-    /// This is an approximation, because actual calculations, taking sun exposure into account
-    /// to compute air temperature, require us to know the exact point on the body where the
+    /// This is an approximation, because actual calculations, taking sun
+    /// exposure into account
+    /// to compute air temperature, require us to know the exact point on the
+    /// body where the
     /// density is to be computed (knowing the altitude is not enough).
-    /// However, the difference is small for high altitudes, so it makes very little difference
+    /// However, the difference is small for high altitudes, so it makes very
+    /// little difference
     /// for trajectory prediction.
     /// </remarks>
     fn CelestialBody_DensityAt(this: Class, altitude: Double) -> Double;
@@ -2484,7 +2683,8 @@ mod SpaceCenter {
     /// The biome at the given latitude and longitude, in degrees.
     fn CelestialBody_BiomeAt(this: Class, latitude: Double, longitude: Double) -> String;
 
-    /// The position of the center of the body, in the specified reference frame.
+    /// The position of the center of the body, in the specified reference
+    /// frame.
     /// 
     /// # Returns
     /// 
@@ -2530,8 +2730,10 @@ mod SpaceCenter {
     /// 
     /// # Returns
     /// 
-    /// The angular velocity as a vector. The magnitude of the vector is the rotational
-    /// speed of the body, in radians per second. The direction of the vector indicates the axis
+    /// The angular velocity as a vector. The magnitude of the vector is the
+    /// rotational
+    /// speed of the body, in radians per second. The direction of the vector
+    /// indicates the axis
     /// of rotation, using the right-hand rule.
     /// 
     /// <param name="referenceFrame">The reference frame the returned
@@ -2547,11 +2749,14 @@ mod SpaceCenter {
     /// The mass of the body, in kilograms.
     fn CelestialBody_get_Mass(this: Class) -> Float;
 
-    /// The <a href="https://en.wikipedia.org/wiki/Standard_gravitational_parameter">standard
+    /// The <a
+    /// href="https://en.wikipedia.org/wiki/Standard_gravitational_parameter">standard
+    /// 
     /// gravitational parameter</a> of the body in <math>m^3s^{-2}</math>.
     fn CelestialBody_get_GravitationalParameter(this: Class) -> Float;
 
-    /// The acceleration due to gravity at sea level (mean altitude) on the body,
+    /// The acceleration due to gravity at sea level (mean altitude) on the
+    /// body,
     /// in <math>m/s^2</math>.
     fn CelestialBody_get_SurfaceGravity(this: Class) -> Float;
 
@@ -2576,7 +2781,7 @@ mod SpaceCenter {
     fn CelestialBody_get_SphereOfInfluence(this: Class) -> Float;
 
     /// The orbit of the body.
-    fn CelestialBody_get_Orbit(this: Class) -> Class;
+    fn CelestialBody_get_Orbit(this: Class) -> Option<Class>;
 
     /// <c>true</c> if the body has an atmosphere.
     fn CelestialBody_get_HasAtmosphere(this: Class) -> Bool;
@@ -2584,7 +2789,8 @@ mod SpaceCenter {
     /// The depth of the atmosphere, in meters.
     fn CelestialBody_get_AtmosphereDepth(this: Class) -> Float;
 
-    /// <c>true</c> if there is oxygen in the atmosphere, required for air-breathing engines.
+    /// <c>true</c> if there is oxygen in the atmosphere, required for
+    /// air-breathing engines.
     fn CelestialBody_get_HasAtmosphericOxygen(this: Class) -> Bool;
 
     /// The biomes present on this body.
@@ -2599,29 +2805,45 @@ mod SpaceCenter {
     fn CelestialBody_get_SpaceHighAltitudeThreshold(this: Class) -> Float;
 
     /// The reference frame that is fixed relative to the celestial body.
-    /// <list type="bullet"><item><description>The origin is at the center of the body.
-    /// </description></item><item><description>The axes rotate with the body.</description></item><item><description>The x-axis points from the center of the body
+    /// <list type="bullet"><item><description>The origin is at the center of
+    /// the body.
+    /// </description></item><item><description>The axes rotate with the
+    /// body.</description></item><item><description>The x-axis points from the
+    /// center of the body
     /// towards the intersection of the prime meridian and equator (the
-    /// position at 0° longitude, 0° latitude).</description></item><item><description>The y-axis points from the center of the body
-    /// towards the north pole.</description></item><item><description>The z-axis points from the center of the body
+    /// position at 0° longitude, 0°
+    /// latitude).</description></item><item><description>The y-axis points
+    /// from the center of the body
+    /// towards the north pole.</description></item><item><description>The
+    /// z-axis points from the center of the body
     /// towards the equator at 90°E longitude.</description></item></list>
     fn CelestialBody_get_ReferenceFrame(this: Class) -> Class;
 
     /// The reference frame that is fixed relative to this celestial body, and
     /// orientated in a fixed direction (it does not rotate with the body).
-    /// <list type="bullet"><item><description>The origin is at the center of the body.</description></item><item><description>The axes do not rotate.</description></item><item><description>The x-axis points in an arbitrary direction through the
-    /// equator.</description></item><item><description>The y-axis points from the center of the body towards
-    /// the north pole.</description></item><item><description>The z-axis points in an arbitrary direction through the
+    /// <list type="bullet"><item><description>The origin is at the center of
+    /// the body.</description></item><item><description>The axes do not
+    /// rotate.</description></item><item><description>The x-axis points in an
+    /// arbitrary direction through the
+    /// equator.</description></item><item><description>The y-axis points from
+    /// the center of the body towards
+    /// the north pole.</description></item><item><description>The z-axis
+    /// points in an arbitrary direction through the
     /// equator.</description></item></list>
     fn CelestialBody_get_NonRotatingReferenceFrame(this: Class) -> Class;
 
     /// The reference frame that is fixed relative to this celestial body, but
     /// orientated with the body's orbital prograde/normal/radial directions.
-    /// <list type="bullet"><item><description>The origin is at the center of the body.
-    /// </description></item><item><description>The axes rotate with the orbital prograde/normal/radial
-    /// directions.</description></item><item><description>The x-axis points in the orbital anti-radial direction.
-    /// </description></item><item><description>The y-axis points in the orbital prograde direction.
-    /// </description></item><item><description>The z-axis points in the orbital normal direction.
+    /// <list type="bullet"><item><description>The origin is at the center of
+    /// the body.
+    /// </description></item><item><description>The axes rotate with the
+    /// orbital prograde/normal/radial
+    /// directions.</description></item><item><description>The x-axis points in
+    /// the orbital anti-radial direction.
+    /// </description></item><item><description>The y-axis points in the
+    /// orbital prograde direction.
+    /// </description></item><item><description>The z-axis points in the
+    /// orbital normal direction.
     /// </description></item></list>
     fn CelestialBody_get_OrbitalReferenceFrame(this: Class) -> Class;
 
@@ -2643,7 +2865,8 @@ mod SpaceCenter {
     /// Whether the communication node is on Kerbin.
     fn CommNode_get_IsHome(this: Class) -> Bool;
 
-    /// Whether the communication node is a control point, for example a manned vessel.
+    /// Whether the communication node is a control point, for example a manned
+    /// vessel.
     fn CommNode_get_IsControlPoint(this: Class) -> Bool;
 
     /// Whether the communication node is a vessel.
@@ -2800,9 +3023,11 @@ mod SpaceCenter {
     /// A list of vessel objects that are jettisoned from the active vessel.
     /// 
     /// <remarks>
-    /// When called, the active vessel may change. It is therefore possible that,
-    /// after calling this function, the object(s) returned by previous call(s) to
-    /// <see cref="M:SpaceCenter.ActiveVessel" /> no longer refer to the active vessel.
+    /// When called, the active vessel may change. It is therefore possible
+    /// that,
+    /// after calling this function, the object(s) returned by previous call(s)
+    /// to
+    /// SpaceCenter.ActiveVessel no longer refer to the active vessel.
     /// </remarks>
     fn Control_ActivateNextStage(this: Class) -> List;
 
@@ -2810,7 +3035,9 @@ mod SpaceCenter {
     /// 
     /// <param name="group">
     /// A number between 0 and 9 inclusive,
-    /// or between 0 and 250 inclusive when the <a href="https://forum.kerbalspaceprogram.com/index.php?/topic/67235-122dec1016-action-groups-extended-250-action-groups-in-flight-editing-now-kosremotetech/">Extended Action Groups mod</a> is installed.
+    /// or between 0 and 250 inclusive when the <a
+    /// href="https://forum.kerbalspaceprogram.com/index.php?/topic/67235-122dec1016-action-groups-extended-250-action-groups-in-flight-editing-now-kosremotetech/">Extended Action Groups mod</a> is installed.
+    /// 
     /// </param>
     fn Control_GetActionGroup(this: Class, group: Uint32) -> Bool;
 
@@ -2818,7 +3045,9 @@ mod SpaceCenter {
     /// 
     /// <param name="group">
     /// A number between 0 and 9 inclusive,
-    /// or between 0 and 250 inclusive when the <a href="https://forum.kerbalspaceprogram.com/index.php?/topic/67235-122dec1016-action-groups-extended-250-action-groups-in-flight-editing-now-kosremotetech/">Extended Action Groups mod</a> is installed.
+    /// or between 0 and 250 inclusive when the <a
+    /// href="https://forum.kerbalspaceprogram.com/index.php?/topic/67235-122dec1016-action-groups-extended-250-action-groups-in-flight-editing-now-kosremotetech/">Extended Action Groups mod</a> is installed.
+    /// 
     /// </param>
     /// <param name="state"></param>
     fn Control_SetActionGroup(this: Class, group: Uint32, state: Bool);
@@ -2827,12 +3056,14 @@ mod SpaceCenter {
     /// 
     /// <param name="group">
     /// A number between 0 and 9 inclusive,
-    /// or between 0 and 250 inclusive when the <a href="https://forum.kerbalspaceprogram.com/index.php?/topic/67235-122dec1016-action-groups-extended-250-action-groups-in-flight-editing-now-kosremotetech/">Extended Action Groups mod</a> is installed.
+    /// or between 0 and 250 inclusive when the <a
+    /// href="https://forum.kerbalspaceprogram.com/index.php?/topic/67235-122dec1016-action-groups-extended-250-action-groups-in-flight-editing-now-kosremotetech/">Extended Action Groups mod</a> is installed.
+    /// 
     /// </param>
     fn Control_ToggleActionGroup(this: Class, group: Uint32);
 
     /// Creates a maneuver node at the given universal time, and returns a
-    /// <see cref="T:SpaceCenter.Node" /> object that can be used to modify it.
+    /// <see cref="T:SpaceCenter.Node object that can be used to modify it.
     /// Optionally sets the magnitude of the delta-v for the maneuver node
     /// in the prograde, normal and radial directions.
     /// 
@@ -2848,38 +3079,39 @@ mod SpaceCenter {
     /// The control state of the vessel.
     fn Control_get_State(this: Class) -> Enumeration;
 
-    /// The source of the vessels control, for example by a kerbal or a probe core.
+    /// The source of the vessels control, for example by a kerbal or a probe
+    /// core.
     fn Control_get_Source(this: Class) -> Enumeration;
 
     /// The state of SAS.
     /// 
-    /// <remarks>Equivalent to <see cref="M:SpaceCenter.AutoPilot.SAS" /></remarks>
+    /// <remarks>Equivalent to SpaceCenter.AutoPilot.SAS</remarks>
     fn Control_get_SAS(this: Class) -> Bool;
 
     /// The state of SAS.
     /// 
-    /// <remarks>Equivalent to <see cref="M:SpaceCenter.AutoPilot.SAS" /></remarks>
+    /// <remarks>Equivalent to SpaceCenter.AutoPilot.SAS</remarks>
     fn Control_set_SAS(this: Class, value: Bool);
 
-    /// The current <see cref="T:SpaceCenter.SASMode" />.
+    /// The current <see cref="T:SpaceCenter.SASMode.
     /// These modes are equivalent to the mode buttons to
     /// the left of the navball that appear when SAS is enabled.
     /// 
-    /// <remarks>Equivalent to <see cref="M:SpaceCenter.AutoPilot.SASMode" /></remarks>
+    /// <remarks>Equivalent to SpaceCenter.AutoPilot.SASMode</remarks>
     fn Control_get_SASMode(this: Class) -> Enumeration;
 
-    /// The current <see cref="T:SpaceCenter.SASMode" />.
+    /// The current <see cref="T:SpaceCenter.SASMode.
     /// These modes are equivalent to the mode buttons to
     /// the left of the navball that appear when SAS is enabled.
     /// 
-    /// <remarks>Equivalent to <see cref="M:SpaceCenter.AutoPilot.SASMode" /></remarks>
+    /// <remarks>Equivalent to SpaceCenter.AutoPilot.SASMode</remarks>
     fn Control_set_SASMode(this: Class, value: Enumeration);
 
-    /// The current <see cref="T:SpaceCenter.SpeedMode" /> of the navball.
+    /// The current <see cref="T:SpaceCenter.SpeedMode of the navball.
     /// This is the mode displayed next to the speed at the top of the navball.
     fn Control_get_SpeedMode(this: Class) -> Enumeration;
 
-    /// The current <see cref="T:SpaceCenter.SpeedMode" /> of the navball.
+    /// The current <see cref="T:SpaceCenter.SpeedMode of the navball.
     /// This is the mode displayed next to the speed at the top of the navball.
     fn Control_set_SpeedMode(this: Class, value: Enumeration);
 
@@ -2891,12 +3123,12 @@ mod SpaceCenter {
 
     /// Returns whether all reactive wheels on the vessel are active,
     /// and sets the active state of all reaction wheels.
-    /// See <see cref="M:SpaceCenter.ReactionWheel.Active" />.
+    /// See SpaceCenter.ReactionWheel.Active.
     fn Control_get_ReactionWheels(this: Class) -> Bool;
 
     /// Returns whether all reactive wheels on the vessel are active,
     /// and sets the active state of all reaction wheels.
-    /// See <see cref="M:SpaceCenter.ReactionWheel.Active" />.
+    /// See SpaceCenter.ReactionWheel.Active.
     fn Control_set_ReactionWheels(this: Class, value: Bool);
 
     /// The state of the landing gear/legs.
@@ -2908,25 +3140,25 @@ mod SpaceCenter {
     /// Returns whether all landing legs on the vessel are deployed,
     /// and sets the deployment state of all landing legs.
     /// Does not include wheels (for example landing gear).
-    /// See <see cref="M:SpaceCenter.Leg.Deployed" />.
+    /// See SpaceCenter.Leg.Deployed.
     fn Control_get_Legs(this: Class) -> Bool;
 
     /// Returns whether all landing legs on the vessel are deployed,
     /// and sets the deployment state of all landing legs.
     /// Does not include wheels (for example landing gear).
-    /// See <see cref="M:SpaceCenter.Leg.Deployed" />.
+    /// See SpaceCenter.Leg.Deployed.
     fn Control_set_Legs(this: Class, value: Bool);
 
     /// Returns whether all wheels on the vessel are deployed,
     /// and sets the deployment state of all wheels.
     /// Does not include landing legs.
-    /// See <see cref="M:SpaceCenter.Wheel.Deployed" />.
+    /// See SpaceCenter.Wheel.Deployed.
     fn Control_get_Wheels(this: Class) -> Bool;
 
     /// Returns whether all wheels on the vessel are deployed,
     /// and sets the deployment state of all wheels.
     /// Does not include landing legs.
-    /// See <see cref="M:SpaceCenter.Wheel.Deployed" />.
+    /// See SpaceCenter.Wheel.Deployed.
     fn Control_set_Wheels(this: Class, value: Bool);
 
     /// The state of the lights.
@@ -2943,84 +3175,86 @@ mod SpaceCenter {
 
     /// Returns whether all antennas on the vessel are deployed,
     /// and sets the deployment state of all antennas.
-    /// See <see cref="M:SpaceCenter.Antenna.Deployed" />.
+    /// See SpaceCenter.Antenna.Deployed.
     fn Control_get_Antennas(this: Class) -> Bool;
 
     /// Returns whether all antennas on the vessel are deployed,
     /// and sets the deployment state of all antennas.
-    /// See <see cref="M:SpaceCenter.Antenna.Deployed" />.
+    /// See SpaceCenter.Antenna.Deployed.
     fn Control_set_Antennas(this: Class, value: Bool);
 
     /// Returns whether any of the cargo bays on the vessel are open,
     /// and sets the open state of all cargo bays.
-    /// See <see cref="M:SpaceCenter.CargoBay.Open" />.
+    /// See SpaceCenter.CargoBay.Open.
     fn Control_get_CargoBays(this: Class) -> Bool;
 
     /// Returns whether any of the cargo bays on the vessel are open,
     /// and sets the open state of all cargo bays.
-    /// See <see cref="M:SpaceCenter.CargoBay.Open" />.
+    /// See SpaceCenter.CargoBay.Open.
     fn Control_set_CargoBays(this: Class, value: Bool);
 
     /// Returns whether all of the air intakes on the vessel are open,
     /// and sets the open state of all air intakes.
-    /// See <see cref="M:SpaceCenter.Intake.Open" />.
+    /// See SpaceCenter.Intake.Open.
     fn Control_get_Intakes(this: Class) -> Bool;
 
     /// Returns whether all of the air intakes on the vessel are open,
     /// and sets the open state of all air intakes.
-    /// See <see cref="M:SpaceCenter.Intake.Open" />.
+    /// See SpaceCenter.Intake.Open.
     fn Control_set_Intakes(this: Class, value: Bool);
 
     /// Returns whether all parachutes on the vessel are deployed,
     /// and sets the deployment state of all parachutes.
     /// Cannot be set to <c>false</c>.
-    /// See <see cref="M:SpaceCenter.Parachute.Deployed" />.
+    /// See SpaceCenter.Parachute.Deployed.
     fn Control_get_Parachutes(this: Class) -> Bool;
 
     /// Returns whether all parachutes on the vessel are deployed,
     /// and sets the deployment state of all parachutes.
     /// Cannot be set to <c>false</c>.
-    /// See <see cref="M:SpaceCenter.Parachute.Deployed" />.
+    /// See SpaceCenter.Parachute.Deployed.
     fn Control_set_Parachutes(this: Class, value: Bool);
 
     /// Returns whether all radiators on the vessel are deployed,
     /// and sets the deployment state of all radiators.
-    /// See <see cref="M:SpaceCenter.Radiator.Deployed" />.
+    /// See SpaceCenter.Radiator.Deployed.
     fn Control_get_Radiators(this: Class) -> Bool;
 
     /// Returns whether all radiators on the vessel are deployed,
     /// and sets the deployment state of all radiators.
-    /// See <see cref="M:SpaceCenter.Radiator.Deployed" />.
+    /// See SpaceCenter.Radiator.Deployed.
     fn Control_set_Radiators(this: Class, value: Bool);
 
-    /// Returns whether all of the resource harvesters on the vessel are deployed,
+    /// Returns whether all of the resource harvesters on the vessel are
+    /// deployed,
     /// and sets the deployment state of all resource harvesters.
-    /// See <see cref="M:SpaceCenter.ResourceHarvester.Deployed" />.
+    /// See SpaceCenter.ResourceHarvester.Deployed.
     fn Control_get_ResourceHarvesters(this: Class) -> Bool;
 
-    /// Returns whether all of the resource harvesters on the vessel are deployed,
+    /// Returns whether all of the resource harvesters on the vessel are
+    /// deployed,
     /// and sets the deployment state of all resource harvesters.
-    /// See <see cref="M:SpaceCenter.ResourceHarvester.Deployed" />.
+    /// See SpaceCenter.ResourceHarvester.Deployed.
     fn Control_set_ResourceHarvesters(this: Class, value: Bool);
 
     /// Returns whether any of the resource harvesters on the vessel are active,
     /// and sets the active state of all resource harvesters.
-    /// See <see cref="M:SpaceCenter.ResourceHarvester.Active" />.
+    /// See SpaceCenter.ResourceHarvester.Active.
     fn Control_get_ResourceHarvestersActive(this: Class) -> Bool;
 
     /// Returns whether any of the resource harvesters on the vessel are active,
     /// and sets the active state of all resource harvesters.
-    /// See <see cref="M:SpaceCenter.ResourceHarvester.Active" />.
+    /// See SpaceCenter.ResourceHarvester.Active.
     fn Control_set_ResourceHarvestersActive(this: Class, value: Bool);
 
     /// Returns whether all solar panels on the vessel are deployed,
     /// and sets the deployment state of all solar panels.
-    /// See <see cref="M:SpaceCenter.SolarPanel.Deployed" />.
+    /// See SpaceCenter.SolarPanel.Deployed.
     fn Control_get_SolarPanels(this: Class) -> Bool;
 
     /// Returns whether all solar panels on the vessel are deployed,
     /// and sets the deployment state of all solar panels.
-    /// See <see cref="M:SpaceCenter.SolarPanel.Deployed" />.
+    /// See SpaceCenter.SolarPanel.Deployed.
     fn Control_set_SolarPanels(this: Class, value: Bool);
 
     /// The state of the abort action group.
@@ -3035,19 +3269,27 @@ mod SpaceCenter {
     /// The state of the throttle. A value between 0 and 1.
     fn Control_set_Throttle(this: Class, value: Float);
 
-    /// Sets the behavior of the pitch, yaw, roll and translation control inputs.
-    /// When set to additive, these inputs are added to the vessels current inputs.
+    /// Sets the behavior of the pitch, yaw, roll and translation control
+    /// inputs.
+    /// When set to additive, these inputs are added to the vessels current
+    /// inputs.
     /// This mode is the default.
-    /// When set to override, these inputs (if non-zero) override the vessels inputs.
-    /// This mode prevents keyboard control, or SAS, from interfering with the controls when
+    /// When set to override, these inputs (if non-zero) override the vessels
+    /// inputs.
+    /// This mode prevents keyboard control, or SAS, from interfering with the
+    /// controls when
     /// they are set.
     fn Control_get_InputMode(this: Class) -> Enumeration;
 
-    /// Sets the behavior of the pitch, yaw, roll and translation control inputs.
-    /// When set to additive, these inputs are added to the vessels current inputs.
+    /// Sets the behavior of the pitch, yaw, roll and translation control
+    /// inputs.
+    /// When set to additive, these inputs are added to the vessels current
+    /// inputs.
     /// This mode is the default.
-    /// When set to override, these inputs (if non-zero) override the vessels inputs.
-    /// This mode prevents keyboard control, or SAS, from interfering with the controls when
+    /// When set to override, these inputs (if non-zero) override the vessels
+    /// inputs.
+    /// This mode prevents keyboard control, or SAS, from interfering with the
+    /// controls when
     /// they are set.
     fn Control_set_InputMode(this: Class, value: Enumeration);
 
@@ -3137,7 +3379,8 @@ mod SpaceCenter {
     /// the in-game UI.
     fn Control_get_CurrentStage(this: Class) -> Sint32;
 
-    /// Returns a list of all existing maneuver nodes, ordered by time from first to last.
+    /// Returns a list of all existing maneuver nodes, ordered by time from
+    /// first to last.
     fn Control_get_Nodes(this: Class) -> List;
 
     /// The crew members name.
@@ -3183,7 +3426,8 @@ mod SpaceCenter {
     fn CrewMember_set_Veteran(this: Class, value: Bool);
 
     /// Simulate and return the total aerodynamic forces acting on the vessel,
-    /// if it where to be traveling with the given velocity at the given position in the
+    /// if it where to be traveling with the given velocity at the given
+    /// position in the
     /// atmosphere of the given celestial body.
     /// 
     /// # Returns
@@ -3199,25 +3443,31 @@ mod SpaceCenter {
     /// Measured from the center of mass of the vessel.
     fn Flight_get_MeanAltitude(this: Class) -> Double;
 
-    /// The altitude above the surface of the body or sea level, whichever is closer, in meters.
+    /// The altitude above the surface of the body or sea level, whichever is
+    /// closer, in meters.
     /// Measured from the center of mass of the vessel.
     fn Flight_get_SurfaceAltitude(this: Class) -> Double;
 
-    /// The altitude above the surface of the body, in meters. When over water, this is the altitude above the sea floor.
+    /// The altitude above the surface of the body, in meters. When over water,
+    /// this is the altitude above the sea floor.
     /// Measured from the center of mass of the vessel.
     fn Flight_get_BedrockAltitude(this: Class) -> Double;
 
-    /// The elevation of the terrain under the vessel, in meters. This is the height of the terrain above sea level,
+    /// The elevation of the terrain under the vessel, in meters. This is the
+    /// height of the terrain above sea level,
     /// and is negative when the vessel is over the sea.
     fn Flight_get_Elevation(this: Class) -> Double;
 
-    /// The <a href="https://en.wikipedia.org/wiki/Latitude">latitude</a> of the vessel for the body being orbited, in degrees.
+    /// The <a href="https://en.wikipedia.org/wiki/Latitude">latitude</a> of
+    /// the vessel for the body being orbited, in degrees.
     fn Flight_get_Latitude(this: Class) -> Double;
 
-    /// The <a href="https://en.wikipedia.org/wiki/Longitude">longitude</a> of the vessel for the body being orbited, in degrees.
+    /// The <a href="https://en.wikipedia.org/wiki/Longitude">longitude</a> of
+    /// the vessel for the body being orbited, in degrees.
     fn Flight_get_Longitude(this: Class) -> Double;
 
-    /// The velocity of the vessel, in the reference frame <see cref="T:SpaceCenter.ReferenceFrame" />.
+    /// The velocity of the vessel, in the reference frame <see
+    /// cref="T:SpaceCenter.ReferenceFrame.
     /// 
     /// # Returns
     /// 
@@ -3226,32 +3476,33 @@ mod SpaceCenter {
     fn Flight_get_Velocity(this: Class) -> Tuple;
 
     /// The speed of the vessel in meters per second,
-    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame" />.
+    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame.
     fn Flight_get_Speed(this: Class) -> Double;
 
     /// The horizontal speed of the vessel in meters per second,
-    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame" />.
+    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame.
     fn Flight_get_HorizontalSpeed(this: Class) -> Double;
 
     /// The vertical speed of the vessel in meters per second,
-    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame" />.
+    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame.
     fn Flight_get_VerticalSpeed(this: Class) -> Double;
 
     /// The position of the center of mass of the vessel,
-    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame" />
+    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame
     /// # Returns
     /// 
     /// The position as a vector.
     fn Flight_get_CenterOfMass(this: Class) -> Tuple;
 
-    /// The rotation of the vessel, in the reference frame <see cref="T:SpaceCenter.ReferenceFrame" />
+    /// The rotation of the vessel, in the reference frame <see
+    /// cref="T:SpaceCenter.ReferenceFrame
     /// # Returns
     /// 
     /// The rotation as a quaternion of the form <math>(x, y, z, w)</math>.
     fn Flight_get_Rotation(this: Class) -> Tuple;
 
     /// The direction that the vessel is pointing in,
-    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame" />.
+    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame.
     /// 
     /// # Returns
     /// 
@@ -3271,7 +3522,7 @@ mod SpaceCenter {
     fn Flight_get_Roll(this: Class) -> Float;
 
     /// The prograde direction of the vessels orbit,
-    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame" />.
+    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame.
     /// 
     /// # Returns
     /// 
@@ -3279,7 +3530,7 @@ mod SpaceCenter {
     fn Flight_get_Prograde(this: Class) -> Tuple;
 
     /// The retrograde direction of the vessels orbit,
-    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame" />.
+    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame.
     /// 
     /// # Returns
     /// 
@@ -3287,7 +3538,7 @@ mod SpaceCenter {
     fn Flight_get_Retrograde(this: Class) -> Tuple;
 
     /// The direction normal to the vessels orbit,
-    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame" />.
+    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame.
     /// 
     /// # Returns
     /// 
@@ -3295,7 +3546,7 @@ mod SpaceCenter {
     fn Flight_get_Normal(this: Class) -> Tuple;
 
     /// The direction opposite to the normal of the vessels orbit,
-    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame" />.
+    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame.
     /// 
     /// # Returns
     /// 
@@ -3303,7 +3554,7 @@ mod SpaceCenter {
     fn Flight_get_AntiNormal(this: Class) -> Tuple;
 
     /// The radial direction of the vessels orbit,
-    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame" />.
+    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame.
     /// 
     /// # Returns
     /// 
@@ -3311,17 +3562,19 @@ mod SpaceCenter {
     fn Flight_get_Radial(this: Class) -> Tuple;
 
     /// The direction opposite to the radial direction of the vessels orbit,
-    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame" />.
+    /// in the reference frame <see cref="T:SpaceCenter.ReferenceFrame.
     /// 
     /// # Returns
     /// 
     /// The direction as a unit vector.
     fn Flight_get_AntiRadial(this: Class) -> Tuple;
 
-    /// The current density of the atmosphere around the vessel, in <math>kg/m^3</math>.
+    /// The current density of the atmosphere around the vessel, in
+    /// <math>kg/m^3</math>.
     fn Flight_get_AtmosphereDensity(this: Class) -> Float;
 
-    /// The dynamic pressure acting on the vessel, in Pascals. This is a measure of the
+    /// The dynamic pressure acting on the vessel, in Pascals. This is a
+    /// measure of the
     /// strength of the aerodynamic forces. It is equal to
     /// <math>\frac{1}{2} . \mbox{air density} . \mbox{velocity}^2</math>.
     /// It is commonly denoted <math>Q</math>.
@@ -3334,7 +3587,7 @@ mod SpaceCenter {
     fn Flight_get_StaticPressure(this: Class) -> Float;
 
     /// The total aerodynamic forces acting on the vessel,
-    /// in reference frame <see cref="T:SpaceCenter.ReferenceFrame" />.
+    /// in reference frame <see cref="T:SpaceCenter.ReferenceFrame.
     /// 
     /// # Returns
     /// 
@@ -3342,7 +3595,9 @@ mod SpaceCenter {
     /// with its magnitude equal to the strength of the force in Newtons.
     fn Flight_get_AerodynamicForce(this: Class) -> Tuple;
 
-    /// The <a href="https://en.wikipedia.org/wiki/Aerodynamic_force">aerodynamic lift</a>
+    /// The <a
+    /// href="https://en.wikipedia.org/wiki/Aerodynamic_force">aerodynamic
+    /// lift</a>
     /// currently acting on the vessel.
     /// 
     /// # Returns
@@ -3351,7 +3606,9 @@ mod SpaceCenter {
     /// with its magnitude equal to the strength of the force in Newtons.
     fn Flight_get_Lift(this: Class) -> Tuple;
 
-    /// The <a href="https://en.wikipedia.org/wiki/Aerodynamic_force">aerodynamic drag</a> currently acting on the vessel.
+    /// The <a
+    /// href="https://en.wikipedia.org/wiki/Aerodynamic_force">aerodynamic
+    /// drag</a> currently acting on the vessel.
     /// 
     /// # Returns
     /// 
@@ -3359,7 +3616,8 @@ mod SpaceCenter {
     /// equal to the strength of the force in Newtons.
     fn Flight_get_Drag(this: Class) -> Tuple;
 
-    /// The speed of sound, in the atmosphere around the vessel, in <math>m/s</math>.
+    /// The speed of sound, in the atmosphere around the vessel, in
+    /// <math>m/s</math>.
     fn Flight_get_SpeedOfSound(this: Class) -> Float;
 
     /// The speed of the vessel, in multiples of the speed of sound.
@@ -3368,83 +3626,116 @@ mod SpaceCenter {
     /// The vessels Reynolds number.
     /// 
     /// <remarks>
-    /// Requires <a href="https://forum.kerbalspaceprogram.com/index.php?/topic/19321-130-ferram-aerospace-research-v0159-liebe-82117/">Ferram Aerospace Research</a>.
+    /// Requires <a
+    /// href="https://forum.kerbalspaceprogram.com/index.php?/topic/19321-130-ferram-aerospace-research-v0159-liebe-82117/">Ferram Aerospace Research</a>.
+    /// 
     /// </remarks>
     fn Flight_get_ReynoldsNumber(this: Class) -> Float;
 
-    /// The <a href="https://en.wikipedia.org/wiki/True_airspeed">true air speed</a>
+    /// The <a href="https://en.wikipedia.org/wiki/True_airspeed">true air
+    /// speed</a>
     /// of the vessel, in meters per second.
     fn Flight_get_TrueAirSpeed(this: Class) -> Float;
 
-    /// The <a href="https://en.wikipedia.org/wiki/Equivalent_airspeed">equivalent air speed</a>
+    /// The <a
+    /// href="https://en.wikipedia.org/wiki/Equivalent_airspeed">equivalent air
+    /// speed</a>
     /// of the vessel, in meters per second.
     fn Flight_get_EquivalentAirSpeed(this: Class) -> Float;
 
-    /// An estimate of the current terminal velocity of the vessel, in meters per second.
-    /// This is the speed at which the drag forces cancel out the force of gravity.
+    /// An estimate of the current terminal velocity of the vessel, in meters
+    /// per second.
+    /// This is the speed at which the drag forces cancel out the force of
+    /// gravity.
     fn Flight_get_TerminalVelocity(this: Class) -> Float;
 
-    /// The pitch angle between the orientation of the vessel and its velocity vector,
+    /// The pitch angle between the orientation of the vessel and its velocity
+    /// vector,
     /// in degrees.
     fn Flight_get_AngleOfAttack(this: Class) -> Float;
 
-    /// The yaw angle between the orientation of the vessel and its velocity vector, in degrees.
+    /// The yaw angle between the orientation of the vessel and its velocity
+    /// vector, in degrees.
     fn Flight_get_SideslipAngle(this: Class) -> Float;
 
-    /// The <a href="https://en.wikipedia.org/wiki/Total_air_temperature">total air temperature</a>
+    /// The <a href="https://en.wikipedia.org/wiki/Total_air_temperature">total
+    /// air temperature</a>
     /// of the atmosphere around the vessel, in Kelvin.
-    /// This includes the <see cref="M:SpaceCenter.Flight.StaticAirTemperature" /> and the vessel's kinetic energy.
+    /// This includes the SpaceCenter.Flight.StaticAirTemperature and the
+    /// vessel's kinetic energy.
     fn Flight_get_TotalAirTemperature(this: Class) -> Float;
 
-    /// The <a href="https://en.wikipedia.org/wiki/Total_air_temperature">static (ambient)
+    /// The <a
+    /// href="https://en.wikipedia.org/wiki/Total_air_temperature">static
+    /// (ambient)
     /// temperature</a> of the atmosphere around the vessel, in Kelvin.
     fn Flight_get_StaticAirTemperature(this: Class) -> Float;
 
-    /// The current amount of stall, between 0 and 1. A value greater than 0.005 indicates
-    /// a minor stall and a value greater than 0.5 indicates a large-scale stall.
+    /// The current amount of stall, between 0 and 1. A value greater than
+    /// 0.005 indicates
+    /// a minor stall and a value greater than 0.5 indicates a large-scale
+    /// stall.
     /// 
     /// <remarks>
-    /// Requires <a href="https://forum.kerbalspaceprogram.com/index.php?/topic/19321-130-ferram-aerospace-research-v0159-liebe-82117/">Ferram Aerospace Research</a>.
+    /// Requires <a
+    /// href="https://forum.kerbalspaceprogram.com/index.php?/topic/19321-130-ferram-aerospace-research-v0159-liebe-82117/">Ferram Aerospace Research</a>.
+    /// 
     /// </remarks>
     fn Flight_get_StallFraction(this: Class) -> Float;
 
-    /// The coefficient of drag. This is the amount of drag produced by the vessel.
+    /// The coefficient of drag. This is the amount of drag produced by the
+    /// vessel.
     /// It depends on air speed, air density and wing area.
     /// 
     /// <remarks>
-    /// Requires <a href="https://forum.kerbalspaceprogram.com/index.php?/topic/19321-130-ferram-aerospace-research-v0159-liebe-82117/">Ferram Aerospace Research</a>.
+    /// Requires <a
+    /// href="https://forum.kerbalspaceprogram.com/index.php?/topic/19321-130-ferram-aerospace-research-v0159-liebe-82117/">Ferram Aerospace Research</a>.
+    /// 
     /// </remarks>
     fn Flight_get_DragCoefficient(this: Class) -> Float;
 
-    /// The coefficient of lift. This is the amount of lift produced by the vessel, and
+    /// The coefficient of lift. This is the amount of lift produced by the
+    /// vessel, and
     /// depends on air speed, air density and wing area.
     /// 
     /// <remarks>
-    /// Requires <a href="https://forum.kerbalspaceprogram.com/index.php?/topic/19321-130-ferram-aerospace-research-v0159-liebe-82117/">Ferram Aerospace Research</a>.
+    /// Requires <a
+    /// href="https://forum.kerbalspaceprogram.com/index.php?/topic/19321-130-ferram-aerospace-research-v0159-liebe-82117/">Ferram Aerospace Research</a>.
+    /// 
     /// </remarks>
     fn Flight_get_LiftCoefficient(this: Class) -> Float;
 
-    /// The <a href="https://en.wikipedia.org/wiki/Ballistic_coefficient">ballistic coefficient</a>.
+    /// The <a
+    /// href="https://en.wikipedia.org/wiki/Ballistic_coefficient">ballistic
+    /// coefficient</a>.
     /// 
     /// <remarks>
-    /// Requires <a href="https://forum.kerbalspaceprogram.com/index.php?/topic/19321-130-ferram-aerospace-research-v0159-liebe-82117/">Ferram Aerospace Research</a>.
+    /// Requires <a
+    /// href="https://forum.kerbalspaceprogram.com/index.php?/topic/19321-130-ferram-aerospace-research-v0159-liebe-82117/">Ferram Aerospace Research</a>.
+    /// 
     /// </remarks>
     fn Flight_get_BallisticCoefficient(this: Class) -> Float;
 
-    /// The thrust specific fuel consumption for the jet engines on the vessel. This is a
-    /// measure of the efficiency of the engines, with a lower value indicating a more
-    /// efficient vessel. This value is the number of Newtons of fuel that are burned,
+    /// The thrust specific fuel consumption for the jet engines on the vessel.
+    /// This is a
+    /// measure of the efficiency of the engines, with a lower value indicating
+    /// a more
+    /// efficient vessel. This value is the number of Newtons of fuel that are
+    /// burned,
     /// per hour, to produce one newton of thrust.
     /// 
     /// <remarks>
-    /// Requires <a href="https://forum.kerbalspaceprogram.com/index.php?/topic/19321-130-ferram-aerospace-research-v0159-liebe-82117/">Ferram Aerospace Research</a>.
+    /// Requires <a
+    /// href="https://forum.kerbalspaceprogram.com/index.php?/topic/19321-130-ferram-aerospace-research-v0159-liebe-82117/">Ferram Aerospace Research</a>.
+    /// 
     /// </remarks>
     fn Flight_get_ThrustSpecificFuelConsumption(this: Class) -> Float;
 
     /// Returns the burn vector for the maneuver node.
     /// 
-    /// <param name="referenceFrame">The reference frame that the returned vector is in.
-    /// Defaults to <see cref="M:SpaceCenter.Vessel.OrbitalReferenceFrame" />.</param>
+    /// <param name="referenceFrame">The reference frame that the returned
+    /// vector is in.
+    /// Defaults to SpaceCenter.Vessel.OrbitalReferenceFrame.</param>
     /// # Returns
     /// 
     /// A vector whose direction is the direction of the maneuver node burn, and
@@ -3452,14 +3743,16 @@ mod SpaceCenter {
     /// 
     /// 
     /// <remarks>
-    /// Does not change when executing the maneuver node. See <see cref="M:SpaceCenter.Node.RemainingBurnVector" />.
+    /// Does not change when executing the maneuver node. See
+    /// SpaceCenter.Node.RemainingBurnVector.
     /// </remarks>
     fn Node_BurnVector(this: Class, referenceFrame: Class) -> Tuple;
 
     /// Returns the remaining burn vector for the maneuver node.
     /// 
-    /// <param name="referenceFrame">The reference frame that the returned vector is in.
-    /// Defaults to <see cref="M:SpaceCenter.Vessel.OrbitalReferenceFrame" />.</param>
+    /// <param name="referenceFrame">The reference frame that the returned
+    /// vector is in.
+    /// Defaults to SpaceCenter.Vessel.OrbitalReferenceFrame.</param>
     /// # Returns
     /// 
     /// A vector whose direction is the direction of the maneuver node burn, and
@@ -3467,7 +3760,8 @@ mod SpaceCenter {
     /// 
     /// 
     /// <remarks>
-    /// Changes as the maneuver node is executed. See <see cref="M:SpaceCenter.Node.BurnVector" />.
+    /// Changes as the maneuver node is executed. See
+    /// SpaceCenter.Node.BurnVector.
     /// </remarks>
     fn Node_RemainingBurnVector(this: Class, referenceFrame: Class) -> Tuple;
 
@@ -3521,18 +3815,21 @@ mod SpaceCenter {
     /// The delta-v of the maneuver node, in meters per second.
     /// 
     /// <remarks>
-    /// Does not change when executing the maneuver node. See <see cref="M:SpaceCenter.Node.RemainingDeltaV" />.
+    /// Does not change when executing the maneuver node. See
+    /// SpaceCenter.Node.RemainingDeltaV.
     /// </remarks>
     fn Node_get_DeltaV(this: Class) -> Double;
 
     /// The delta-v of the maneuver node, in meters per second.
     /// 
     /// <remarks>
-    /// Does not change when executing the maneuver node. See <see cref="M:SpaceCenter.Node.RemainingDeltaV" />.
+    /// Does not change when executing the maneuver node. See
+    /// SpaceCenter.Node.RemainingDeltaV.
     /// </remarks>
     fn Node_set_DeltaV(this: Class, value: Double);
 
-    /// Gets the remaining delta-v of the maneuver node, in meters per second. Changes as the
+    /// Gets the remaining delta-v of the maneuver node, in meters per second.
+    /// Changes as the
     /// node is executed. This is equivalent to the delta-v reported in-game.
     fn Node_get_RemainingDeltaV(this: Class) -> Double;
 
@@ -3549,21 +3846,32 @@ mod SpaceCenter {
     fn Node_get_Orbit(this: Class) -> Class;
 
     /// The reference frame that is fixed relative to the maneuver node's burn.
-    /// <list type="bullet"><item><description>The origin is at the position of the maneuver node.</description></item><item><description>The y-axis points in the direction of the burn.</description></item><item><description>The x-axis and z-axis point in arbitrary but fixed directions.</description></item></list>
+    /// <list type="bullet"><item><description>The origin is at the position of
+    /// the maneuver node.</description></item><item><description>The y-axis
+    /// points in the direction of the
+    /// burn.</description></item><item><description>The x-axis and z-axis
+    /// point in arbitrary but fixed directions.</description></item></list>
     fn Node_get_ReferenceFrame(this: Class) -> Class;
 
     /// The reference frame that is fixed relative to the maneuver node, and
     /// orientated with the orbital prograde/normal/radial directions of the
     /// original orbit at the maneuver node's position.
-    /// <list type="bullet"><item><description>The origin is at the position of the maneuver node.</description></item><item><description>The x-axis points in the orbital anti-radial direction of the original
-    /// orbit, at the position of the maneuver node.</description></item><item><description>The y-axis points in the orbital prograde direction of the original
-    /// orbit, at the position of the maneuver node.</description></item><item><description>The z-axis points in the orbital normal direction of the original orbit,
+    /// <list type="bullet"><item><description>The origin is at the position of
+    /// the maneuver node.</description></item><item><description>The x-axis
+    /// points in the orbital anti-radial direction of the original
+    /// orbit, at the position of the maneuver
+    /// node.</description></item><item><description>The y-axis points in the
+    /// orbital prograde direction of the original
+    /// orbit, at the position of the maneuver
+    /// node.</description></item><item><description>The z-axis points in the
+    /// orbital normal direction of the original orbit,
     /// at the position of the maneuver node.</description></item></list>
     fn Node_get_OrbitalReferenceFrame(this: Class) -> Class;
 
     /// The direction that is normal to the orbits reference plane,
     /// in the given reference frame.
-    /// The reference plane is the plane from which the orbits inclination is measured.
+    /// The reference plane is the plane from which the orbits inclination is
+    /// measured.
     /// 
     /// # Returns
     /// 
@@ -3573,7 +3881,8 @@ mod SpaceCenter {
     /// direction is in.</param>
     fn Orbit_static_ReferencePlaneNormal(referenceFrame: Class) -> Tuple;
 
-    /// The direction from which the orbits longitude of ascending node is measured,
+    /// The direction from which the orbits longitude of ascending node is
+    /// measured,
     /// in the given reference frame.
     /// 
     /// # Returns
@@ -3644,19 +3953,23 @@ mod SpaceCenter {
     /// <param name="target">Target orbit.</param>
     fn Orbit_TimeOfClosestApproach(this: Class, target: Class) -> Double;
 
-    /// Estimates and returns the distance at closest approach to a target orbit, in meters.
+    /// Estimates and returns the distance at closest approach to a target
+    /// orbit, in meters.
     /// 
     /// <param name="target">Target orbit.</param>
     fn Orbit_DistanceAtClosestApproach(this: Class, target: Class) -> Double;
 
-    /// Returns the times at closest approach and corresponding distances, to a target orbit.
+    /// Returns the times at closest approach and corresponding distances, to a
+    /// target orbit.
     /// 
     /// # Returns
     /// 
     /// 
     /// A list of two lists.
-    /// The first is a list of times at closest approach, as universal times in seconds.
-    /// The second is a list of corresponding distances at closest approach, in meters.
+    /// The first is a list of times at closest approach, as universal times in
+    /// seconds.
+    /// The second is a list of corresponding distances at closest approach, in
+    /// meters.
     /// 
     /// 
     /// <param name="target">Target orbit.</param>
@@ -3678,7 +3991,8 @@ mod SpaceCenter {
     /// <param name="target">Target orbit.</param>
     fn Orbit_RelativeInclination(this: Class, target: Class) -> Double;
 
-    /// The celestial body (e.g. planet or moon) around which the object is orbiting.
+    /// The celestial body (e.g. planet or moon) around which the object is
+    /// orbiting.
     fn Orbit_get_Body(this: Class) -> Class;
 
     /// Gets the apoapsis of the orbit, in meters, from the center of mass
@@ -3686,7 +4000,7 @@ mod SpaceCenter {
     /// 
     /// <remarks>
     /// For the apoapsis altitude reported on the in-game map view,
-    /// use <see cref="M:SpaceCenter.Orbit.ApoapsisAltitude" />.
+    /// use SpaceCenter.Orbit.ApoapsisAltitude.
     /// </remarks>
     fn Orbit_get_Apoapsis(this: Class) -> Double;
 
@@ -3695,21 +4009,25 @@ mod SpaceCenter {
     /// 
     /// <remarks>
     /// For the periapsis altitude reported on the in-game map view,
-    /// use <see cref="M:SpaceCenter.Orbit.PeriapsisAltitude" />.
+    /// use SpaceCenter.Orbit.PeriapsisAltitude.
     /// </remarks>
     fn Orbit_get_Periapsis(this: Class) -> Double;
 
-    /// The apoapsis of the orbit, in meters, above the sea level of the body being orbited.
+    /// The apoapsis of the orbit, in meters, above the sea level of the body
+    /// being orbited.
     /// 
     /// <remarks>
-    /// This is equal to <see cref="M:SpaceCenter.Orbit.Apoapsis" /> minus the equatorial radius of the body.
+    /// This is equal to SpaceCenter.Orbit.Apoapsis minus the equatorial radius
+    /// of the body.
     /// </remarks>
     fn Orbit_get_ApoapsisAltitude(this: Class) -> Double;
 
-    /// The periapsis of the orbit, in meters, above the sea level of the body being orbited.
+    /// The periapsis of the orbit, in meters, above the sea level of the body
+    /// being orbited.
     /// 
     /// <remarks>
-    /// This is equal to <see cref="M:SpaceCenter.Orbit.Periapsis" /> minus the equatorial radius of the body.
+    /// This is equal to SpaceCenter.Orbit.Periapsis minus the equatorial
+    /// radius of the body.
     /// </remarks>
     fn Orbit_get_PeriapsisAltitude(this: Class) -> Double;
 
@@ -3719,8 +4037,10 @@ mod SpaceCenter {
     /// The semi-minor axis of the orbit, in meters.
     fn Orbit_get_SemiMinorAxis(this: Class) -> Double;
 
-    /// The current radius of the orbit, in meters. This is the distance between the center
-    /// of mass of the object in orbit, and the center of mass of the body around which it
+    /// The current radius of the orbit, in meters. This is the distance
+    /// between the center
+    /// of mass of the object in orbit, and the center of mass of the body
+    /// around which it
     /// is orbiting.
     /// 
     /// <remarks>
@@ -3744,45 +4064,58 @@ mod SpaceCenter {
     /// The time until the object reaches periapsis, in seconds.
     fn Orbit_get_TimeToPeriapsis(this: Class) -> Double;
 
-    /// The <a href="https://en.wikipedia.org/wiki/Orbital_eccentricity">eccentricity</a>
+    /// The <a
+    /// href="https://en.wikipedia.org/wiki/Orbital_eccentricity">eccentricity</a>
+    /// 
     /// of the orbit.
     fn Orbit_get_Eccentricity(this: Class) -> Double;
 
-    /// The <a href="https://en.wikipedia.org/wiki/Orbital_inclination">inclination</a>
+    /// The <a
+    /// href="https://en.wikipedia.org/wiki/Orbital_inclination">inclination</a>
     /// of the orbit,
     /// in radians.
     fn Orbit_get_Inclination(this: Class) -> Double;
 
-    /// The <a href="https://en.wikipedia.org/wiki/Longitude_of_the_ascending_node">longitude of
+    /// The <a
+    /// href="https://en.wikipedia.org/wiki/Longitude_of_the_ascending_node">longitude of
+    /// 
     /// the ascending node</a>, in radians.
     fn Orbit_get_LongitudeOfAscendingNode(this: Class) -> Double;
 
-    /// The <a href="https://en.wikipedia.org/wiki/Argument_of_periapsis">argument of
+    /// The <a
+    /// href="https://en.wikipedia.org/wiki/Argument_of_periapsis">argument of
     /// periapsis</a>, in radians.
     fn Orbit_get_ArgumentOfPeriapsis(this: Class) -> Double;
 
-    /// The <a href="https://en.wikipedia.org/wiki/Mean_anomaly">mean anomaly at epoch</a>.
+    /// The <a href="https://en.wikipedia.org/wiki/Mean_anomaly">mean anomaly
+    /// at epoch</a>.
     fn Orbit_get_MeanAnomalyAtEpoch(this: Class) -> Double;
 
     /// The time since the epoch (the point at which the
-    /// <a href="https://en.wikipedia.org/wiki/Mean_anomaly">mean anomaly at epoch</a>
+    /// <a href="https://en.wikipedia.org/wiki/Mean_anomaly">mean anomaly at
+    /// epoch</a>
     /// was measured, in seconds.
     fn Orbit_get_Epoch(this: Class) -> Double;
 
-    /// The <a href="https://en.wikipedia.org/wiki/Mean_anomaly">mean anomaly</a>.
+    /// The <a href="https://en.wikipedia.org/wiki/Mean_anomaly">mean
+    /// anomaly</a>.
     fn Orbit_get_MeanAnomaly(this: Class) -> Double;
 
-    /// The <a href="https://en.wikipedia.org/wiki/Eccentric_anomaly">eccentric anomaly</a>.
+    /// The <a href="https://en.wikipedia.org/wiki/Eccentric_anomaly">eccentric
+    /// anomaly</a>.
     fn Orbit_get_EccentricAnomaly(this: Class) -> Double;
 
-    /// The <a href="https://en.wikipedia.org/wiki/True_anomaly">true anomaly</a>.
+    /// The <a href="https://en.wikipedia.org/wiki/True_anomaly">true
+    /// anomaly</a>.
     fn Orbit_get_TrueAnomaly(this: Class) -> Double;
 
-    /// If the object is going to change sphere of influence in the future, returns the new
+    /// If the object is going to change sphere of influence in the future,
+    /// returns the new
     /// orbit after the change. Otherwise returns <c>null</c>.
-    fn Orbit_get_NextOrbit(this: Class) -> Class;
+    fn Orbit_get_NextOrbit(this: Class) -> Option<Class>;
 
-    /// The time until the object changes sphere of influence, in seconds. Returns <c>NaN</c>
+    /// The time until the object changes sphere of influence, in seconds.
+    /// Returns <c>NaN</c>
     /// if the object is not going to change sphere of influence.
     fn Orbit_get_TimeToSOIChange(this: Class) -> Double;
 
@@ -3836,7 +4169,8 @@ mod SpaceCenter {
     /// to boost the power.
     fn Antenna_get_Combinable(this: Class) -> Bool;
 
-    /// Exponent used to calculate the combined power of multiple antennae on a vessel.
+    /// Exponent used to calculate the combined power of multiple antennae on a
+    /// vessel.
     fn Antenna_get_CombinableExponent(this: Class) -> Double;
 
     /// Interval between sending packets in seconds.
@@ -3881,11 +4215,13 @@ mod SpaceCenter {
     /// Whether the control surface has roll control enabled.
     fn ControlSurface_set_RollEnabled(this: Class, value: Bool);
 
-    /// The authority limiter for the control surface, which controls how far the
+    /// The authority limiter for the control surface, which controls how far
+    /// the
     /// control surface will move.
     fn ControlSurface_get_AuthorityLimiter(this: Class) -> Float;
 
-    /// The authority limiter for the control surface, which controls how far the
+    /// The authority limiter for the control surface, which controls how far
+    /// the
     /// control surface will move.
     fn ControlSurface_set_AuthorityLimiter(this: Class, value: Float);
 
@@ -3904,18 +4240,24 @@ mod SpaceCenter {
     /// Surface area of the control surface in <math>m^2</math>.
     fn ControlSurface_get_SurfaceArea(this: Class) -> Float;
 
-    /// The available torque, in Newton meters, that can be produced by this control surface,
-    /// in the positive and negative pitch, roll and yaw axes of the vessel. These axes
-    /// correspond to the coordinate axes of the <see cref="M:SpaceCenter.Vessel.ReferenceFrame" />.
+    /// The available torque, in Newton meters, that can be produced by this
+    /// control surface,
+    /// in the positive and negative pitch, roll and yaw axes of the vessel.
+    /// These axes
+    /// correspond to the coordinate axes of the
+    /// SpaceCenter.Vessel.ReferenceFrame.
     fn ControlSurface_get_AvailableTorque(this: Class) -> Tuple;
 
-    /// Fires the decoupler. Returns the new vessel created when the decoupler fires.
+    /// Fires the decoupler. Returns the new vessel created when the decoupler
+    /// fires.
     /// Throws an exception if the decoupler has already fired.
     /// 
     /// <remarks>
-    /// When called, the active vessel may change. It is therefore possible that,
-    /// after calling this function, the object(s) returned by previous call(s) to
-    /// <see cref="M:SpaceCenter.ActiveVessel" /> no longer refer to the active vessel.
+    /// When called, the active vessel may change. It is therefore possible
+    /// that,
+    /// after calling this function, the object(s) returned by previous call(s)
+    /// to
+    /// SpaceCenter.ActiveVessel no longer refer to the active vessel.
     /// </remarks>
     fn Decoupler_Decouple(this: Class) -> Class;
 
@@ -3928,17 +4270,21 @@ mod SpaceCenter {
     /// Whether the decoupler is enabled in the staging sequence.
     fn Decoupler_get_Staged(this: Class) -> Bool;
 
-    /// The impulse that the decoupler imparts when it is fired, in Newton seconds.
+    /// The impulse that the decoupler imparts when it is fired, in Newton
+    /// seconds.
     fn Decoupler_get_Impulse(this: Class) -> Float;
 
-    /// Undocks the docking port and returns the new <see cref="T:SpaceCenter.Vessel" /> that is created.
+    /// Undocks the docking port and returns the new <see
+    /// cref="T:SpaceCenter.Vessel that is created.
     /// This method can be called for either docking port in a docked pair.
     /// Throws an exception if the docking port is not docked to anything.
     /// 
     /// <remarks>
-    /// When called, the active vessel may change. It is therefore possible that,
-    /// after calling this function, the object(s) returned by previous call(s) to
-    /// <see cref="M:SpaceCenter.ActiveVessel" /> no longer refer to the active vessel.
+    /// When called, the active vessel may change. It is therefore possible
+    /// that,
+    /// after calling this function, the object(s) returned by previous call(s)
+    /// to
+    /// SpaceCenter.ActiveVessel no longer refer to the active vessel.
     /// </remarks>
     fn DockingPort_Undock(this: Class) -> Class;
 
@@ -3978,9 +4324,10 @@ mod SpaceCenter {
     /// The current state of the docking port.
     fn DockingPort_get_State(this: Class) -> Enumeration;
 
-    /// The part that this docking port is docked to. Returns <c>null</c> if this
+    /// The part that this docking port is docked to. Returns <c>null</c> if
+    /// this
     /// docking port is not docked to anything.
-    fn DockingPort_get_DockedPart(this: Class) -> Class;
+    fn DockingPort_get_DockedPart(this: Class) -> Option<Class>;
 
     /// The distance a docking port must move away when it undocks before it
     /// becomes ready to dock with another port, in meters.
@@ -3992,29 +4339,39 @@ mod SpaceCenter {
     /// The state of the docking ports shield, if it has one.
     /// 
     /// Returns <c>true</c> if the docking port has a shield, and the shield is
-    /// closed. Otherwise returns <c>false</c>. When set to <c>true</c>, the shield is
-    /// closed, and when set to <c>false</c> the shield is opened. If the docking
+    /// closed. Otherwise returns <c>false</c>. When set to <c>true</c>, the
+    /// shield is
+    /// closed, and when set to <c>false</c> the shield is opened. If the
+    /// docking
     /// port does not have a shield, setting this attribute has no effect.
     fn DockingPort_get_Shielded(this: Class) -> Bool;
 
     /// The state of the docking ports shield, if it has one.
     /// 
     /// Returns <c>true</c> if the docking port has a shield, and the shield is
-    /// closed. Otherwise returns <c>false</c>. When set to <c>true</c>, the shield is
-    /// closed, and when set to <c>false</c> the shield is opened. If the docking
+    /// closed. Otherwise returns <c>false</c>. When set to <c>true</c>, the
+    /// shield is
+    /// closed, and when set to <c>false</c> the shield is opened. If the
+    /// docking
     /// port does not have a shield, setting this attribute has no effect.
     fn DockingPort_set_Shielded(this: Class, value: Bool);
 
     /// The reference frame that is fixed relative to this docking port, and
     /// oriented with the port.
-    /// <list type="bullet"><item><description>The origin is at the position of the docking port.
-    /// </description></item><item><description>The axes rotate with the docking port.</description></item><item><description>The x-axis points out to the right side of the docking port.
-    /// </description></item><item><description>The y-axis points in the direction the docking port is facing.
-    /// </description></item><item><description>The z-axis points out of the bottom off the docking port.
+    /// <list type="bullet"><item><description>The origin is at the position of
+    /// the docking port.
+    /// </description></item><item><description>The axes rotate with the
+    /// docking port.</description></item><item><description>The x-axis points
+    /// out to the right side of the docking port.
+    /// </description></item><item><description>The y-axis points in the
+    /// direction the docking port is facing.
+    /// </description></item><item><description>The z-axis points out of the
+    /// bottom off the docking port.
     /// </description></item></list>
     /// <remarks>
-    /// This reference frame is not necessarily equivalent to the reference frame
-    /// for the part, returned by <see cref="M:SpaceCenter.Part.ReferenceFrame" />.
+    /// This reference frame is not necessarily equivalent to the reference
+    /// frame
+    /// for the part, returned by SpaceCenter.Part.ReferenceFrame.
     /// </remarks>
     fn DockingPort_get_ReferenceFrame(this: Class) -> Class;
 
@@ -4025,11 +4382,13 @@ mod SpaceCenter {
     fn Engine_get_Part(this: Class) -> Class;
 
     /// Whether the engine is active. Setting this attribute may have no effect,
-    /// depending on <see cref="M:SpaceCenter.Engine.CanShutdown" /> and <see cref="M:SpaceCenter.Engine.CanRestart" />.
+    /// depending on SpaceCenter.Engine.CanShutdown and
+    /// SpaceCenter.Engine.CanRestart.
     fn Engine_get_Active(this: Class) -> Bool;
 
     /// Whether the engine is active. Setting this attribute may have no effect,
-    /// depending on <see cref="M:SpaceCenter.Engine.CanShutdown" /> and <see cref="M:SpaceCenter.Engine.CanRestart" />.
+    /// depending on SpaceCenter.Engine.CanShutdown and
+    /// SpaceCenter.Engine.CanRestart.
     fn Engine_set_Active(this: Class, value: Bool);
 
     /// The current amount of thrust being produced by the engine, in Newtons.
@@ -4038,17 +4397,19 @@ mod SpaceCenter {
     /// The amount of thrust, in Newtons, that would be produced by the engine
     /// when activated and with its throttle set to 100%.
     /// Returns zero if the engine does not have any fuel.
-    /// Takes the engine's current <see cref="M:SpaceCenter.Engine.ThrustLimit" /> and atmospheric conditions
+    /// Takes the engine's current SpaceCenter.Engine.ThrustLimit and
+    /// atmospheric conditions
     /// into account.
     fn Engine_get_AvailableThrust(this: Class) -> Float;
 
     /// The amount of thrust, in Newtons, that would be produced by the engine
-    /// when activated and fueled, with its throttle and throttle limiter set to 100%.
+    /// when activated and fueled, with its throttle and throttle limiter set
+    /// to 100%.
     fn Engine_get_MaxThrust(this: Class) -> Float;
 
     /// The maximum amount of thrust that can be produced by the engine in a
     /// vacuum, in Newtons. This is the amount of thrust produced by the engine
-    /// when activated, <see cref="M:SpaceCenter.Engine.ThrustLimit" /> is set to 100%, the main
+    /// when activated, SpaceCenter.Engine.ThrustLimit is set to 100%, the main
     /// vessel's throttle is set to 100% and the engine is in a vacuum.
     fn Engine_get_MaxVacuumThrust(this: Class) -> Float;
 
@@ -4065,10 +4426,13 @@ mod SpaceCenter {
     /// The components of the engine that generate thrust.
     /// 
     /// <remarks>
-    /// For example, this corresponds to the rocket nozzel on a solid rocket booster,
+    /// For example, this corresponds to the rocket nozzel on a solid rocket
+    /// booster,
     /// or the individual nozzels on a RAPIER engine.
-    /// The overall thrust produced by the engine, as reported by <see cref="M:SpaceCenter.Engine.AvailableThrust" />,
-    /// <see cref="M:SpaceCenter.Engine.MaxThrust" /> and others, is the sum of the thrust generated by each thruster.
+    /// The overall thrust produced by the engine, as reported by
+    /// SpaceCenter.Engine.AvailableThrust,
+    /// SpaceCenter.Engine.MaxThrust and others, is the sum of the thrust
+    /// generated by each thruster.
     /// </remarks>
     fn Engine_get_Thrusters(this: Class) -> List;
 
@@ -4088,12 +4452,15 @@ mod SpaceCenter {
     /// The propellants that the engine consumes.
     fn Engine_get_Propellants(this: Class) -> List;
 
-    /// The ratio of resources that the engine consumes. A dictionary mapping resource names
+    /// The ratio of resources that the engine consumes. A dictionary mapping
+    /// resource names
     /// to the ratio at which they are consumed by the engine.
     /// 
     /// <remarks>
-    /// For example, if the ratios are 0.6 for LiquidFuel and 0.4 for Oxidizer, then for every
-    /// 0.6 units of LiquidFuel that the engine burns, it will burn 0.4 units of Oxidizer.
+    /// For example, if the ratios are 0.6 for LiquidFuel and 0.4 for Oxidizer,
+    /// then for every
+    /// 0.6 units of LiquidFuel that the engine burns, it will burn 0.4 units
+    /// of Oxidizer.
     /// </remarks>
     fn Engine_get_PropellantRatios(this: Class) -> Dictionary;
 
@@ -4110,18 +4477,23 @@ mod SpaceCenter {
     /// (such as jet engines).
     fn Engine_get_Throttle(this: Class) -> Float;
 
-    /// Whether the <see cref="M:SpaceCenter.Control.Throttle" /> affects the engine. For example,
-    /// this is <c>true</c> for liquid fueled rockets, and <c>false</c> for solid rocket
+    /// Whether the SpaceCenter.Control.Throttle affects the engine. For
+    /// example,
+    /// this is <c>true</c> for liquid fueled rockets, and <c>false</c> for
+    /// solid rocket
     /// boosters.
     fn Engine_get_ThrottleLocked(this: Class) -> Bool;
 
-    /// Whether the engine can be restarted once shutdown. If the engine cannot be shutdown,
-    /// returns <c>false</c>. For example, this is <c>true</c> for liquid fueled rockets
+    /// Whether the engine can be restarted once shutdown. If the engine cannot
+    /// be shutdown,
+    /// returns <c>false</c>. For example, this is <c>true</c> for liquid
+    /// fueled rockets
     /// and <c>false</c> for solid rocket boosters.
     fn Engine_get_CanRestart(this: Class) -> Bool;
 
     /// Whether the engine can be shutdown once activated. For example, this is
-    /// <c>true</c> for liquid fueled rockets and <c>false</c> for solid rocket boosters.
+    /// <c>true</c> for liquid fueled rockets and <c>false</c> for solid rocket
+    /// boosters.
     fn Engine_get_CanShutdown(this: Class) -> Bool;
 
     /// Whether the engine has multiple modes of operation.
@@ -4134,7 +4506,8 @@ mod SpaceCenter {
     fn Engine_set_Mode(this: Class, value: String);
 
     /// The available modes for the engine.
-    /// A dictionary mapping mode names to <see cref="T:SpaceCenter.Engine" /> objects.
+    /// A dictionary mapping mode names to <see cref="T:SpaceCenter.Engine
+    /// objects.
     fn Engine_get_Modes(this: Class) -> Dictionary;
 
     /// Whether the engine will automatically switch modes.
@@ -4150,11 +4523,13 @@ mod SpaceCenter {
     /// Returns 0 if the engine is not gimballed.
     fn Engine_get_GimbalRange(this: Class) -> Float;
 
-    /// Whether the engines gimbal is locked in place. Setting this attribute has
+    /// Whether the engines gimbal is locked in place. Setting this attribute
+    /// has
     /// no effect if the engine is not gimballed.
     fn Engine_get_GimbalLocked(this: Class) -> Bool;
 
-    /// Whether the engines gimbal is locked in place. Setting this attribute has
+    /// Whether the engines gimbal is locked in place. Setting this attribute
+    /// has
     /// no effect if the engine is not gimballed.
     fn Engine_set_GimbalLocked(this: Class, value: Bool);
 
@@ -4166,9 +4541,12 @@ mod SpaceCenter {
     /// Returns 0 if the gimbal is locked.
     fn Engine_set_GimbalLimit(this: Class, value: Float);
 
-    /// The available torque, in Newton meters, that can be produced by this engine,
-    /// in the positive and negative pitch, roll and yaw axes of the vessel. These axes
-    /// correspond to the coordinate axes of the <see cref="M:SpaceCenter.Vessel.ReferenceFrame" />.
+    /// The available torque, in Newton meters, that can be produced by this
+    /// engine,
+    /// in the positive and negative pitch, roll and yaw axes of the vessel.
+    /// These axes
+    /// correspond to the coordinate axes of the
+    /// SpaceCenter.Vessel.ReferenceFrame.
     /// Returns zero if the engine is inactive, or not gimballed.
     fn Engine_get_AvailableTorque(this: Class) -> Tuple;
 
@@ -4208,7 +4586,8 @@ mod SpaceCenter {
     /// The name of the biome the experiment is currently in.
     fn Experiment_get_Biome(this: Class) -> String;
 
-    /// Containing information on the corresponding specific science result for the current
+    /// Containing information on the corresponding specific science result for
+    /// the current
     /// conditions. Returns <c>null</c> if the experiment is unavailable.
     fn Experiment_get_ScienceSubject(this: Class) -> Class;
 
@@ -4243,14 +4622,16 @@ mod SpaceCenter {
     /// with its magnitude equal to the strength of the force in Newtons.
     fn Force_set_ForceVector(this: Class, value: Tuple);
 
-    /// The position at which the force acts, in reference frame <see cref="T:SpaceCenter.ReferenceFrame" />.
+    /// The position at which the force acts, in reference frame <see
+    /// cref="T:SpaceCenter.ReferenceFrame.
     /// 
     /// # Returns
     /// 
     /// The position as a vector.
     fn Force_get_Position(this: Class) -> Tuple;
 
-    /// The position at which the force acts, in reference frame <see cref="T:SpaceCenter.ReferenceFrame" />.
+    /// The position at which the force acts, in reference frame <see
+    /// cref="T:SpaceCenter.ReferenceFrame.
     /// 
     /// # Returns
     /// 
@@ -4281,7 +4662,8 @@ mod SpaceCenter {
     /// The area of the intake's opening, in square meters.
     fn Intake_get_Area(this: Class) -> Float;
 
-    /// Releases the docking clamp. Has no effect if the clamp has already been released.
+    /// Releases the docking clamp. Has no effect if the clamp has already been
+    /// released.
     fn LaunchClamp_Release(this: Class);
 
     /// The part object for this launch clamp.
@@ -4371,7 +4753,8 @@ mod SpaceCenter {
     /// <param name="name"></param>
     fn Module_HasEvent(this: Class, name: String) -> Bool;
 
-    /// Trigger the named event. Equivalent to clicking the button in the right-click menu
+    /// Trigger the named event. Equivalent to clicking the button in the
+    /// right-click menu
     /// of the part.
     /// 
     /// <param name="name"></param>
@@ -4398,11 +4781,13 @@ mod SpaceCenter {
     /// These are the values visible in the right-click menu of the part.
     fn Module_get_Fields(this: Class) -> Dictionary;
 
-    /// A list of the names of all of the modules events. Events are the clickable buttons
+    /// A list of the names of all of the modules events. Events are the
+    /// clickable buttons
     /// visible in the right-click menu of the part.
     fn Module_get_Events(this: Class) -> List;
 
-    /// A list of all the names of the modules actions. These are the parts actions that can
+    /// A list of all the names of the modules actions. These are the parts
+    /// actions that can
     /// be assigned to action groups in the in-game editor.
     fn Module_get_Actions(this: Class) -> List;
 
@@ -4435,11 +4820,13 @@ mod SpaceCenter {
     /// Only applicable to stock parachutes.
     fn Parachute_set_DeployAltitude(this: Class, value: Float);
 
-    /// The minimum pressure at which the parachute will semi-deploy, in atmospheres.
+    /// The minimum pressure at which the parachute will semi-deploy, in
+    /// atmospheres.
     /// Only applicable to stock parachutes.
     fn Parachute_get_DeployMinPressure(this: Class) -> Float;
 
-    /// The minimum pressure at which the parachute will semi-deploy, in atmospheres.
+    /// The minimum pressure at which the parachute will semi-deploy, in
+    /// atmospheres.
     /// Only applicable to stock parachutes.
     fn Parachute_set_DeployMinPressure(this: Class, value: Float);
 
@@ -4454,12 +4841,13 @@ mod SpaceCenter {
     /// <remarks>
     /// This is a fixed position in the part, defined by the parts model.
     /// It s not necessarily the same as the parts center of mass.
-    /// Use <see cref="M:SpaceCenter.Part.CenterOfMass" /> to get the parts center of mass.
+    /// Use SpaceCenter.Part.CenterOfMass to get the parts center of mass.
     /// </remarks>
     fn Part_Position(this: Class, referenceFrame: Class) -> Tuple;
 
     /// The position of the parts center of mass in the given reference frame.
-    /// If the part is physicsless, this is equivalent to <see cref="M:SpaceCenter.Part.Position" />.
+    /// If the part is physicsless, this is equivalent to
+    /// SpaceCenter.Part.Position.
     /// 
     /// # Returns
     /// 
@@ -4480,8 +4868,9 @@ mod SpaceCenter {
     /// position vectors are in.</param>
     /// <remarks>
     /// This is computed from the collision mesh of the part.
-    /// If the part is not collidable, the box has zero volume and is centered on
-    /// the <see cref="M:SpaceCenter.Part.Position" /> of the part.
+    /// If the part is not collidable, the box has zero volume and is centered
+    /// on
+    /// the SpaceCenter.Part.Position of the part.
     /// </remarks>
     fn Part_BoundingBox(this: Class, referenceFrame: Class) -> Tuple;
 
@@ -4522,29 +4911,39 @@ mod SpaceCenter {
     /// 
     /// An object that can be used to remove or modify the force.
     /// 
-    /// <param name="force">A vector pointing in the direction that the force acts,
-    /// with its magnitude equal to the strength of the force in Newtons.</param>
-    /// <param name="position">The position at which the force acts, as a vector.</param>
+    /// <param name="force">A vector pointing in the direction that the force
+    /// acts,
+    /// with its magnitude equal to the strength of the force in
+    /// Newtons.</param>
+    /// <param name="position">The position at which the force acts, as a
+    /// vector.</param>
     /// <param name="referenceFrame">The reference frame that the
     /// force and position are in.</param>
     fn Part_AddForce(this: Class, force: Tuple, position: Tuple, referenceFrame: Class) -> Class;
 
     /// Exert an instantaneous force on the part, acting at the given position.
     /// 
-    /// <param name="force">A vector pointing in the direction that the force acts,
-    /// with its magnitude equal to the strength of the force in Newtons.</param>
-    /// <param name="position">The position at which the force acts, as a vector.</param>
+    /// <param name="force">A vector pointing in the direction that the force
+    /// acts,
+    /// with its magnitude equal to the strength of the force in
+    /// Newtons.</param>
+    /// <param name="position">The position at which the force acts, as a
+    /// vector.</param>
     /// <param name="referenceFrame">The reference frame that the
     /// force and position are in.</param>
-    /// <remarks>The force is applied instantaneously in a single physics update.</remarks>
+    /// <remarks>The force is applied instantaneously in a single physics
+    /// update.</remarks>
     fn Part_InstantaneousForce(this: Class, force: Tuple, position: Tuple, referenceFrame: Class);
 
     /// Internal name of the part, as used in
-    /// <a href="https://wiki.kerbalspaceprogram.com/wiki/CFG_File_Documentation">part cfg files</a>.
+    /// <a
+    /// href="https://wiki.kerbalspaceprogram.com/wiki/CFG_File_Documentation">part cfg files</a>.
+    /// 
     /// For example "Mark1-2Pod".
     fn Part_get_Name(this: Class) -> String;
 
-    /// Title of the part, as shown when the part is right clicked in-game. For example "Mk1-2 Command Pod".
+    /// Title of the part, as shown when the part is right clicked in-game. For
+    /// example "Mk1-2 Command Pod".
     fn Part_get_Title(this: Class) -> String;
 
     /// The name tag for the part. Can be set to a custom string using the
@@ -4552,7 +4951,9 @@ mod SpaceCenter {
     /// 
     /// <remarks>
     /// This string is shared with
-    /// <a href="https://forum.kerbalspaceprogram.com/index.php?/topic/61827-/">kOS</a>
+    /// <a
+    /// href="https://forum.kerbalspaceprogram.com/index.php?/topic/61827-/">kOS</a>
+    /// 
     /// if it is installed.
     /// </remarks>
     fn Part_get_Tag(this: Class) -> String;
@@ -4562,7 +4963,9 @@ mod SpaceCenter {
     /// 
     /// <remarks>
     /// This string is shared with
-    /// <a href="https://forum.kerbalspaceprogram.com/index.php?/topic/61827-/">kOS</a>
+    /// <a
+    /// href="https://forum.kerbalspaceprogram.com/index.php?/topic/61827-/">kOS</a>
+    /// 
     /// if it is installed.
     /// </remarks>
     fn Part_set_Tag(this: Class, value: String);
@@ -4585,45 +4988,57 @@ mod SpaceCenter {
     /// The vessel that contains this part.
     fn Part_get_Vessel(this: Class) -> Class;
 
-    /// The parts parent. Returns <c>null</c> if the part does not have a parent.
-    /// This, in combination with <see cref="M:SpaceCenter.Part.Children" />, can be used to traverse the vessels
+    /// The parts parent. Returns <c>null</c> if the part does not have a
+    /// parent.
+    /// This, in combination with SpaceCenter.Part.Children, can be used to
+    /// traverse the vessels
     /// parts tree.
-    fn Part_get_Parent(this: Class) -> Class;
+    fn Part_get_Parent(this: Class) -> Option<Class>;
 
     /// The parts children. Returns an empty list if the part has no children.
-    /// This, in combination with <see cref="M:SpaceCenter.Part.Parent" />, can be used to traverse the vessels
+    /// This, in combination with SpaceCenter.Part.Parent, can be used to
+    /// traverse the vessels
     /// parts tree.
     fn Part_get_Children(this: Class) -> List;
 
     /// Whether the part is axially attached to its parent, i.e. on the top
-    /// or bottom of its parent. If the part has no parent, returns <c>false</c>.
+    /// or bottom of its parent. If the part has no parent, returns
+    /// <c>false</c>.
     fn Part_get_AxiallyAttached(this: Class) -> Bool;
 
-    /// Whether the part is radially attached to its parent, i.e. on the side of its parent.
+    /// Whether the part is radially attached to its parent, i.e. on the side
+    /// of its parent.
     /// If the part has no parent, returns <c>false</c>.
     fn Part_get_RadiallyAttached(this: Class) -> Bool;
 
-    /// The stage in which this part will be activated. Returns -1 if the part is not
+    /// The stage in which this part will be activated. Returns -1 if the part
+    /// is not
     /// activated by staging.
     fn Part_get_Stage(this: Class) -> Sint32;
 
-    /// The stage in which this part will be decoupled. Returns -1 if the part is never
+    /// The stage in which this part will be decoupled. Returns -1 if the part
+    /// is never
     /// decoupled from the vessel.
     fn Part_get_DecoupleStage(this: Class) -> Sint32;
 
     /// Whether the part is
-    /// <a href="https://wiki.kerbalspaceprogram.com/wiki/Massless_part">massless</a>.
+    /// <a
+    /// href="https://wiki.kerbalspaceprogram.com/wiki/Massless_part">massless</a>.
+    /// 
     fn Part_get_Massless(this: Class) -> Bool;
 
-    /// The current mass of the part, including resources it contains, in kilograms.
+    /// The current mass of the part, including resources it contains, in
+    /// kilograms.
     /// Returns zero if the part is massless.
     fn Part_get_Mass(this: Class) -> Double;
 
-    /// The mass of the part, not including any resources it contains, in kilograms.
+    /// The mass of the part, not including any resources it contains, in
+    /// kilograms.
     /// Returns zero if the part is massless.
     fn Part_get_DryMass(this: Class) -> Double;
 
-    /// Whether the part is shielded from the exterior of the vessel, for example by a fairing.
+    /// Whether the part is shielded from the exterior of the vessel, for
+    /// example by a fairing.
     fn Part_get_Shielded(this: Class) -> Bool;
 
     /// The dynamic pressure acting on the part, in Pascals.
@@ -4644,50 +5059,62 @@ mod SpaceCenter {
     /// Maximum temperature that the skin of the part can survive, in Kelvin.
     fn Part_get_MaxSkinTemperature(this: Class) -> Double;
 
-    /// A measure of how much energy it takes to increase the internal temperature of the part,
+    /// A measure of how much energy it takes to increase the internal
+    /// temperature of the part,
     /// in Joules per Kelvin.
     fn Part_get_ThermalMass(this: Class) -> Float;
 
-    /// A measure of how much energy it takes to increase the skin temperature of the part,
+    /// A measure of how much energy it takes to increase the skin temperature
+    /// of the part,
     /// in Joules per Kelvin.
     fn Part_get_ThermalSkinMass(this: Class) -> Float;
 
-    /// A measure of how much energy it takes to increase the temperature of the resources
+    /// A measure of how much energy it takes to increase the temperature of
+    /// the resources
     /// contained in the part, in Joules per Kelvin.
     fn Part_get_ThermalResourceMass(this: Class) -> Float;
 
     /// The rate at which heat energy is begin generated by the part.
     /// For example, some engines generate heat by combusting fuel.
     /// Measured in energy per unit time, or power, in Watts.
-    /// A positive value means the part is gaining heat energy, and negative means it is losing
+    /// A positive value means the part is gaining heat energy, and negative
+    /// means it is losing
     /// heat energy.
     fn Part_get_ThermalInternalFlux(this: Class) -> Float;
 
-    /// The rate at which heat energy is conducting into or out of the part via contact with
+    /// The rate at which heat energy is conducting into or out of the part via
+    /// contact with
     /// other parts. Measured in energy per unit time, or power, in Watts.
-    /// A positive value means the part is gaining heat energy, and negative means it is
+    /// A positive value means the part is gaining heat energy, and negative
+    /// means it is
     /// losing heat energy.
     fn Part_get_ThermalConductionFlux(this: Class) -> Float;
 
-    /// The rate at which heat energy is convecting into or out of the part from the
-    /// surrounding atmosphere. Measured in energy per unit time, or power, in Watts.
-    /// A positive value means the part is gaining heat energy, and negative means it is
+    /// The rate at which heat energy is convecting into or out of the part
+    /// from the
+    /// surrounding atmosphere. Measured in energy per unit time, or power, in
+    /// Watts.
+    /// A positive value means the part is gaining heat energy, and negative
+    /// means it is
     /// losing heat energy.
     fn Part_get_ThermalConvectionFlux(this: Class) -> Float;
 
-    /// The rate at which heat energy is radiating into or out of the part from the surrounding
+    /// The rate at which heat energy is radiating into or out of the part from
+    /// the surrounding
     /// environment. Measured in energy per unit time, or power, in Watts.
-    /// A positive value means the part is gaining heat energy, and negative means it is
+    /// A positive value means the part is gaining heat energy, and negative
+    /// means it is
     /// losing heat energy.
     fn Part_get_ThermalRadiationFlux(this: Class) -> Float;
 
-    /// The rate at which heat energy is transferring between the part's skin and its internals.
+    /// The rate at which heat energy is transferring between the part's skin
+    /// and its internals.
     /// Measured in energy per unit time, or power, in Watts.
     /// A positive value means the part's internals are gaining heat energy,
     /// and negative means its skin is gaining heat energy.
     fn Part_get_ThermalSkinToInternalFlux(this: Class) -> Float;
 
-    /// A <see cref="T:SpaceCenter.Resources" /> object for the part.
+    /// A <see cref="T:SpaceCenter.Resources object for the part.
     fn Part_get_Resources(this: Class) -> Class;
 
     /// Whether this part is crossfeed capable.
@@ -4696,155 +5123,193 @@ mod SpaceCenter {
     /// Whether this part is a fuel line.
     fn Part_get_IsFuelLine(this: Class) -> Bool;
 
-    /// The parts that are connected to this part via fuel lines, where the direction of the
+    /// The parts that are connected to this part via fuel lines, where the
+    /// direction of the
     /// fuel line is into this part.
     fn Part_get_FuelLinesFrom(this: Class) -> List;
 
-    /// The parts that are connected to this part via fuel lines, where the direction of the
+    /// The parts that are connected to this part via fuel lines, where the
+    /// direction of the
     /// fuel line is out of this part.
     fn Part_get_FuelLinesTo(this: Class) -> List;
 
     /// The modules for this part.
     fn Part_get_Modules(this: Class) -> List;
 
-    /// A <see cref="T:SpaceCenter.Antenna" /> if the part is an antenna, otherwise <c>null</c>.
-    fn Part_get_Antenna(this: Class) -> Class;
+    /// A <see cref="T:SpaceCenter.Antenna if the part is an antenna, otherwise
+    /// <c>null</c>.
+    fn Part_get_Antenna(this: Class) -> Option<Class>;
 
-    /// A <see cref="T:SpaceCenter.CargoBay" /> if the part is a cargo bay, otherwise <c>null</c>.
-    fn Part_get_CargoBay(this: Class) -> Class;
-
-    /// A <see cref="T:SpaceCenter.ControlSurface" /> if the part is an aerodynamic control surface,
+    /// A <see cref="T:SpaceCenter.CargoBay if the part is a cargo bay,
     /// otherwise <c>null</c>.
-    fn Part_get_ControlSurface(this: Class) -> Class;
+    fn Part_get_CargoBay(this: Class) -> Option<Class>;
 
-    /// A <see cref="T:SpaceCenter.Decoupler" /> if the part is a decoupler, otherwise <c>null</c>.
-    fn Part_get_Decoupler(this: Class) -> Class;
+    /// A <see cref="T:SpaceCenter.ControlSurface if the part is an aerodynamic
+    /// control surface,
+    /// otherwise <c>null</c>.
+    fn Part_get_ControlSurface(this: Class) -> Option<Class>;
 
-    /// A <see cref="T:SpaceCenter.DockingPort" /> if the part is a docking port, otherwise <c>null</c>.
-    fn Part_get_DockingPort(this: Class) -> Class;
+    /// A <see cref="T:SpaceCenter.Decoupler if the part is a decoupler,
+    /// otherwise <c>null</c>.
+    fn Part_get_Decoupler(this: Class) -> Option<Class>;
 
-    /// An <see cref="T:SpaceCenter.Engine" /> if the part is an engine, otherwise <c>null</c>.
-    fn Part_get_Engine(this: Class) -> Class;
+    /// A <see cref="T:SpaceCenter.DockingPort if the part is a docking port,
+    /// otherwise <c>null</c>.
+    fn Part_get_DockingPort(this: Class) -> Option<Class>;
 
-    /// An <see cref="T:SpaceCenter.Experiment" /> if the part is a science experiment, otherwise <c>null</c>.
-    fn Part_get_Experiment(this: Class) -> Class;
+    /// An <see cref="T:SpaceCenter.Engine if the part is an engine, otherwise
+    /// <c>null</c>.
+    fn Part_get_Engine(this: Class) -> Option<Class>;
 
-    /// A <see cref="T:SpaceCenter.Fairing" /> if the part is a fairing, otherwise <c>null</c>.
-    fn Part_get_Fairing(this: Class) -> Class;
+    /// An <see cref="T:SpaceCenter.Experiment if the part is a science
+    /// experiment, otherwise <c>null</c>.
+    fn Part_get_Experiment(this: Class) -> Option<Class>;
 
-    /// An <see cref="T:SpaceCenter.Intake" /> if the part is an intake, otherwise <c>null</c>.
+    /// A <see cref="T:SpaceCenter.Fairing if the part is a fairing, otherwise
+    /// <c>null</c>.
+    fn Part_get_Fairing(this: Class) -> Option<Class>;
+
+    /// An <see cref="T:SpaceCenter.Intake if the part is an intake, otherwise
+    /// <c>null</c>.
     /// 
     /// <remarks>
-    /// This includes any part that generates thrust. This covers many different types
-    /// of engine, including liquid fuel rockets, solid rocket boosters and jet engines.
-    /// For RCS thrusters see <see cref="T:SpaceCenter.RCS" />.
+    /// This includes any part that generates thrust. This covers many
+    /// different types
+    /// of engine, including liquid fuel rockets, solid rocket boosters and jet
+    /// engines.
+    /// For RCS thrusters see <see cref="T:SpaceCenter.RCS.
     /// </remarks>
-    fn Part_get_Intake(this: Class) -> Class;
+    fn Part_get_Intake(this: Class) -> Option<Class>;
 
-    /// A <see cref="T:SpaceCenter.Leg" /> if the part is a landing leg, otherwise <c>null</c>.
-    fn Part_get_Leg(this: Class) -> Class;
+    /// A <see cref="T:SpaceCenter.Leg if the part is a landing leg, otherwise
+    /// <c>null</c>.
+    fn Part_get_Leg(this: Class) -> Option<Class>;
 
-    /// A <see cref="T:SpaceCenter.LaunchClamp" /> if the part is a launch clamp, otherwise <c>null</c>.
-    fn Part_get_LaunchClamp(this: Class) -> Class;
-
-    /// A <see cref="T:SpaceCenter.Light" /> if the part is a light, otherwise <c>null</c>.
-    fn Part_get_Light(this: Class) -> Class;
-
-    /// A <see cref="T:SpaceCenter.Parachute" /> if the part is a parachute, otherwise <c>null</c>.
-    fn Part_get_Parachute(this: Class) -> Class;
-
-    /// A <see cref="T:SpaceCenter.Radiator" /> if the part is a radiator, otherwise <c>null</c>.
-    fn Part_get_Radiator(this: Class) -> Class;
-
-    /// A <see cref="T:SpaceCenter.RCS" /> if the part is an RCS block/thruster, otherwise <c>null</c>.
-    fn Part_get_RCS(this: Class) -> Class;
-
-    /// A <see cref="T:SpaceCenter.ReactionWheel" /> if the part is a reaction wheel, otherwise <c>null</c>.
-    fn Part_get_ReactionWheel(this: Class) -> Class;
-
-    /// A <see cref="T:SpaceCenter.ResourceConverter" /> if the part is a resource converter,
+    /// A <see cref="T:SpaceCenter.LaunchClamp if the part is a launch clamp,
     /// otherwise <c>null</c>.
-    fn Part_get_ResourceConverter(this: Class) -> Class;
+    fn Part_get_LaunchClamp(this: Class) -> Option<Class>;
 
-    /// A <see cref="T:SpaceCenter.ResourceHarvester" /> if the part is a resource harvester,
+    /// A <see cref="T:SpaceCenter.Light if the part is a light, otherwise
+    /// <c>null</c>.
+    fn Part_get_Light(this: Class) -> Option<Class>;
+
+    /// A <see cref="T:SpaceCenter.Parachute if the part is a parachute,
     /// otherwise <c>null</c>.
-    fn Part_get_ResourceHarvester(this: Class) -> Class;
+    fn Part_get_Parachute(this: Class) -> Option<Class>;
 
-    /// A <see cref="T:SpaceCenter.Sensor" /> if the part is a sensor, otherwise <c>null</c>.
-    fn Part_get_Sensor(this: Class) -> Class;
+    /// A <see cref="T:SpaceCenter.Radiator if the part is a radiator,
+    /// otherwise <c>null</c>.
+    fn Part_get_Radiator(this: Class) -> Option<Class>;
 
-    /// A <see cref="T:SpaceCenter.SolarPanel" /> if the part is a solar panel, otherwise <c>null</c>.
-    fn Part_get_SolarPanel(this: Class) -> Class;
+    /// A <see cref="T:SpaceCenter.RCS if the part is an RCS block/thruster,
+    /// otherwise <c>null</c>.
+    fn Part_get_RCS(this: Class) -> Option<Class>;
 
-    /// A <see cref="T:SpaceCenter.Wheel" /> if the part is a wheel, otherwise <c>null</c>.
-    fn Part_get_Wheel(this: Class) -> Class;
+    /// A <see cref="T:SpaceCenter.ReactionWheel if the part is a reaction
+    /// wheel, otherwise <c>null</c>.
+    fn Part_get_ReactionWheel(this: Class) -> Option<Class>;
 
-    /// The moment of inertia of the part in <math>kg.m^2</math> around its center of mass
-    /// in the parts reference frame (<see cref="T:SpaceCenter.ReferenceFrame" />).
+    /// A <see cref="T:SpaceCenter.ResourceConverter if the part is a resource
+    /// converter,
+    /// otherwise <c>null</c>.
+    fn Part_get_ResourceConverter(this: Class) -> Option<Class>;
+
+    /// A <see cref="T:SpaceCenter.ResourceHarvester if the part is a resource
+    /// harvester,
+    /// otherwise <c>null</c>.
+    fn Part_get_ResourceHarvester(this: Class) -> Option<Class>;
+
+    /// A <see cref="T:SpaceCenter.Sensor if the part is a sensor, otherwise
+    /// <c>null</c>.
+    fn Part_get_Sensor(this: Class) -> Option<Class>;
+
+    /// A <see cref="T:SpaceCenter.SolarPanel if the part is a solar panel,
+    /// otherwise <c>null</c>.
+    fn Part_get_SolarPanel(this: Class) -> Option<Class>;
+
+    /// A <see cref="T:SpaceCenter.Wheel if the part is a wheel, otherwise
+    /// <c>null</c>.
+    fn Part_get_Wheel(this: Class) -> Option<Class>;
+
+    /// The moment of inertia of the part in <math>kg.m^2</math> around its
+    /// center of mass
+    /// in the parts reference frame (<see cref="T:SpaceCenter.ReferenceFrame).
     fn Part_get_MomentOfInertia(this: Class) -> Tuple;
 
     /// The inertia tensor of the part in the parts reference frame
-    /// (<see cref="T:SpaceCenter.ReferenceFrame" />).
+    /// (<see cref="T:SpaceCenter.ReferenceFrame).
     /// Returns the 3x3 matrix as a list of elements, in row-major order.
     fn Part_get_InertiaTensor(this: Class) -> List;
 
-    /// The reference frame that is fixed relative to this part, and centered on a fixed
+    /// The reference frame that is fixed relative to this part, and centered
+    /// on a fixed
     /// position within the part, defined by the parts model.
-    /// <list type="bullet"><item><description>The origin is at the position of the part, as returned by
-    /// <see cref="M:SpaceCenter.Part.Position" />.</description></item><item><description>The axes rotate with the part.</description></item><item><description>The x, y and z axis directions depend on the design of the part.
+    /// <list type="bullet"><item><description>The origin is at the position of
+    /// the part, as returned by
+    /// SpaceCenter.Part.Position.</description></item><item><description>The
+    /// axes rotate with the part.</description></item><item><description>The
+    /// x, y and z axis directions depend on the design of the part.
     /// </description></item></list>
     /// <remarks>
-    /// For docking port parts, this reference frame is not necessarily equivalent to the
+    /// For docking port parts, this reference frame is not necessarily
+    /// equivalent to the
     /// reference frame for the docking port, returned by
-    /// <see cref="M:SpaceCenter.DockingPort.ReferenceFrame" />.
+    /// SpaceCenter.DockingPort.ReferenceFrame.
     /// </remarks>
     fn Part_get_ReferenceFrame(this: Class) -> Class;
 
-    /// The reference frame that is fixed relative to this part, and centered on its
+    /// The reference frame that is fixed relative to this part, and centered
+    /// on its
     /// center of mass.
-    /// <list type="bullet"><item><description>The origin is at the center of mass of the part, as returned by
-    /// <see cref="M:SpaceCenter.Part.CenterOfMass" />.</description></item><item><description>The axes rotate with the part.</description></item><item><description>The x, y and z axis directions depend on the design of the part.
+    /// <list type="bullet"><item><description>The origin is at the center of
+    /// mass of the part, as returned by
+    /// SpaceCenter.Part.CenterOfMass.</description></item><item><description>The axes rotate with the part.</description></item><item><description>The x, y and z axis directions depend on the design of the part.
+    /// 
     /// </description></item></list>
     /// <remarks>
-    /// For docking port parts, this reference frame is not necessarily equivalent to the
+    /// For docking port parts, this reference frame is not necessarily
+    /// equivalent to the
     /// reference frame for the docking port, returned by
-    /// <see cref="M:SpaceCenter.DockingPort.ReferenceFrame" />.
+    /// SpaceCenter.DockingPort.ReferenceFrame.
     /// </remarks>
     fn Part_get_CenterOfMassReferenceFrame(this: Class) -> Class;
 
-    /// A list of parts whose <see cref="M:SpaceCenter.Part.Name" /> is <paramref name="name" />.
+    /// A list of parts whose SpaceCenter.Part.Name is <paramref name="name.
     /// 
     /// <param name="name"></param>
     fn Parts_WithName(this: Class, name: String) -> List;
 
-    /// A list of all parts whose <see cref="M:SpaceCenter.Part.Title" /> is <paramref name="title" />.
+    /// A list of all parts whose SpaceCenter.Part.Title is <paramref
+    /// name="title.
     /// 
     /// <param name="title"></param>
     fn Parts_WithTitle(this: Class, title: String) -> List;
 
-    /// A list of all parts whose <see cref="M:SpaceCenter.Part.Tag" /> is <paramref name="tag" />.
+    /// A list of all parts whose SpaceCenter.Part.Tag is <paramref name="tag.
     /// 
     /// <param name="tag"></param>
     fn Parts_WithTag(this: Class, tag: String) -> List;
 
-    /// A list of all parts that contain a <see cref="T:SpaceCenter.Module" /> whose
-    /// <see cref="M:SpaceCenter.Module.Name" /> is <paramref name="moduleName" />.
+    /// A list of all parts that contain a <see cref="T:SpaceCenter.Module whose
+    /// SpaceCenter.Module.Name is <paramref name="moduleName.
     /// 
     /// <param name="moduleName"></param>
     fn Parts_WithModule(this: Class, moduleName: String) -> List;
 
-    /// A list of all parts that are activated in the given <paramref name="stage" />.
+    /// A list of all parts that are activated in the given <paramref
+    /// name="stage.
     /// 
     /// <param name="stage"></param>
     fn Parts_InStage(this: Class, stage: Sint32) -> List;
 
-    /// A list of all parts that are decoupled in the given <paramref name="stage" />.
+    /// A list of all parts that are decoupled in the given <paramref
+    /// name="stage.
     /// 
     /// <param name="stage"></param>
     fn Parts_InDecoupleStage(this: Class, stage: Sint32) -> List;
 
     /// A list of modules (combined across all parts in the vessel) whose
-    /// <see cref="M:SpaceCenter.Module.Name" /> is <paramref name="moduleName" />.
+    /// SpaceCenter.Module.Name is <paramref name="moduleName.
     /// 
     /// <param name="moduleName"></param>
     fn Parts_ModulesWithName(this: Class, moduleName: String) -> List;
@@ -4879,8 +5344,10 @@ mod SpaceCenter {
     /// A list of all engines in the vessel.
     /// 
     /// <remarks>
-    /// This includes any part that generates thrust. This covers many different types
-    /// of engine, including liquid fuel rockets, solid rocket boosters, jet engines and
+    /// This includes any part that generates thrust. This covers many
+    /// different types
+    /// of engine, including liquid fuel rockets, solid rocket boosters, jet
+    /// engines and
     /// RCS thrusters.
     /// </remarks>
     fn Parts_get_Engines(this: Class) -> List;
@@ -4968,8 +5435,9 @@ mod SpaceCenter {
 
     /// Whether the RCS thrusters are active.
     /// An RCS thruster is inactive if the RCS action group is disabled
-    /// (<see cref="M:SpaceCenter.Control.RCS" />), the RCS thruster itself is not enabled
-    /// (<see cref="M:SpaceCenter.RCS.Enabled" />) or it is covered by a fairing (<see cref="M:SpaceCenter.Part.Shielded" />).
+    /// (SpaceCenter.Control.RCS), the RCS thruster itself is not enabled
+    /// (SpaceCenter.RCS.Enabled) or it is covered by a fairing
+    /// (SpaceCenter.Part.Shielded).
     fn RCS_get_Active(this: Class) -> Bool;
 
     /// Whether the RCS thrusters are enabled.
@@ -5014,17 +5482,22 @@ mod SpaceCenter {
     /// Whether the RCS thruster will fire when roll control input is given.
     fn RCS_set_RightEnabled(this: Class, value: Bool);
 
-    /// The available torque, in Newton meters, that can be produced by this RCS,
-    /// in the positive and negative pitch, roll and yaw axes of the vessel. These axes
-    /// correspond to the coordinate axes of the <see cref="M:SpaceCenter.Vessel.ReferenceFrame" />.
+    /// The available torque, in Newton meters, that can be produced by this
+    /// RCS,
+    /// in the positive and negative pitch, roll and yaw axes of the vessel.
+    /// These axes
+    /// correspond to the coordinate axes of the
+    /// SpaceCenter.Vessel.ReferenceFrame.
     /// Returns zero if RCS is disable.
     fn RCS_get_AvailableTorque(this: Class) -> Tuple;
 
-    /// The maximum amount of thrust that can be produced by the RCS thrusters when active,
+    /// The maximum amount of thrust that can be produced by the RCS thrusters
+    /// when active,
     /// in Newtons.
     fn RCS_get_MaxThrust(this: Class) -> Float;
 
-    /// The maximum amount of thrust that can be produced by the RCS thrusters when active
+    /// The maximum amount of thrust that can be produced by the RCS thrusters
+    /// when active
     /// in a vacuum, in Newtons.
     fn RCS_get_MaxVacuumThrust(this: Class) -> Float;
 
@@ -5044,14 +5517,16 @@ mod SpaceCenter {
     /// The names of resources that the RCS consumes.
     fn RCS_get_Propellants(this: Class) -> List;
 
-    /// The ratios of resources that the RCS consumes. A dictionary mapping resource names
+    /// The ratios of resources that the RCS consumes. A dictionary mapping
+    /// resource names
     /// to the ratios at which they are consumed by the RCS.
     fn RCS_get_PropellantRatios(this: Class) -> Dictionary;
 
     /// Whether the RCS has fuel available.
     /// 
     /// <remarks>
-    /// The RCS thruster must be activated for this property to update correctly.
+    /// The RCS thruster must be activated for this property to update
+    /// correctly.
     /// </remarks>
     fn RCS_get_HasFuel(this: Class) -> Bool;
 
@@ -5072,7 +5547,7 @@ mod SpaceCenter {
     /// The current state of the radiator.
     /// 
     /// <remarks>
-    /// A fixed radiator is always <see cref="M:SpaceCenter.RadiatorState.Extended" />.
+    /// A fixed radiator is always SpaceCenter.RadiatorState.Extended.
     /// </remarks>
     fn Radiator_get_State(this: Class) -> Enumeration;
 
@@ -5088,15 +5563,21 @@ mod SpaceCenter {
     /// Whether the reaction wheel is broken.
     fn ReactionWheel_get_Broken(this: Class) -> Bool;
 
-    /// The available torque, in Newton meters, that can be produced by this reaction wheel,
-    /// in the positive and negative pitch, roll and yaw axes of the vessel. These axes
-    /// correspond to the coordinate axes of the <see cref="M:SpaceCenter.Vessel.ReferenceFrame" />.
+    /// The available torque, in Newton meters, that can be produced by this
+    /// reaction wheel,
+    /// in the positive and negative pitch, roll and yaw axes of the vessel.
+    /// These axes
+    /// correspond to the coordinate axes of the
+    /// SpaceCenter.Vessel.ReferenceFrame.
     /// Returns zero if the reaction wheel is inactive or broken.
     fn ReactionWheel_get_AvailableTorque(this: Class) -> Tuple;
 
-    /// The maximum torque, in Newton meters, that can be produced by this reaction wheel,
-    /// when it is active, in the positive and negative pitch, roll and yaw axes of the vessel.
-    /// These axes correspond to the coordinate axes of the <see cref="M:SpaceCenter.Vessel.ReferenceFrame" />.
+    /// The maximum torque, in Newton meters, that can be produced by this
+    /// reaction wheel,
+    /// when it is active, in the positive and negative pitch, roll and yaw
+    /// axes of the vessel.
+    /// These axes correspond to the coordinate axes of the
+    /// SpaceCenter.Vessel.ReferenceFrame.
     fn ReactionWheel_get_MaxTorque(this: Class) -> Tuple;
 
     /// True if the specified converter is active.
@@ -5152,7 +5633,8 @@ mod SpaceCenter {
     /// The core temperature of the converter, in Kelvin.
     fn ResourceConverter_get_CoreTemperature(this: Class) -> Float;
 
-    /// The core temperature at which the converter will operate with peak efficiency, in Kelvin.
+    /// The core temperature at which the converter will operate with peak
+    /// efficiency, in Kelvin.
     fn ResourceConverter_get_OptimumCoreTemperature(this: Class) -> Float;
 
     /// The part object for this harvester.
@@ -5182,7 +5664,8 @@ mod SpaceCenter {
     /// The core temperature of the drill, in Kelvin.
     fn ResourceHarvester_get_CoreTemperature(this: Class) -> Float;
 
-    /// The core temperature at which the drill will operate with peak efficiency, in Kelvin.
+    /// The core temperature at which the drill will operate with peak
+    /// efficiency, in Kelvin.
     fn ResourceHarvester_get_OptimumCoreTemperature(this: Class) -> Float;
 
     /// Data amount.
@@ -5194,7 +5677,8 @@ mod SpaceCenter {
     /// Transmit value.
     fn ScienceData_get_TransmitValue(this: Class) -> Float;
 
-    /// Amount of science already earned from this subject, not updated until after
+    /// Amount of science already earned from this subject, not updated until
+    /// after
     /// transmission/recovery.
     fn ScienceSubject_get_Science(this: Class) -> Float;
 
@@ -5207,7 +5691,8 @@ mod SpaceCenter {
     /// Multiply science value by this to determine data amount in mits.
     fn ScienceSubject_get_DataScale(this: Class) -> Float;
 
-    /// Diminishing value multiplier for decreasing the science value returned from repeated
+    /// Diminishing value multiplier for decreasing the science value returned
+    /// from repeated
     /// experiments.
     fn ScienceSubject_get_ScientificValue(this: Class) -> Float;
 
@@ -5252,8 +5737,10 @@ mod SpaceCenter {
     /// as a percentage. A value between 0 and 1.
     fn SolarPanel_get_SunExposure(this: Class) -> Float;
 
-    /// The position at which the thruster generates thrust, in the given reference frame.
-    /// For gimballed engines, this takes into account the current rotation of the gimbal.
+    /// The position at which the thruster generates thrust, in the given
+    /// reference frame.
+    /// For gimballed engines, this takes into account the current rotation of
+    /// the gimbal.
     /// 
     /// # Returns
     /// 
@@ -5263,9 +5750,12 @@ mod SpaceCenter {
     /// position vector is in.</param>
     fn Thruster_ThrustPosition(this: Class, referenceFrame: Class) -> Tuple;
 
-    /// The direction of the force generated by the thruster, in the given reference frame.
-    /// This is opposite to the direction in which the thruster expels propellant.
-    /// For gimballed engines, this takes into account the current rotation of the gimbal.
+    /// The direction of the force generated by the thruster, in the given
+    /// reference frame.
+    /// This is opposite to the direction in which the thruster expels
+    /// propellant.
+    /// For gimballed engines, this takes into account the current rotation of
+    /// the gimbal.
     /// 
     /// # Returns
     /// 
@@ -5275,7 +5765,8 @@ mod SpaceCenter {
     /// direction is in.</param>
     fn Thruster_ThrustDirection(this: Class, referenceFrame: Class) -> Tuple;
 
-    /// The position at which the thruster generates thrust, when the engine is in its
+    /// The position at which the thruster generates thrust, when the engine is
+    /// in its
     /// initial position (no gimballing), in the given reference frame.
     /// 
     /// # Returns
@@ -5285,14 +5776,17 @@ mod SpaceCenter {
     /// <param name="referenceFrame">The reference frame that the returned
     /// position vector is in.</param>
     /// <remarks>
-    /// This position can move when the gimbal rotates. This is because the thrust position and
+    /// This position can move when the gimbal rotates. This is because the
+    /// thrust position and
     /// gimbal position are not necessarily the same.
     /// </remarks>
     fn Thruster_InitialThrustPosition(this: Class, referenceFrame: Class) -> Tuple;
 
-    /// The direction of the force generated by the thruster, when the engine is in its
+    /// The direction of the force generated by the thruster, when the engine
+    /// is in its
     /// initial position (no gimballing), in the given reference frame.
-    /// This is opposite to the direction in which the thruster expels propellant.
+    /// This is opposite to the direction in which the thruster expels
+    /// propellant.
     /// 
     /// # Returns
     /// 
@@ -5312,18 +5806,24 @@ mod SpaceCenter {
     /// position vector is in.</param>
     fn Thruster_GimbalPosition(this: Class, referenceFrame: Class) -> Tuple;
 
-    /// The <see cref="T:SpaceCenter.Part" /> that contains this thruster.
+    /// The <see cref="T:SpaceCenter.Part that contains this thruster.
     fn Thruster_get_Part(this: Class) -> Class;
 
-    /// A reference frame that is fixed relative to the thruster and orientated with
-    /// its thrust direction (<see cref="M:SpaceCenter.Thruster.ThrustDirection" />).
-    /// For gimballed engines, this takes into account the current rotation of the gimbal.
+    /// A reference frame that is fixed relative to the thruster and orientated
+    /// with
+    /// its thrust direction (SpaceCenter.Thruster.ThrustDirection).
+    /// For gimballed engines, this takes into account the current rotation of
+    /// the gimbal.
     /// <list type="bullet"><item><description>
     /// The origin is at the position of thrust for this thruster
-    /// (<see cref="M:SpaceCenter.Thruster.ThrustPosition" />).</description></item><item><description>
+    /// (SpaceCenter.Thruster.ThrustPosition).</description></item><item><description>
+    /// 
     /// The axes rotate with the thrust direction.
-    /// This is the direction in which the thruster expels propellant, including any gimballing.
-    /// </description></item><item><description>The y-axis points along the thrust direction.</description></item><item><description>The x-axis and z-axis are perpendicular to the thrust direction.
+    /// This is the direction in which the thruster expels propellant,
+    /// including any gimballing.
+    /// </description></item><item><description>The y-axis points along the
+    /// thrust direction.</description></item><item><description>The x-axis and
+    /// z-axis are perpendicular to the thrust direction.
     /// </description></item></list>
     fn Thruster_get_ThrustReferenceFrame(this: Class) -> Class;
 
@@ -5348,10 +5848,12 @@ mod SpaceCenter {
     /// Whether the wheel has brakes.
     fn Wheel_get_HasBrakes(this: Class) -> Bool;
 
-    /// The braking force, as a percentage of maximum, when the brakes are applied.
+    /// The braking force, as a percentage of maximum, when the brakes are
+    /// applied.
     fn Wheel_get_Brakes(this: Class) -> Float;
 
-    /// The braking force, as a percentage of maximum, when the brakes are applied.
+    /// The braking force, as a percentage of maximum, when the brakes are
+    /// applied.
     fn Wheel_set_Brakes(this: Class, value: Float);
 
     /// Whether automatic friction control is enabled.
@@ -5360,11 +5862,13 @@ mod SpaceCenter {
     /// Whether automatic friction control is enabled.
     fn Wheel_set_AutoFrictionControl(this: Class, value: Bool);
 
-    /// Manual friction control value. Only has an effect if automatic friction control is disabled.
+    /// Manual friction control value. Only has an effect if automatic friction
+    /// control is disabled.
     /// A value between 0 and 5 inclusive.
     fn Wheel_get_ManualFrictionControl(this: Class) -> Float;
 
-    /// Manual friction control value. Only has an effect if automatic friction control is disabled.
+    /// Manual friction control value. Only has an effect if automatic friction
+    /// control is disabled.
     /// A value between 0 and 5 inclusive.
     fn Wheel_set_ManualFrictionControl(this: Class, value: Float);
 
@@ -5395,7 +5899,8 @@ mod SpaceCenter {
     /// Whether the direction of the motor is inverted.
     fn Wheel_get_MotorState(this: Class) -> Enumeration;
 
-    /// The output of the motor. This is the torque currently being generated, in Newton meters.
+    /// The output of the motor. This is the torque currently being generated,
+    /// in Newton meters.
     fn Wheel_get_MotorOutput(this: Class) -> Float;
 
     /// Whether automatic traction control is enabled.
@@ -5478,14 +5983,19 @@ mod SpaceCenter {
     /// base this reference frame.</param>
     /// <param name="position">The offset of the position of the origin,
     /// as a position vector. Defaults to <math>(0, 0, 0)</math></param>
-    /// <param name="rotation">The rotation to apply to the parent frames rotation,
+    /// <param name="rotation">The rotation to apply to the parent frames
+    /// rotation,
     /// as a quaternion of the form <math>(x, y, z, w)</math>.
     /// Defaults to <math>(0, 0, 0, 1)</math> (i.e. no rotation)</param>
-    /// <param name="velocity">The linear velocity to offset the parent frame by,
-    /// as a vector pointing in the direction of travel, whose magnitude is the speed in
+    /// <param name="velocity">The linear velocity to offset the parent frame
+    /// by,
+    /// as a vector pointing in the direction of travel, whose magnitude is the
+    /// speed in
     /// meters per second. Defaults to <math>(0, 0, 0)</math>.</param>
-    /// <param name="angularVelocity">The angular velocity to offset the parent frame by,
-    /// as a vector. This vector points in the direction of the axis of rotation,
+    /// <param name="angularVelocity">The angular velocity to offset the parent
+    /// frame by,
+    /// as a vector. This vector points in the direction of the axis of
+    /// rotation,
     /// and its magnitude is the speed of the rotation in radians per second.
     /// Defaults to <math>(0, 0, 0)</math>.</param>
     fn ReferenceFrame_static_CreateRelative(referenceFrame: Class, position: Tuple, rotation: Tuple, velocity: Tuple, angularVelocity: Tuple) -> Class;
@@ -5493,16 +6003,20 @@ mod SpaceCenter {
     /// Create a hybrid reference frame. This is a custom reference frame
     /// whose components inherited from other reference frames.
     /// 
-    /// <param name="position">The reference frame providing the position of the origin.</param>
-    /// <param name="rotation">The reference frame providing the rotation of the frame.</param>
-    /// <param name="velocity">The reference frame providing the linear velocity of the frame.
+    /// <param name="position">The reference frame providing the position of
+    /// the origin.</param>
+    /// <param name="rotation">The reference frame providing the rotation of
+    /// the frame.</param>
+    /// <param name="velocity">The reference frame providing the linear
+    /// velocity of the frame.
     /// </param>
-    /// <param name="angularVelocity">The reference frame providing the angular velocity
+    /// <param name="angularVelocity">The reference frame providing the angular
+    /// velocity
     /// of the frame.</param>
     /// <remarks>
-    /// The <paramref name="position" /> reference frame is required but all other
+    /// The <paramref name="position reference frame is required but all other
     /// reference frames are optional. If omitted, they are set to the
-    /// <paramref name="position" /> reference frame.
+    /// <paramref name="position reference frame.
     /// </remarks>
     fn ReferenceFrame_static_CreateHybrid(position: Class, rotation: Class, velocity: Class, angularVelocity: Class) -> Class;
 
@@ -5530,17 +6044,23 @@ mod SpaceCenter {
     /// Whether use of this resource is enabled.
     fn Resource_set_Enabled(this: Class, value: Bool);
 
-    /// Start transferring a resource transfer between a pair of parts. The transfer will move
-    /// at most <paramref name="maxAmount" /> units of the resource, depending on how much of
-    /// the resource is available in the source part and how much storage is available in the
+    /// Start transferring a resource transfer between a pair of parts. The
+    /// transfer will move
+    /// at most <paramref name="maxAmount units of the resource, depending on
+    /// how much of
+    /// the resource is available in the source part and how much storage is
+    /// available in the
     /// destination part.
-    /// Use <see cref="M:SpaceCenter.ResourceTransfer.Complete" /> to check if the transfer is complete.
-    /// Use <see cref="M:SpaceCenter.ResourceTransfer.Amount" /> to see how much of the resource has been transferred.
+    /// Use SpaceCenter.ResourceTransfer.Complete to check if the transfer is
+    /// complete.
+    /// Use SpaceCenter.ResourceTransfer.Amount to see how much of the resource
+    /// has been transferred.
     /// 
     /// <param name="fromPart">The part to transfer to.</param>
     /// <param name="toPart">The part to transfer from.</param>
     /// <param name="resource">The name of the resource to transfer.</param>
-    /// <param name="maxAmount">The maximum amount of resource to transfer.</param>
+    /// <param name="maxAmount">The maximum amount of resource to
+    /// transfer.</param>
     fn ResourceTransfer_static_Start(fromPart: Class, toPart: Class, resource: String, maxAmount: Float) -> Class;
 
     /// Whether the transfer has completed.
@@ -5602,25 +6122,31 @@ mod SpaceCenter {
     /// Recover the vessel.
     fn Vessel_Recover(this: Class);
 
-    /// Returns a <see cref="T:SpaceCenter.Flight" /> object that can be used to get flight
+    /// Returns a <see cref="T:SpaceCenter.Flight object that can be used to
+    /// get flight
     /// telemetry for the vessel, in the specified reference frame.
     /// 
     /// <param name="referenceFrame">
     /// Reference frame. Defaults to the vessel's surface reference frame
-    /// (<see cref="M:SpaceCenter.Vessel.SurfaceReferenceFrame" />).
+    /// (SpaceCenter.Vessel.SurfaceReferenceFrame).
     /// </param>
     fn Vessel_Flight(this: Class, referenceFrame: Class) -> Class;
 
-    /// Returns a <see cref="T:SpaceCenter.Resources" /> object, that can used to get
-    /// information about resources stored in a given <paramref name="stage" />.
+    /// Returns a <see cref="T:SpaceCenter.Resources object, that can used to
+    /// get
+    /// information about resources stored in a given <paramref name="stage.
     /// 
-    /// <param name="stage">Get resources for parts that are decoupled in this stage.</param>
-    /// <param name="cumulative">When <c>false</c>, returns the resources for parts
-    /// decoupled in just the given stage. When <c>true</c> returns the resources decoupled in
+    /// <param name="stage">Get resources for parts that are decoupled in this
+    /// stage.</param>
+    /// <param name="cumulative">When <c>false</c>, returns the resources for
+    /// parts
+    /// decoupled in just the given stage. When <c>true</c> returns the
+    /// resources decoupled in
     /// the given stage and all subsequent stages combined.</param>
     fn Vessel_ResourcesInDecoupleStage(this: Class, stage: Sint32, cumulative: Bool) -> Class;
 
-    /// The position of the center of mass of the vessel, in the given reference frame.
+    /// The position of the center of mass of the vessel, in the given
+    /// reference frame.
     /// 
     /// # Returns
     /// 
@@ -5630,7 +6156,8 @@ mod SpaceCenter {
     /// position vector is in.</param>
     fn Vessel_Position(this: Class, referenceFrame: Class) -> Tuple;
 
-    /// The axis-aligned bounding box of the vessel in the given reference frame.
+    /// The axis-aligned bounding box of the vessel in the given reference
+    /// frame.
     /// 
     /// # Returns
     /// 
@@ -5641,7 +6168,8 @@ mod SpaceCenter {
     /// position vectors are in.</param>
     fn Vessel_BoundingBox(this: Class, referenceFrame: Class) -> Tuple;
 
-    /// The velocity of the center of mass of the vessel, in the given reference frame.
+    /// The velocity of the center of mass of the vessel, in the given
+    /// reference frame.
     /// 
     /// # Returns
     /// 
@@ -5662,7 +6190,8 @@ mod SpaceCenter {
     /// rotation is in.</param>
     fn Vessel_Rotation(this: Class, referenceFrame: Class) -> Tuple;
 
-    /// The direction in which the vessel is pointing, in the given reference frame.
+    /// The direction in which the vessel is pointing, in the given reference
+    /// frame.
     /// 
     /// # Returns
     /// 
@@ -5676,8 +6205,10 @@ mod SpaceCenter {
     /// 
     /// # Returns
     /// 
-    /// The angular velocity as a vector. The magnitude of the vector is the rotational
-    /// speed of the vessel, in radians per second. The direction of the vector indicates the
+    /// The angular velocity as a vector. The magnitude of the vector is the
+    /// rotational
+    /// speed of the vessel, in radians per second. The direction of the vector
+    /// indicates the
     /// axis of rotation, using the right-hand rule.
     /// 
     /// <param name="referenceFrame">The reference frame the returned
@@ -5711,16 +6242,19 @@ mod SpaceCenter {
     /// The current orbit of the vessel.
     fn Vessel_get_Orbit(this: Class) -> Class;
 
-    /// Returns a <see cref="T:SpaceCenter.Control" /> object that can be used to manipulate
+    /// Returns a <see cref="T:SpaceCenter.Control object that can be used to
+    /// manipulate
     /// the vessel's control inputs. For example, its pitch/yaw/roll controls,
     /// RCS and thrust.
     fn Vessel_get_Control(this: Class) -> Class;
 
-    /// Returns a <see cref="T:SpaceCenter.Comms" /> object that can be used to interact
+    /// Returns a <see cref="T:SpaceCenter.Comms object that can be used to
+    /// interact
     /// with CommNet for this vessel.
     fn Vessel_get_Comms(this: Class) -> Class;
 
-    /// An <see cref="T:SpaceCenter.AutoPilot" /> object, that can be used to perform
+    /// An <see cref="T:SpaceCenter.AutoPilot object, that can be used to
+    /// perform
     /// simple auto-piloting of the vessel.
     fn Vessel_get_AutoPilot(this: Class) -> Class;
 
@@ -5733,11 +6267,13 @@ mod SpaceCenter {
     /// The crew in the vessel.
     fn Vessel_get_Crew(this: Class) -> List;
 
-    /// A <see cref="T:SpaceCenter.Resources" /> object, that can used to get information
+    /// A <see cref="T:SpaceCenter.Resources object, that can used to get
+    /// information
     /// about resources stored in the vessel.
     fn Vessel_get_Resources(this: Class) -> Class;
 
-    /// A <see cref="T:SpaceCenter.Parts" /> object, that can used to interact with the parts that make up this vessel.
+    /// A <see cref="T:SpaceCenter.Parts object, that can used to interact with
+    /// the parts that make up this vessel.
     fn Vessel_get_Parts(this: Class) -> Class;
 
     /// The total mass of the vessel, including resources, in kg.
@@ -5747,95 +6283,135 @@ mod SpaceCenter {
     fn Vessel_get_DryMass(this: Class) -> Float;
 
     /// The total thrust currently being produced by the vessel's engines, in
-    /// Newtons. This is computed by summing <see cref="M:SpaceCenter.Engine.Thrust" /> for
+    /// Newtons. This is computed by summing SpaceCenter.Engine.Thrust for
     /// every engine in the vessel.
     fn Vessel_get_Thrust(this: Class) -> Float;
 
     /// Gets the total available thrust that can be produced by the vessel's
     /// active engines, in Newtons. This is computed by summing
-    /// <see cref="M:SpaceCenter.Engine.AvailableThrust" /> for every active engine in the vessel.
+    /// SpaceCenter.Engine.AvailableThrust for every active engine in the
+    /// vessel.
     fn Vessel_get_AvailableThrust(this: Class) -> Float;
 
     /// The total maximum thrust that can be produced by the vessel's active
     /// engines, in Newtons. This is computed by summing
-    /// <see cref="M:SpaceCenter.Engine.MaxThrust" /> for every active engine.
+    /// SpaceCenter.Engine.MaxThrust for every active engine.
     fn Vessel_get_MaxThrust(this: Class) -> Float;
 
     /// The total maximum thrust that can be produced by the vessel's active
     /// engines when the vessel is in a vacuum, in Newtons. This is computed by
-    /// summing <see cref="M:SpaceCenter.Engine.MaxVacuumThrust" /> for every active engine.
+    /// summing SpaceCenter.Engine.MaxVacuumThrust for every active engine.
     fn Vessel_get_MaxVacuumThrust(this: Class) -> Float;
 
-    /// The combined specific impulse of all active engines, in seconds. This is computed using the formula
-    /// <a href="https://wiki.kerbalspaceprogram.com/wiki/Specific_impulse#Multiple_engines">described here</a>.
+    /// The combined specific impulse of all active engines, in seconds. This
+    /// is computed using the formula
+    /// <a
+    /// href="https://wiki.kerbalspaceprogram.com/wiki/Specific_impulse#Multiple_engines">described here</a>.
+    /// 
     fn Vessel_get_SpecificImpulse(this: Class) -> Float;
 
-    /// The combined vacuum specific impulse of all active engines, in seconds. This is computed using the formula
-    /// <a href="https://wiki.kerbalspaceprogram.com/wiki/Specific_impulse#Multiple_engines">described here</a>.
+    /// The combined vacuum specific impulse of all active engines, in seconds.
+    /// This is computed using the formula
+    /// <a
+    /// href="https://wiki.kerbalspaceprogram.com/wiki/Specific_impulse#Multiple_engines">described here</a>.
+    /// 
     fn Vessel_get_VacuumSpecificImpulse(this: Class) -> Float;
 
-    /// The combined specific impulse of all active engines at sea level on Kerbin, in seconds.
+    /// The combined specific impulse of all active engines at sea level on
+    /// Kerbin, in seconds.
     /// This is computed using the formula
-    /// <a href="https://wiki.kerbalspaceprogram.com/wiki/Specific_impulse#Multiple_engines">described here</a>.
+    /// <a
+    /// href="https://wiki.kerbalspaceprogram.com/wiki/Specific_impulse#Multiple_engines">described here</a>.
+    /// 
     fn Vessel_get_KerbinSeaLevelSpecificImpulse(this: Class) -> Float;
 
-    /// The moment of inertia of the vessel around its center of mass in <math>kg.m^2</math>.
+    /// The moment of inertia of the vessel around its center of mass in
+    /// <math>kg.m^2</math>.
     /// The inertia values in the returned 3-tuple are around the
     /// pitch, roll and yaw directions respectively.
-    /// This corresponds to the vessels reference frame (<see cref="T:SpaceCenter.ReferenceFrame" />).
+    /// This corresponds to the vessels reference frame (<see
+    /// cref="T:SpaceCenter.ReferenceFrame).
     fn Vessel_get_MomentOfInertia(this: Class) -> Tuple;
 
     /// The inertia tensor of the vessel around its center of mass,
-    /// in the vessels reference frame (<see cref="T:SpaceCenter.ReferenceFrame" />).
+    /// in the vessels reference frame (<see
+    /// cref="T:SpaceCenter.ReferenceFrame).
     /// Returns the 3x3 matrix as a list of elements, in row-major order.
     fn Vessel_get_InertiaTensor(this: Class) -> List;
 
-    /// The maximum torque that the vessel generates. Includes contributions from
-    /// reaction wheels, RCS, gimballed engines and aerodynamic control surfaces.
-    /// Returns the torques in <math>N.m</math> around each of the coordinate axes of the
-    /// vessels reference frame (<see cref="T:SpaceCenter.ReferenceFrame" />).
+    /// The maximum torque that the vessel generates. Includes contributions
+    /// from
+    /// reaction wheels, RCS, gimballed engines and aerodynamic control
+    /// surfaces.
+    /// Returns the torques in <math>N.m</math> around each of the coordinate
+    /// axes of the
+    /// vessels reference frame (<see cref="T:SpaceCenter.ReferenceFrame).
     /// These axes are equivalent to the pitch, roll and yaw axes of the vessel.
     fn Vessel_get_AvailableTorque(this: Class) -> Tuple;
 
-    /// The maximum torque that the currently active and powered reaction wheels can generate.
-    /// Returns the torques in <math>N.m</math> around each of the coordinate axes of the
-    /// vessels reference frame (<see cref="T:SpaceCenter.ReferenceFrame" />).
+    /// The maximum torque that the currently active and powered reaction
+    /// wheels can generate.
+    /// Returns the torques in <math>N.m</math> around each of the coordinate
+    /// axes of the
+    /// vessels reference frame (<see cref="T:SpaceCenter.ReferenceFrame).
     /// These axes are equivalent to the pitch, roll and yaw axes of the vessel.
     fn Vessel_get_AvailableReactionWheelTorque(this: Class) -> Tuple;
 
     /// The maximum torque that the currently active RCS thrusters can generate.
-    /// Returns the torques in <math>N.m</math> around each of the coordinate axes of the
-    /// vessels reference frame (<see cref="T:SpaceCenter.ReferenceFrame" />).
+    /// Returns the torques in <math>N.m</math> around each of the coordinate
+    /// axes of the
+    /// vessels reference frame (<see cref="T:SpaceCenter.ReferenceFrame).
     /// These axes are equivalent to the pitch, roll and yaw axes of the vessel.
     fn Vessel_get_AvailableRCSTorque(this: Class) -> Tuple;
 
-    /// The maximum torque that the currently active and gimballed engines can generate.
-    /// Returns the torques in <math>N.m</math> around each of the coordinate axes of the
-    /// vessels reference frame (<see cref="T:SpaceCenter.ReferenceFrame" />).
+    /// The maximum torque that the currently active and gimballed engines can
+    /// generate.
+    /// Returns the torques in <math>N.m</math> around each of the coordinate
+    /// axes of the
+    /// vessels reference frame (<see cref="T:SpaceCenter.ReferenceFrame).
     /// These axes are equivalent to the pitch, roll and yaw axes of the vessel.
     fn Vessel_get_AvailableEngineTorque(this: Class) -> Tuple;
 
     /// The maximum torque that the aerodynamic control surfaces can generate.
-    /// Returns the torques in <math>N.m</math> around each of the coordinate axes of the
-    /// vessels reference frame (<see cref="T:SpaceCenter.ReferenceFrame" />).
+    /// Returns the torques in <math>N.m</math> around each of the coordinate
+    /// axes of the
+    /// vessels reference frame (<see cref="T:SpaceCenter.ReferenceFrame).
     /// These axes are equivalent to the pitch, roll and yaw axes of the vessel.
     fn Vessel_get_AvailableControlSurfaceTorque(this: Class) -> Tuple;
 
-    /// The maximum torque that parts (excluding reaction wheels, gimballed engines,
+    /// The maximum torque that parts (excluding reaction wheels, gimballed
+    /// engines,
     /// RCS and control surfaces) can generate.
-    /// Returns the torques in <math>N.m</math> around each of the coordinate axes of the
-    /// vessels reference frame (<see cref="T:SpaceCenter.ReferenceFrame" />).
+    /// Returns the torques in <math>N.m</math> around each of the coordinate
+    /// axes of the
+    /// vessels reference frame (<see cref="T:SpaceCenter.ReferenceFrame).
     /// These axes are equivalent to the pitch, roll and yaw axes of the vessel.
     fn Vessel_get_AvailableOtherTorque(this: Class) -> Tuple;
 
     /// The reference frame that is fixed relative to the vessel,
     /// and orientated with the vessel.
-    /// <list type="bullet"><item><description>The origin is at the center of mass of the vessel.</description></item><item><description>The axes rotate with the vessel.</description></item><item><description>The x-axis points out to the right of the vessel.</description></item><item><description>The y-axis points in the forward direction of the vessel.</description></item><item><description>The z-axis points out of the bottom off the vessel.</description></item></list>
+    /// <list type="bullet"><item><description>The origin is at the center of
+    /// mass of the vessel.</description></item><item><description>The axes
+    /// rotate with the vessel.</description></item><item><description>The
+    /// x-axis points out to the right of the
+    /// vessel.</description></item><item><description>The y-axis points in the
+    /// forward direction of the
+    /// vessel.</description></item><item><description>The z-axis points out of
+    /// the bottom off the vessel.</description></item></list>
     fn Vessel_get_ReferenceFrame(this: Class) -> Class;
 
     /// The reference frame that is fixed relative to the vessel,
-    /// and orientated with the vessels orbital prograde/normal/radial directions.
-    /// <list type="bullet"><item><description>The origin is at the center of mass of the vessel.</description></item><item><description>The axes rotate with the orbital prograde/normal/radial directions.</description></item><item><description>The x-axis points in the orbital anti-radial direction.</description></item><item><description>The y-axis points in the orbital prograde direction.</description></item><item><description>The z-axis points in the orbital normal direction.</description></item></list>
+    /// and orientated with the vessels orbital prograde/normal/radial
+    /// directions.
+    /// <list type="bullet"><item><description>The origin is at the center of
+    /// mass of the vessel.</description></item><item><description>The axes
+    /// rotate with the orbital prograde/normal/radial
+    /// directions.</description></item><item><description>The x-axis points in
+    /// the orbital anti-radial
+    /// direction.</description></item><item><description>The y-axis points in
+    /// the orbital prograde
+    /// direction.</description></item><item><description>The z-axis points in
+    /// the orbital normal direction.</description></item></list>
     /// <remarks>
     /// Be careful not to confuse this with 'orbit' mode on the navball.
     /// </remarks>
@@ -5843,13 +6419,24 @@ mod SpaceCenter {
 
     /// The reference frame that is fixed relative to the vessel,
     /// and orientated with the surface of the body being orbited.
-    /// <list type="bullet"><item><description>The origin is at the center of mass of the vessel.</description></item><item><description>The axes rotate with the north and up directions on the surface of the body.</description></item><item><description>The x-axis points in the <a href="https://en.wikipedia.org/wiki/Zenith">zenith</a>
-    /// direction (upwards, normal to the body being orbited, from the center of the body towards the center of
-    /// mass of the vessel).</description></item><item><description>The y-axis points northwards towards the
-    /// <a href="https://en.wikipedia.org/wiki/Horizon">astronomical horizon</a> (north, and tangential to the
-    /// surface of the body -- the direction in which a compass would point when on the surface).</description></item><item><description>The z-axis points eastwards towards the
-    /// <a href="https://en.wikipedia.org/wiki/Horizon">astronomical horizon</a> (east, and tangential to the
-    /// surface of the body -- east on a compass when on the surface).</description></item></list>
+    /// <list type="bullet"><item><description>The origin is at the center of
+    /// mass of the vessel.</description></item><item><description>The axes
+    /// rotate with the north and up directions on the surface of the
+    /// body.</description></item><item><description>The x-axis points in the
+    /// <a href="https://en.wikipedia.org/wiki/Zenith">zenith</a>
+    /// direction (upwards, normal to the body being orbited, from the center
+    /// of the body towards the center of
+    /// mass of the vessel).</description></item><item><description>The y-axis
+    /// points northwards towards the
+    /// <a href="https://en.wikipedia.org/wiki/Horizon">astronomical
+    /// horizon</a> (north, and tangential to the
+    /// surface of the body -- the direction in which a compass would point
+    /// when on the surface).</description></item><item><description>The z-axis
+    /// points eastwards towards the
+    /// <a href="https://en.wikipedia.org/wiki/Horizon">astronomical
+    /// horizon</a> (east, and tangential to the
+    /// surface of the body -- east on a compass when on the
+    /// surface).</description></item></list>
     /// <remarks>
     /// Be careful not to confuse this with 'surface' mode on the navball.
     /// </remarks>
@@ -5858,9 +6445,17 @@ mod SpaceCenter {
     /// The reference frame that is fixed relative to the vessel,
     /// and orientated with the velocity vector of the vessel relative
     /// to the surface of the body being orbited.
-    /// <list type="bullet"><item><description>The origin is at the center of mass of the vessel.</description></item><item><description>The axes rotate with the vessel's velocity vector.</description></item><item><description>The y-axis points in the direction of the vessel's velocity vector,
-    /// relative to the surface of the body being orbited.</description></item><item><description>The z-axis is in the plane of the
-    /// <a href="https://en.wikipedia.org/wiki/Horizon">astronomical horizon</a>.</description></item><item><description>The x-axis is orthogonal to the other two axes.</description></item></list>
+    /// <list type="bullet"><item><description>The origin is at the center of
+    /// mass of the vessel.</description></item><item><description>The axes
+    /// rotate with the vessel's velocity
+    /// vector.</description></item><item><description>The y-axis points in the
+    /// direction of the vessel's velocity vector,
+    /// relative to the surface of the body being
+    /// orbited.</description></item><item><description>The z-axis is in the
+    /// plane of the
+    /// <a href="https://en.wikipedia.org/wiki/Horizon">astronomical
+    /// horizon</a>.</description></item><item><description>The x-axis is
+    /// orthogonal to the other two axes.</description></item></list>
     fn Vessel_get_SurfaceVelocityReferenceFrame(this: Class) -> Class;
 
     /// Removes the waypoint.
@@ -5878,10 +6473,12 @@ mod SpaceCenter {
     /// The name of the waypoint as it appears on the map and the contract.
     fn Waypoint_set_Name(this: Class, value: String);
 
-    /// The seed of the icon color. See <see cref="M:SpaceCenter.WaypointManager.Colors" /> for example colors.
+    /// The seed of the icon color. See SpaceCenter.WaypointManager.Colors for
+    /// example colors.
     fn Waypoint_get_Color(this: Class) -> Sint32;
 
-    /// The seed of the icon color. See <see cref="M:SpaceCenter.WaypointManager.Colors" /> for example colors.
+    /// The seed of the icon color. See SpaceCenter.WaypointManager.Colors for
+    /// example colors.
     fn Waypoint_set_Color(this: Class, value: Sint32);
 
     /// The icon of the waypoint.
@@ -5930,17 +6527,22 @@ mod SpaceCenter {
     /// <c>true</c> if the waypoint is attached to the ground.
     fn Waypoint_get_Grounded(this: Class) -> Bool;
 
-    /// The integer index of this waypoint within its cluster of sibling waypoints.
-    /// In other words, when you have a cluster of waypoints called "Somewhere Alpha",
-    /// "Somewhere Beta" and "Somewhere Gamma", the alpha site has index 0, the beta
+    /// The integer index of this waypoint within its cluster of sibling
+    /// waypoints.
+    /// In other words, when you have a cluster of waypoints called "Somewhere
+    /// Alpha",
+    /// "Somewhere Beta" and "Somewhere Gamma", the alpha site has index 0, the
+    /// beta
     /// site has index 1 and the gamma site has index 2.
-    /// When <see cref="M:SpaceCenter.Waypoint.Clustered" /> is <c>false</c>, this is zero.
+    /// When SpaceCenter.Waypoint.Clustered is <c>false</c>, this is zero.
     fn Waypoint_get_Index(this: Class) -> Sint32;
 
-    /// <c>true</c> if this waypoint is part of a set of clustered waypoints with greek letter
+    /// <c>true</c> if this waypoint is part of a set of clustered waypoints
+    /// with greek letter
     /// names appended (Alpha, Beta, Gamma, etc).
-    /// If <c>true</c>, there is a one-to-one correspondence with the greek letter name and
-    /// the <see cref="M:SpaceCenter.Waypoint.Index" />.
+    /// If <c>true</c>, there is a one-to-one correspondence with the greek
+    /// letter name and
+    /// the SpaceCenter.Waypoint.Index.
     fn Waypoint_get_Clustered(this: Class) -> Bool;
 
     /// Whether the waypoint belongs to a contract.
@@ -5950,7 +6552,7 @@ mod SpaceCenter {
     fn Waypoint_get_Contract(this: Class) -> Class;
 
     /// Creates a waypoint at the given position at ground level, and returns a
-    /// <see cref="T:SpaceCenter.Waypoint" /> object that can be used to modify it.
+    /// <see cref="T:SpaceCenter.Waypoint object that can be used to modify it.
     /// 
     /// <param name="latitude">Latitude of the waypoint.</param>
     /// <param name="longitude">Longitude of the waypoint.</param>
@@ -5960,11 +6562,12 @@ mod SpaceCenter {
     fn WaypointManager_AddWaypoint(this: Class, latitude: Double, longitude: Double, body: Class, name: String) -> Class;
 
     /// Creates a waypoint at the given position and altitude, and returns a
-    /// <see cref="T:SpaceCenter.Waypoint" /> object that can be used to modify it.
+    /// <see cref="T:SpaceCenter.Waypoint object that can be used to modify it.
     /// 
     /// <param name="latitude">Latitude of the waypoint.</param>
     /// <param name="longitude">Longitude of the waypoint.</param>
-    /// <param name="altitude">Altitude (above sea level) of the waypoint.</param>
+    /// <param name="altitude">Altitude (above sea level) of the
+    /// waypoint.</param>
     /// <param name="body">Celestial body the waypoint is attached to.</param>
     /// <param name="name">Name of the waypoint.</param>
     /// # Returns
@@ -5982,29 +6585,33 @@ mod SpaceCenter {
 
 }
 
-/// Provides functionality for drawing and interacting with in-game user interface elements.
+/// Provides functionality for drawing and interacting with in-game user
+/// interface elements.
 /// 
 /// <remarks>
 /// For drawing 3D objects in the flight scene, see the Drawing service.
 /// </remarks>
 mod UI {
-    /// A text label. See <see cref="M:UI.Panel.AddButton" />.
+    /// A text label. See UI.Panel.AddButton.
     struct Button;
 
-    /// A canvas for user interface elements. See <see cref="M:UI.StockCanvas" /> and <see cref="M:UI.AddCanvas" />.
+    /// A canvas for user interface elements. See UI.StockCanvas and
+    /// UI.AddCanvas.
     struct Canvas;
 
-    /// An input field. See <see cref="M:UI.Panel.AddInputField" />.
+    /// An input field. See UI.Panel.AddInputField.
     struct InputField;
 
-    /// A container for user interface elements. See <see cref="M:UI.Canvas.AddPanel" />.
+    /// A container for user interface elements. See UI.Canvas.AddPanel.
     struct Panel;
 
     /// A Unity engine Rect Transform for a UI object.
-    /// See the <a href="https://docs.unity3d.com/Manual/class-RectTransform.html">Unity manual</a> for more details.
+    /// See the <a
+    /// href="https://docs.unity3d.com/Manual/class-RectTransform.html">Unity
+    /// manual</a> for more details.
     struct RectTransform;
 
-    /// A text label. See <see cref="M:UI.Panel.AddText" />.
+    /// A text label. See UI.Panel.AddText.
     struct Text;
 
     /// Font style.
@@ -6066,17 +6673,20 @@ mod UI {
     /// Add a new canvas.
     /// 
     /// <remarks>
-    /// If you want to add UI elements to KSPs stock UI canvas, use <see cref="M:UI.StockCanvas" />.
+    /// If you want to add UI elements to KSPs stock UI canvas, use
+    /// UI.StockCanvas.
     /// </remarks>
     fn AddCanvas() -> Class;
 
     /// Display a message on the screen.
     /// 
     /// <remarks>
-    /// The message appears just like a stock message, for example quicksave or quickload messages.
+    /// The message appears just like a stock message, for example quicksave or
+    /// quickload messages.
     /// </remarks>
     /// <param name="content">Message content.</param>
-    /// <param name="duration">Duration before the message disappears, in seconds.</param>
+    /// <param name="duration">Duration before the message disappears, in
+    /// seconds.</param>
     /// <param name="position">Position to display the message.</param>
     /// <param name="size">Size of the message, differs per position.</param>
     /// <param name="color">The color of the message.</param>
@@ -6084,7 +6694,8 @@ mod UI {
 
     /// Remove all user interface elements.
     /// 
-    /// <param name="clientOnly">If true, only remove objects created by the calling client.</param>
+    /// <param name="clientOnly">If true, only remove objects created by the
+    /// calling client.</param>
     fn Clear(clientOnly: Bool);
 
     /// The stock UI canvas.
@@ -6103,7 +6714,8 @@ mod UI {
     /// 
     /// <remarks>
     /// This property is set to true when the user clicks the button.
-    /// A client script should reset the property to false in order to detect subsequent button presses.
+    /// A client script should reset the property to false in order to detect
+    /// subsequent button presses.
     /// </remarks>
     fn Button_get_Clicked(this: Class) -> Bool;
 
@@ -6111,7 +6723,8 @@ mod UI {
     /// 
     /// <remarks>
     /// This property is set to true when the user clicks the button.
-    /// A client script should reset the property to false in order to detect subsequent button presses.
+    /// A client script should reset the property to false in order to detect
+    /// subsequent button presses.
     /// </remarks>
     fn Button_set_Clicked(this: Class, value: Bool);
 
@@ -6170,7 +6783,7 @@ mod UI {
     /// The text component of the input field.
     /// 
     /// <remarks>
-    /// Use <see cref="M:UI.InputField.Value" /> to get and set the value in the field.
+    /// Use UI.InputField.Value to get and set the value in the field.
     /// This object can be used to alter the style of the input field's text.
     /// </remarks>
     fn InputField_get_Text(this: Class) -> Class;
@@ -6178,16 +6791,20 @@ mod UI {
     /// Whether the input field has been changed.
     /// 
     /// <remarks>
-    /// This property is set to true when the user modifies the value of the input field.
-    /// A client script should reset the property to false in order to detect subsequent changes.
+    /// This property is set to true when the user modifies the value of the
+    /// input field.
+    /// A client script should reset the property to false in order to detect
+    /// subsequent changes.
     /// </remarks>
     fn InputField_get_Changed(this: Class) -> Bool;
 
     /// Whether the input field has been changed.
     /// 
     /// <remarks>
-    /// This property is set to true when the user modifies the value of the input field.
-    /// A client script should reset the property to false in order to detect subsequent changes.
+    /// This property is set to true when the user modifies the value of the
+    /// input field.
+    /// A client script should reset the property to false in order to detect
+    /// subsequent changes.
     /// </remarks>
     fn InputField_set_Changed(this: Class, value: Bool);
 
@@ -6261,25 +6878,32 @@ mod UI {
     /// Position of the rectangles lower left corner relative to the anchors.
     fn RectTransform_set_LowerLeft(this: Class, value: Tuple);
 
-    /// Set the minimum and maximum anchor points as a fraction of the size of the parent rectangle.
+    /// Set the minimum and maximum anchor points as a fraction of the size of
+    /// the parent rectangle.
     fn RectTransform_set_Anchor(this: Class, value: Tuple);
 
-    /// The anchor point for the lower left corner of the rectangle defined as a fraction of the size of the parent rectangle.
+    /// The anchor point for the lower left corner of the rectangle defined as
+    /// a fraction of the size of the parent rectangle.
     fn RectTransform_get_AnchorMax(this: Class) -> Tuple;
 
-    /// The anchor point for the lower left corner of the rectangle defined as a fraction of the size of the parent rectangle.
+    /// The anchor point for the lower left corner of the rectangle defined as
+    /// a fraction of the size of the parent rectangle.
     fn RectTransform_set_AnchorMax(this: Class, value: Tuple);
 
-    /// The anchor point for the upper right corner of the rectangle defined as a fraction of the size of the parent rectangle.
+    /// The anchor point for the upper right corner of the rectangle defined as
+    /// a fraction of the size of the parent rectangle.
     fn RectTransform_get_AnchorMin(this: Class) -> Tuple;
 
-    /// The anchor point for the upper right corner of the rectangle defined as a fraction of the size of the parent rectangle.
+    /// The anchor point for the upper right corner of the rectangle defined as
+    /// a fraction of the size of the parent rectangle.
     fn RectTransform_set_AnchorMin(this: Class, value: Tuple);
 
-    /// Location of the pivot point around which the rectangle rotates, defined as a fraction of the size of the rectangle itself.
+    /// Location of the pivot point around which the rectangle rotates, defined
+    /// as a fraction of the size of the rectangle itself.
     fn RectTransform_get_Pivot(this: Class) -> Tuple;
 
-    /// Location of the pivot point around which the rectangle rotates, defined as a fraction of the size of the rectangle itself.
+    /// Location of the pivot point around which the rectangle rotates, defined
+    /// as a fraction of the size of the rectangle itself.
     fn RectTransform_set_Pivot(this: Class, value: Tuple);
 
     /// Rotation, as a quaternion, of the object around its pivot point.
