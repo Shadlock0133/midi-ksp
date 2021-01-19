@@ -13,3 +13,6 @@ Caveats:
 - doesn't support importing, at least for now, as I didn't need it
 
 `krpc-proto` crate contains generated code from mod-supplied `krpc.proto`
+
+`procs.rs` is not a real rust file, it's just a easier-to-read dump of
+available procedures from server
