@@ -4,9 +4,10 @@ use std::{
     time::{Duration, Instant},
 };
 
+use krpc::{dump_procs_sigs, KrpcConnection};
 use midi::{
     axiom::{AxiomAirController, AxiomMessage, Button},
-    krpc::{dump_procs_sigs, KrpcConnection},
+    cache::Cache,
 };
 
 // WORKAROUND: When using Ctrl+C without handler,
@@ -61,8 +62,8 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 }
                 AxiomMessage::Stop(Button::Pressed) => {
                     let mut vessel = krpc.get_active_vessel()?.unwrap();
-                    let mut control = vessel.get_control()?.unwrap();
-                    let throttle = control.get_throttle()?.unwrap();
+                    let mut control = vessel.get_control(&mut krpc)?.unwrap();
+                    let throttle = control.get_throttle(&mut krpc)?.unwrap();
                     println!("Throttle: {}", throttle);
                 }
                 AxiomMessage::Knob(1, v) => throttle.set(v),
@@ -71,10 +72,12 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         }
         // Batch network calls
         if timer.elapsed() > Duration::from_secs(1) / 60 {
+            let mut vessel = krpc.get_active_vessel()?.unwrap();
+            let mut control = vessel.get_control(&mut krpc)?.unwrap();
             if let Some(throttle) = throttle.get() {
-                let mut vessel = krpc.get_active_vessel()?.unwrap();
-                let mut control = vessel.get_control()?.unwrap();
-                control.set_throttle(throttle as f32 / 127.0)?.unwrap();
+                control
+                    .set_throttle(&mut krpc, throttle as f32 / 127.0)?
+                    .unwrap();
             }
             timer = Instant::now();
         }
@@ -82,44 +85,4 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
 
     controller.close()?;
     Ok(())
-}
-
-struct Cache<T> {
-    current: T,
-    new: T,
-}
-
-impl<T> Cache<T> {
-    pub fn new(value: T) -> Self
-    where
-        T: Clone,
-    {
-        Self {
-            current: value.clone(),
-            new: value,
-        }
-    }
-
-    pub fn set(&mut self, value: T) {
-        self.new = value;
-    }
-
-    pub fn has_changed(&self) -> bool
-    where
-        T: PartialEq,
-    {
-        self.current != self.new
-    }
-
-    pub fn get(&mut self) -> Option<T>
-    where
-        T: Clone + PartialEq,
-    {
-        if self.has_changed() {
-            self.current = self.new.clone();
-            Some(self.new.clone())
-        } else {
-            None
-        }
-    }
 }

@@ -1,5 +1,5 @@
 [package]
-name = "midi"
+name = "krpc"
 version = "0.1.0"
 authors = ["Aurora <tomek-kubel2@wp.pl>"]
 edition = "2018"
@@ -7,8 +7,5 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-midir = "0.7.0"
-minifb = "0.19.1"
-ctrlc = "3.1.7"
-thiserror = "1.0.23"
-krpc = { path = "./krpc" }
+krpc-proto = { path = "../krpc-proto" }
+protobuf-but-worse = { path = "../protobuf-but-worse" }

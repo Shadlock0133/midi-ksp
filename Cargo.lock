@@ -210,6 +210,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "krpc"
+version = "0.1.0"
+dependencies = [
+ "krpc-proto",
+ "protobuf-but-worse",
+]
+
+[[package]]
 name = "krpc-proto"
 version = "0.1.0"
 dependencies = [
@@ -269,10 +277,9 @@ name = "midi"
 version = "0.1.0"
 dependencies = [
  "ctrlc",
- "krpc-proto",
+ "krpc",
  "midir",
  "minifb",
- "protobuf-but-worse",
  "thiserror",
 ]
 

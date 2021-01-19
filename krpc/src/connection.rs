@@ -1,11 +1,17 @@
-use std::{io::Write, net::{SocketAddr, TcpStream, ToSocketAddrs}, time::Duration};
+use std::{
+    io::Write,
+    net::{SocketAddr, TcpStream, ToSocketAddrs},
+    time::Duration,
+};
 
 use krpc_proto::{
     connection_request::Type, connection_response::Status, Argument,
-    ConnectionRequest, ConnectionResponse, Error, Procedure, ProcedureCall,
-    Request, Response, Services,
+    ConnectionRequest, ConnectionResponse, Error, ProcedureCall, Request,
+    Response, Services,
 };
 use protobuf_but_worse::encoding::*;
+
+use crate::vessel::Vessel;
 
 pub struct KrpcConnection {
     stream: TcpStream,
@@ -77,7 +83,7 @@ impl KrpcConnection {
         self.call("SpaceCenter", "get_ActiveVessel", &[])
             .map(move |r| {
                 let class = r?;
-                Ok(Vessel { krpc: self, class })
+                Ok(Vessel { class })
             })
     }
 
@@ -126,143 +132,4 @@ impl KrpcConnection {
         }
         T::decode(result.value.as_deref().unwrap_or_default()).map(Ok)
     }
-}
-
-pub struct Vessel<'a> {
-    krpc: &'a mut KrpcConnection,
-    class: Class,
-}
-
-impl Vessel<'_> {
-    pub fn name(&mut self) -> EncodingResult<Result<String, Error>> {
-        self.krpc
-            .call("SpaceCenter", "Vessel_get_Name", &[&self.class])
-    }
-
-    pub fn get_control(&mut self) -> EncodingResult<Result<Control, Error>> {
-        self.krpc
-            .call("SpaceCenter", "Vessel_get_Control", &[&self.class])
-            .map(move |r| {
-                let class = r?;
-                Ok(Control {
-                    krpc: &mut *self.krpc,
-                    class,
-                })
-            })
-    }
-}
-
-pub struct Control<'a> {
-    krpc: &'a mut KrpcConnection,
-    class: Class,
-}
-
-impl Control<'_> {
-    pub fn set_throttle(
-        &mut self,
-        value: f32,
-    ) -> EncodingResult<Result<(), Error>> {
-        self.krpc.call(
-            "SpaceCenter",
-            "Control_set_Throttle",
-            &[&self.class, &value],
-        )
-    }
-
-    pub fn get_throttle(&mut self) -> EncodingResult<Result<f32, Error>> {
-        self.krpc
-            .call("SpaceCenter", "Control_get_Throttle", &[&self.class])
-    }
-}
-
-struct Class(Varint<u64>);
-impl Decode for Class {
-    fn decode<R: std::io::Read>(r: R) -> Result<Self, EncodingError> {
-        <Varint<u64>>::decode(r).map(Class)
-    }
-}
-impl Encode for Class {
-    fn size(&self) -> u32 {
-        self.0.size()
-    }
-    fn encode<W: std::io::Write>(&self, w: W) -> Result<(), EncodingError> {
-        self.0.encode(w)
-    }
-}
-
-pub fn print_procedure_signature(procedure: &Procedure) -> String {
-    use std::fmt::Write;
-    let mut res = String::new();
-
-    let mut doc = procedure
-        .documentation
-        .as_deref()
-        .unwrap_or_default()
-        .to_string();
-    doc = doc.replace("<doc>", "");
-    doc = doc.replace("</doc>", "");
-    doc = doc.replace("<summary>", "");
-    doc = doc.replace("</summary>", "");
-    doc = doc.replace("<returns>", "# Returns\n\n");
-    doc = doc.replace("</returns>", "\n");
-    let doc = doc.trim();
-    for doc_line in doc.lines() {
-        writeln!(res, "/// {}", doc_line).unwrap();
-    }
-
-    write!(res, "fn {}(", procedure.name.as_ref().unwrap()).unwrap();
-    if let Some(param) = &procedure.parameters.first() {
-        let name = match param.name.as_deref().unwrap().trim() {
-            "type" => "r#type",
-            n => n,
-        };
-        write!(
-            res,
-            "{}: {:?}",
-            name,
-            param.r#type.as_ref().unwrap().code.as_ref().unwrap()
-        )
-        .unwrap();
-        for param in &procedure.parameters[1..] {
-            let name = match param.name.as_deref().unwrap().trim() {
-                "type" => "r#type",
-                n => n,
-            };
-            write!(
-                res,
-                ", {}: {:?}",
-                name,
-                param.r#type.as_ref().unwrap().code.as_ref().unwrap()
-            )
-            .unwrap();
-        }
-    }
-    write!(res, ")").unwrap();
-
-    if let Some(ret) =
-        procedure.return_type.as_ref().and_then(|x| x.code.as_ref())
-    {
-        write!(res, " -> {:?}", ret).unwrap();
-    }
-    writeln!(res, ";").unwrap();
-    res
-}
-
-pub fn dump_procs_sigs(services: &Services) -> String {
-    use std::fmt::Write;
-    let mut res = String::new();
-    for service in &services.services {
-        let service_name = service.name.as_deref().unwrap();
-        writeln!(res, "mod {} {{", service_name).unwrap();
-        for proc in &service.procedures {
-            let text = print_procedure_signature(proc);
-            for line in text.lines() {
-                writeln!(res, "    {}", line).unwrap();
-            }
-            writeln!(res).unwrap();
-        }
-        writeln!(res, "}}").unwrap();
-        writeln!(res).unwrap();
-    }
-    res
 }
