@@ -9,18 +9,18 @@ pub struct Vessel {
 
 impl Vessel {
     pub fn name(
-        &mut self,
+        &self,
         krpc: &mut KrpcConnection,
     ) -> EncodingResult<Result<String, Error>> {
         krpc.call("SpaceCenter", "Vessel_get_Name", &[&self.class])
     }
 
     pub fn get_control(
-        &mut self,
+        &self,
         krpc: &mut KrpcConnection,
     ) -> EncodingResult<Result<Control, Error>> {
         krpc.call("SpaceCenter", "Vessel_get_Control", &[&self.class])
-            .map(move |r| {
+            .map(|r| {
                 let class = r?;
                 Ok(Control { class })
             })

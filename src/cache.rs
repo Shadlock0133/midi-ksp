@@ -18,6 +18,10 @@ impl<T> Cache<T> {
         self.new = value;
     }
 
+    pub fn update<F: FnMut(&mut T)>(&mut self, mut f: F) {
+        f(&mut self.new)
+    }
+
     pub fn has_changed(&self) -> bool
     where
         T: PartialEq,

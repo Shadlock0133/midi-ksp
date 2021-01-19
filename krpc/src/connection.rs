@@ -65,6 +65,16 @@ impl KrpcConnection {
         Ok(Self { stream })
     }
 
+    pub fn get_status(
+        &mut self,
+    ) -> EncodingResult<Result<krpc_proto::Status, Error>> {
+        self.call("KRPC", "GetStatus", &[])
+    }
+
+    pub fn get_services(&mut self) -> EncodingResult<Result<Services, Error>> {
+        self.call("KRPC", "GetServices", &[])
+    }
+
     pub fn is_paused(&mut self) -> EncodingResult<Result<bool, Error>> {
         self.call("KRPC", "get_Paused", &[])
     }
@@ -73,21 +83,17 @@ impl KrpcConnection {
         self.call("KRPC", "set_Paused", &[&value])
     }
 
-    pub fn get_services(&mut self) -> EncodingResult<Result<Services, Error>> {
-        self.call("KRPC", "GetServices", &[])
-    }
-
     pub fn get_active_vessel(
         &mut self,
     ) -> EncodingResult<Result<Vessel, Error>> {
-        self.call("SpaceCenter", "get_ActiveVessel", &[])
-            .map(move |r| {
-                let class = r?;
-                Ok(Vessel { class })
-            })
+        self.call("SpaceCenter", "get_ActiveVessel", &[]).map(|r| {
+            let class = r?;
+            Ok(Vessel { class })
+        })
     }
 
     /// Performs a remote procedure call
+    ///
     /// Returns double Result, because
     /// EncodingError is a connection error and
     /// krpc_proto::Error is a server error

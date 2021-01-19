@@ -1,4 +1,25 @@
+/// Main kRPC service, used by clients to interact with basic server functionality.
 mod KRPC {
+    /// A server side expression.
+    struct Expression;
+
+    /// A server side expression.
+    struct Type;
+
+    /// The game scene. See <see cref="M:KRPC.CurrentGameScene" />.
+    enum GameScene {
+        /// The game scene showing the Kerbal Space Center buildings.
+        SpaceCenter = 0,
+        /// The game scene showing a vessel in flight (or on the launchpad/runway).
+        Flight = 1,
+        /// The tracking station.
+        TrackingStation = 2,
+        /// The Vehicle Assembly Building.
+        EditorVAB = 3,
+        /// The Space Plane Hangar.
+        EditorSPH = 4,
+    }
+
     /// Returns the identifier for the current client.
     fn GetClientID() -> Bytes;
 
@@ -439,7 +460,21 @@ mod KRPC {
 
 }
 
+/// Provides functionality for drawing objects in the flight scene.
+/// 
+/// <remarks>
+/// For drawing and interacting with the user interface, see the UI service.
+/// </remarks>
 mod Drawing {
+    /// A line. Created using <see cref="M:Drawing.AddLine" />.
+    struct Line;
+
+    /// A polygon. Created using <see cref="M:Drawing.AddPolygon" />.
+    struct Polygon;
+
+    /// Text. Created using <see cref="M:Drawing.AddText" />.
+    struct Text;
+
     /// Draw a line in the scene.
     /// 
     /// <param name="start">Position of the start of the line.</param>
@@ -659,7 +694,20 @@ mod Drawing {
 
 }
 
+/// This service provides functionality to interact with
+/// <a href="https://forum.kerbalspaceprogram.com/index.php?/topic/104535-112-magic-smoke-industries-infernal-robotics-202/">Infernal Robotics</a>.
 mod InfernalRobotics {
+    /// Represents a servo. Obtained using
+    /// <see cref="M:InfernalRobotics.ServoGroup.Servos" />,
+    /// <see cref="M:InfernalRobotics.ServoGroup.ServoWithName" />
+    /// or <see cref="M:InfernalRobotics.ServoWithName" />.
+    struct Servo;
+
+    /// A group of servos, obtained by calling <see cref="M:InfernalRobotics.ServoGroups" />
+    /// or <see cref="M:InfernalRobotics.ServoGroupWithName" />. Represents the "Servo Groups"
+    /// in the InfernalRobotics UI.
+    struct ServoGroup;
+
     /// A list of all the servo groups in the given <paramref name="vessel" />.
     fn ServoGroups(vessel: Class) -> List;
 
@@ -842,7 +890,77 @@ mod InfernalRobotics {
 
 }
 
+/// This service provides functionality to interact with
+/// <a href="https://forum.kerbalspaceprogram.com/index.php?/topic/22809-13x-kerbal-alarm-clock-v3850-may-30/">Kerbal Alarm Clock</a>.
 mod KerbalAlarmClock {
+    /// Represents an alarm. Obtained by calling
+    /// <see cref="M:KerbalAlarmClock.Alarms" />,
+    /// <see cref="M:KerbalAlarmClock.AlarmWithName" /> or
+    /// <see cref="M:KerbalAlarmClock.AlarmsWithType" />.
+    struct Alarm;
+
+    /// The action performed by an alarm when it fires.
+    enum AlarmAction {
+        /// Don't do anything at all...
+        DoNothing = 0,
+        /// Don't do anything, and delete the alarm.
+        DoNothingDeleteWhenPassed = 1,
+        /// Drop out of time warp.
+        KillWarp = 2,
+        /// Drop out of time warp.
+        KillWarpOnly = 3,
+        /// Display a message.
+        MessageOnly = 4,
+        /// Pause the game.
+        PauseGame = 5,
+    }
+
+    /// The type of an alarm.
+    enum AlarmType {
+        /// An alarm for a specific date/time or a specific period in the future.
+        Raw = 0,
+        /// An alarm based on the next maneuver node on the current ships flight path.
+        /// This node will be stored and can be restored when you come back to the ship.
+        Maneuver = 1,
+        /// See <see cref="M:KerbalAlarmClock.AlarmType.Maneuver" />.
+        ManeuverAuto = 2,
+        /// An alarm for furthest part of the orbit from the planet.
+        Apoapsis = 3,
+        /// An alarm for nearest part of the orbit from the planet.
+        Periapsis = 4,
+        /// Ascending node for the targeted object, or equatorial ascending node.
+        AscendingNode = 5,
+        /// Descending node for the targeted object, or equatorial descending node.
+        DescendingNode = 6,
+        /// An alarm based on the closest approach of this vessel to the targeted
+        /// vessel, some number of orbits into the future.
+        Closest = 7,
+        /// An alarm based on the expiry or deadline of contracts in career modes.
+        Contract = 8,
+        /// See <see cref="M:KerbalAlarmClock.AlarmType.Contract" />.
+        ContractAuto = 9,
+        /// An alarm that is attached to a crew member.
+        Crew = 10,
+        /// An alarm that is triggered when a selected target comes within a chosen distance.
+        Distance = 11,
+        /// An alarm based on the time in the "Earth" alternative Universe (aka the Real World).
+        EarthTime = 12,
+        /// An alarm that fires as your landed craft passes under the orbit of your target.
+        LaunchRendevous = 13,
+        /// An alarm manually based on when the next SOI point is on the flight path
+        /// or set to continually monitor the active flight path and add alarms as it
+        /// detects SOI changes.
+        SOIChange = 14,
+        /// See <see cref="M:KerbalAlarmClock.AlarmType.SOIChange" />.
+        SOIChangeAuto = 15,
+        /// An alarm based on Interplanetary Transfer Phase Angles, i.e. when should
+        /// I launch to planet X? Based on Kosmo Not's post and used in Olex's
+        /// Calculator.
+        Transfer = 16,
+        /// See <see cref="M:KerbalAlarmClock.AlarmType.Transfer" />.
+        TransferModelled = 17,
+    }
+
     /// Get the alarm with the given <paramref name="name" />, or <c>null</c>
     /// if no alarms have that name. If more than one alarm has the name,
     /// only returns one of them.
@@ -942,7 +1060,30 @@ mod KerbalAlarmClock {
 
 }
 
+/// This service provides functionality to interact with
+/// <a href="https://forum.kerbalspaceprogram.com/index.php?/topic/139167-13-remotetech-v188-2017-09-03/">RemoteTech</a>.
 mod RemoteTech {
+    /// A RemoteTech antenna. Obtained by calling <see cref="M:RemoteTech.Comms.Antennas" /> or <see cref="M:RemoteTech.Antenna" />.
+    struct Antenna;
+
+    /// Communications for a vessel.
+    struct Comms;
+
+    /// The type of object an antenna is targetting.
+    /// See <see cref="M:RemoteTech.Antenna.Target" />.
+    enum Target {
+        /// The active vessel.
+        ActiveVessel = 0,
+        /// A celestial body.
+        CelestialBody = 1,
+        /// A ground station.
+        GroundStation = 2,
+        /// A specific vessel.
+        Vessel = 3,
+        /// No target.
+        None = 4,
+    }
+
     /// Get a communications object, representing the communication capability of a particular vessel.
     fn Comms(vessel: Class) -> Class;
 
@@ -1022,7 +1163,611 @@ mod RemoteTech {
 
 }
 
+/// Provides functionality to interact with Kerbal Space Program. This includes controlling
+/// the active vessel, managing its resources, planning maneuver nodes and auto-piloting.
 mod SpaceCenter {
+    /// Provides basic auto-piloting utilities for a vessel.
+    /// Created by calling <see cref="M:SpaceCenter.Vessel.AutoPilot" />.
+    /// 
+    /// <remarks>
+    /// If a client engages the auto-pilot and then closes its connection to the server,
+    /// the auto-pilot will be disengaged and its target reference frame, direction and roll
+    /// reset to default.
+    /// </remarks>
+    struct AutoPilot;
+
+    /// Controls the game's camera.
+    /// Obtained by calling <see cref="M:SpaceCenter.Camera" />.
+    struct Camera;
+
+    /// Represents a celestial body (such as a planet or moon).
+    /// See <see cref="M:SpaceCenter.Bodies" />.
+    struct CelestialBody;
+
+    /// Represents a communication node in the network. For example, a vessel or the KSC.
+    struct CommLink;
+
+    /// Represents a communication node in the network. For example, a vessel or the KSC.
+    struct CommNode;
+
+    /// Used to interact with CommNet for a given vessel.
+    /// Obtained by calling <see cref="M:SpaceCenter.Vessel.Comms" />.
+    struct Comms;
+
+    /// A contract. Can be accessed using <see cref="M:SpaceCenter.ContractManager" />.
+    struct Contract;
+
+    /// Contracts manager.
+    /// Obtained by calling <see cref="M:SpaceCenter.ContractManager" />.
+    struct ContractManager;
+
+    /// A contract parameter. See <see cref="M:SpaceCenter.Contract.Parameters" />.
+    struct ContractParameter;
+
+    /// Used to manipulate the controls of a vessel. This includes adjusting the
+    /// throttle, enabling/disabling systems such as SAS and RCS, or altering the
+    /// direction in which the vessel is pointing.
+    /// Obtained by calling <see cref="M:SpaceCenter.Vessel.Control" />.
+    /// 
+    /// <remarks>
+    /// Control inputs (such as pitch, yaw and roll) are zeroed when all clients
+    /// that have set one or more of these inputs are no longer connected.
+    /// </remarks>
+    struct Control;
+
+    /// Represents crew in a vessel. Can be obtained using <see cref="M:SpaceCenter.Vessel.Crew" />.
+    struct CrewMember;
+
+    /// Used to get flight telemetry for a vessel, by calling <see cref="M:SpaceCenter.Vessel.Flight" />.
+    /// All of the information returned by this class is given in the reference frame
+    /// passed to that method.
+    /// Obtained by calling <see cref="M:SpaceCenter.Vessel.Flight" />.
+    /// 
+    /// <remarks>
+    /// To get orbital information, such as the apoapsis or inclination, see <see cref="T:SpaceCenter.Orbit" />.
+    /// </remarks>
+    struct Flight;
+
+    /// Represents a maneuver node. Can be created using <see cref="M:SpaceCenter.Control.AddNode" />.
+    struct Node;
+
+    /// Describes an orbit. For example, the orbit of a vessel, obtained by calling
+    /// <see cref="M:SpaceCenter.Vessel.Orbit" />, or a celestial body, obtained by calling
+    /// <see cref="M:SpaceCenter.CelestialBody.Orbit" />.
+    struct Orbit;
+
+    /// An antenna. Obtained by calling <see cref="M:SpaceCenter.Part.Antenna" />.
+    struct Antenna;
+
+    /// A cargo bay. Obtained by calling <see cref="M:SpaceCenter.Part.CargoBay" />.
+    struct CargoBay;
+
+    /// An aerodynamic control surface. Obtained by calling <see cref="M:SpaceCenter.Part.ControlSurface" />.
+    struct ControlSurface;
+
+    /// A decoupler. Obtained by calling <see cref="M:SpaceCenter.Part.Decoupler" />
+    struct Decoupler;
+
+    /// A docking port. Obtained by calling <see cref="M:SpaceCenter.Part.DockingPort" />
+    struct DockingPort;
+
+    /// An engine, including ones of various types.
+    /// For example liquid fuelled gimballed engines, solid rocket boosters and jet engines.
+    /// Obtained by calling <see cref="M:SpaceCenter.Part.Engine" />.
+    /// 
+    /// <remarks>
+    /// For RCS thrusters <see cref="M:SpaceCenter.Part.RCS" />.
+    /// </remarks>
+    struct Engine;
+
+    /// Obtained by calling <see cref="M:SpaceCenter.Part.Experiment" />.
+    struct Experiment;
+
+    /// A fairing. Obtained by calling <see cref="M:SpaceCenter.Part.Fairing" />.
+    struct Fairing;
+
+    /// Obtained by calling <see cref="M:SpaceCenter.Part.AddForce" />.
+    struct Force;
+
+    /// An air intake. Obtained by calling <see cref="M:SpaceCenter.Part.Intake" />.
+    struct Intake;
+
+    /// A launch clamp. Obtained by calling <see cref="M:SpaceCenter.Part.LaunchClamp" />.
+    struct LaunchClamp;
+
+    /// A landing leg. Obtained by calling <see cref="M:SpaceCenter.Part.Leg" />.
+    struct Leg;
+
+    /// A light. Obtained by calling <see cref="M:SpaceCenter.Part.Light" />.
+    struct Light;
+
+    /// This can be used to interact with a specific part module. This includes part modules in
+    /// stock KSP, and those added by mods.
+    /// 
+    /// In KSP, each part has zero or more
+    /// <a href="https://wiki.kerbalspaceprogram.com/wiki/CFG_File_Documentation#MODULES">PartModules</a>
+    /// associated with it. Each one contains some of the functionality of the part.
+    /// For example, an engine has a "ModuleEngines" part module that contains all the
+    /// functionality of an engine.
+    struct Module;
+
+    /// A parachute. Obtained by calling <see cref="M:SpaceCenter.Part.Parachute" />.
+    struct Parachute;
+
+    /// Represents an individual part. Vessels are made up of multiple parts.
+    /// Instances of this class can be obtained by several methods in <see cref="T:SpaceCenter.Parts" />.
+    struct Part;
+
+    /// Instances of this class are used to interact with the parts of a vessel.
+    /// An instance can be obtained by calling <see cref="M:SpaceCenter.Vessel.Parts" />.
+    struct Parts;
+
+    /// A propellant for an engine. Obtains by calling <see cref="M:SpaceCenter.Engine.Propellants" />.
+    struct Propellant;
+
+    /// An RCS block or thruster. Obtained by calling <see cref="M:SpaceCenter.Part.RCS" />.
+    struct RCS;
+
+    /// A radiator. Obtained by calling <see cref="M:SpaceCenter.Part.Radiator" />.
+    struct Radiator;
+
+    /// A reaction wheel. Obtained by calling <see cref="M:SpaceCenter.Part.ReactionWheel" />.
+    struct ReactionWheel;
+
+    /// A resource converter. Obtained by calling <see cref="M:SpaceCenter.Part.ResourceConverter" />.
+    struct ResourceConverter;
+
+    /// A resource harvester (drill). Obtained by calling <see cref="M:SpaceCenter.Part.ResourceHarvester" />.
+    struct ResourceHarvester;
+
+    /// Obtained by calling <see cref="M:SpaceCenter.Experiment.Data" />.
+    struct ScienceData;
+
+    /// Obtained by calling <see cref="M:SpaceCenter.Experiment.ScienceSubject" />.
+    struct ScienceSubject;
+
+    /// A sensor, such as a thermometer. Obtained by calling <see cref="M:SpaceCenter.Part.Sensor" />.
+    struct Sensor;
+
+    /// A solar panel. Obtained by calling <see cref="M:SpaceCenter.Part.SolarPanel" />.
+    struct SolarPanel;
+
+    /// The component of an <see cref="T:SpaceCenter.Engine" /> or <see cref="T:SpaceCenter.RCS" /> part that generates thrust.
+    /// Can obtained by calling <see cref="M:SpaceCenter.Engine.Thrusters" /> or <see cref="M:SpaceCenter.RCS.Thrusters" />.
+    /// 
+    /// <remarks>
+    /// Engines can consist of multiple thrusters.
+    /// For example, the S3 KS-25x4 "Mammoth" has four rocket nozzels, and so consists of
+    /// four thrusters.
+    /// </remarks>
+    struct Thruster;
+
+    /// A wheel. Includes landing gear and rover wheels.
+    /// Obtained by calling <see cref="M:SpaceCenter.Part.Wheel" />.
+    /// Can be used to control the motors, steering and deployment of wheels, among other things.
+    struct Wheel;
+
+    /// Represents a reference frame for positions, rotations and
+    /// velocities. Contains:
+    /// <list type="bullet"><item><description>The position of the origin.</description></item><item><description>The directions of the x, y and z axes.</description></item><item><description>The linear velocity of the frame.</description></item><item><description>The angular velocity of the frame.</description></item></list>
+    /// <remarks>
+    /// This class does not contain any properties or methods. It is only
+    /// used as a parameter to other functions.
+    /// </remarks>
+    struct ReferenceFrame;
+
+    /// An individual resource stored within a part.
+    /// Created using methods in the <see cref="T:SpaceCenter.Resources" /> class.
+    struct Resource;
+
+    /// Transfer resources between parts.
+    struct ResourceTransfer;
+
+    /// Represents the collection of resources stored in a vessel, stage or part.
+    /// Created by calling <see cref="M:SpaceCenter.Vessel.Resources" />,
+    /// <see cref="M:SpaceCenter.Vessel.ResourcesInDecoupleStage" /> or
+    /// <see cref="M:SpaceCenter.Part.Resources" />.
+    struct Resources;
+
+    /// These objects are used to interact with vessels in KSP. This includes getting
+    /// orbital and flight data, manipulating control inputs and managing resources.
+    /// Created using <see cref="M:SpaceCenter.ActiveVessel" /> or <see cref="M:SpaceCenter.Vessels" />.
+    struct Vessel;
+
+    /// Represents a waypoint. Can be created using <see cref="M:SpaceCenter.WaypointManager.AddWaypoint" />.
+    struct Waypoint;
+
+    /// Waypoints are the location markers you can see on the map view showing you where contracts are targeted for.
+    /// With this structure, you can obtain coordinate data for the locations of these waypoints.
+    /// Obtained by calling <see cref="M:SpaceCenter.WaypointManager" />.
+    struct WaypointManager;
+
+    /// See <see cref="M:SpaceCenter.Camera.Mode" />.
+    enum CameraMode {
+        /// The camera is showing the active vessel, in "auto" mode.
+        Automatic = 0,
+        /// The camera is showing the active vessel, in "free" mode.
+        Free = 1,
+        /// The camera is showing the active vessel, in "chase" mode.
+        Chase = 2,
+        /// The camera is showing the active vessel, in "locked" mode.
+        Locked = 3,
+        /// The camera is showing the active vessel, in "orbital" mode.
+        Orbital = 4,
+        /// The Intra-Vehicular Activity view is being shown.
+        IVA = 5,
+        /// The map view is being shown.
+        Map = 6,
+    }
+
+    /// The type of a communication link.
+    /// See <see cref="M:SpaceCenter.CommLink.Type" />.
+    enum CommLinkType {
+        /// Link is to a base station on Kerbin.
+        Home = 0,
+        /// Link is to a control source, for example a manned spacecraft.
+        Control = 1,
+        /// Link is to a relay satellite.
+        Relay = 2,
+    }
+
+    /// The state of a contract. See <see cref="M:SpaceCenter.Contract.State" />.
+    enum ContractState {
+        /// The contract is active.
+        Active = 0,
+        /// The contract has been canceled.
+        Canceled = 1,
+        /// The contract has been completed.
+        Completed = 2,
+        /// The deadline for the contract has expired.
+        DeadlineExpired = 3,
+        /// The contract has been declined.
+        Declined = 4,
+        /// The contract has been failed.
+        Failed = 5,
+        /// The contract has been generated.
+        Generated = 6,
+        /// The contract has been offered to the player.
+        Offered = 7,
+        /// The contract was offered to the player, but the offer expired.
+        OfferExpired = 8,
+        /// The contract has been withdrawn.
+        Withdrawn = 9,
+    }
+
+    /// See <see cref="M:SpaceCenter.Control.InputMode" />.
+    enum ControlInputMode {
+        /// Control inputs are added to the vessels current control inputs.
+        Additive = 0,
+        /// Control inputs (when they are non-zero) override the vessels current control inputs.
+        Override = 1,
+    }
+
+    /// The control source of a vessel.
+    /// See <see cref="M:SpaceCenter.Control.Source" />.
+    enum ControlSource {
+        /// Vessel is controlled by a Kerbal.
+        Kerbal = 0,
+        /// Vessel is controlled by a probe core.
+        Probe = 1,
+        /// Vessel is not controlled.
+        None = 2,
+    }
+
+    /// The control state of a vessel.
+    /// See <see cref="M:SpaceCenter.Control.State" />.
+    enum ControlState {
+        /// Full controllable.
+        Full = 0,
+        /// Partially controllable.
+        Partial = 1,
+        /// Not controllable.
+        None = 2,
+    }
+
+    /// The type of a crew member.
+    /// See <see cref="M:SpaceCenter.CrewMember.Type" />.
+    enum CrewMemberType {
+        /// An applicant for crew.
+        Applicant = 0,
+        /// Rocket crew.
+        Crew = 1,
+        /// A tourist.
+        Tourist = 2,
+        /// An unowned crew member.
+        Unowned = 3,
+    }
+
+    /// The game mode.
+    /// Returned by <see cref="T:SpaceCenter.GameMode" />
+    enum GameMode {
+        /// Sandbox mode.
+        Sandbox = 0,
+        /// Career mode.
+        Career = 1,
+        /// Science career mode.
+        Science = 2,
+        /// Science sandbox mode.
+        ScienceSandbox = 3,
+        /// Mission mode.
+        Mission = 4,
+        /// Mission builder mode.
+        MissionBuilder = 5,
+        /// Scenario mode.
+        Scenario = 6,
+        /// Scenario mode that cannot be resumed.
+        ScenarioNonResumable = 7,
+    }
+
+    /// The state of an antenna. See <see cref="M:SpaceCenter.Antenna.State" />.
+    enum AntennaState {
+        /// Antenna is fully deployed.
+        Deployed = 0,
+        /// Antenna is fully retracted.
+        Retracted = 1,
+        /// Antenna is being deployed.
+        Deploying = 2,
+        /// Antenna is being retracted.
+        Retracting = 3,
+        /// Antenna is broken.
+        Broken = 4,
+    }
+
+    /// The state of a cargo bay. See <see cref="M:SpaceCenter.CargoBay.State" />.
+    enum CargoBayState {
+        /// Cargo bay is fully open.
+        Open = 0,
+        /// Cargo bay closed and locked.
+        Closed = 1,
+        /// Cargo bay is opening.
+        Opening = 2,
+        /// Cargo bay is closing.
+        Closing = 3,
+    }
+
+    /// The state of a docking port. See <see cref="M:SpaceCenter.DockingPort.State" />.
+    enum DockingPortState {
+        /// The docking port is ready to dock to another docking port.
+        Ready = 0,
+        /// The docking port is docked to another docking port, or docked to
+        /// another part (from the VAB/SPH).
+        Docked = 1,
+        /// The docking port is very close to another docking port,
+        /// but has not docked. It is using magnetic force to acquire a solid dock.
+        Docking = 2,
+        /// The docking port has just been undocked from another docking port,
+        /// and is disabled until it moves away by a sufficient distance
+        /// (<see cref="M:SpaceCenter.DockingPort.ReengageDistance" />).
+        Undocking = 3,
+        /// The docking port has a shield, and the shield is closed.
+        Shielded = 4,
+        /// The docking ports shield is currently opening/closing.
+        Moving = 5,
+    }
+
+    /// The state of a landing leg. See <see cref="M:SpaceCenter.Leg.State" />.
+    enum LegState {
+        /// Landing leg is fully deployed.
+        Deployed = 0,
+        /// Landing leg is fully retracted.
+        Retracted = 1,
+        /// Landing leg is being deployed.
+        Deploying = 2,
+        /// Landing leg is being retracted.
+        Retracting = 3,
+        /// Landing leg is broken.
+        Broken = 4,
+    }
+
+    /// The state of the motor on a powered wheel. See <see cref="M:SpaceCenter.Wheel.MotorState" />.
+    enum MotorState {
+        /// The motor is idle.
+        Idle = 0,
+        /// The motor is running.
+        Running = 1,
+        /// The motor is disabled.
+        Disabled = 2,
+        /// The motor is inoperable.
+        Inoperable = 3,
+        /// The motor does not have enough resources to run.
+        NotEnoughResources = 4,
+    }
+
+    /// The state of a parachute. See <see cref="M:SpaceCenter.Parachute.State" />.
+    enum ParachuteState {
+        /// The parachute is safely tucked away inside its housing.
+        Stowed = 0,
+        /// The parachute is armed for deployment. (RealChutes only)
+        Armed = 1,
+        /// The parachute is still stowed, but ready to semi-deploy.
+        /// (Stock parachutes only)
+        Active = 2,
+        /// The parachute has been deployed and is providing some drag,
+        /// but is not fully deployed yet. (Stock parachutes only)
+        SemiDeployed = 3,
+        /// The parachute is fully deployed.
+        Deployed = 4,
+        /// The parachute has been cut.
+        Cut = 5,
+    }
+
+    /// The state of a radiator. <see cref="T:SpaceCenter.RadiatorState" />
+    enum RadiatorState {
+        /// Radiator is fully extended.
+        Extended = 0,
+        /// Radiator is fully retracted.
+        Retracted = 1,
+        /// Radiator is being extended.
+        Extending = 2,
+        /// Radiator is being retracted.
+        Retracting = 3,
+        /// Radiator is being broken.
+        Broken = 4,
+    }
+
+    /// The state of a resource converter. See <see cref="M:SpaceCenter.ResourceConverter.State" />.
+    enum ResourceConverterState {
+        /// Converter is running.
+        Running = 0,
+        /// Converter is idle.
+        Idle = 1,
+        /// Converter is missing a required resource.
+        MissingResource = 2,
+        /// No available storage for output resource.
+        StorageFull = 3,
+        /// At preset resource capacity.
+        Capacity = 4,
+        /// Unknown state. Possible with modified resource converters.
+        /// In this case, check <see cref="M:SpaceCenter.ResourceConverter.StatusInfo" /> for more information.
+        Unknown = 5,
+    }
+
+    /// The state of a resource harvester. See <see cref="M:SpaceCenter.ResourceHarvester.State" />.
+    enum ResourceHarvesterState {
+        /// The drill is deploying.
+        Deploying = 0,
+        /// The drill is deployed and ready.
+        Deployed = 1,
+        /// The drill is retracting.
+        Retracting = 2,
+        /// The drill is retracted.
+        Retracted = 3,
+        /// The drill is running.
+        Active = 4,
+    }
+
+    /// The state of a solar panel. See <see cref="M:SpaceCenter.SolarPanel.State" />.
+    enum SolarPanelState {
+        /// Solar panel is fully extended.
+        Extended = 0,
+        /// Solar panel is fully retracted.
+        Retracted = 1,
+        /// Solar panel is being extended.
+        Extending = 2,
+        /// Solar panel is being retracted.
+        Retracting = 3,
+        /// Solar panel is broken.
+        Broken = 4,
+    }
+
+    /// The state of a wheel. See <see cref="M:SpaceCenter.Wheel.State" />.
+    enum WheelState {
+        /// Wheel is fully deployed.
+        Deployed = 0,
+        /// Wheel is fully retracted.
+        Retracted = 1,
+        /// Wheel is being deployed.
+        Deploying = 2,
+        /// Wheel is being retracted.
+        Retracting = 3,
+        /// Wheel is broken.
+        Broken = 4,
+    }
+
+    /// The way in which a resource flows between parts. See <see cref="M:SpaceCenter.Resources.FlowMode" />.
+    enum ResourceFlowMode {
+        /// The resource flows to any part in the vessel. For example, electric charge.
+        Vessel = 0,
+        /// The resource flows from parts in the first stage, followed by the second,
+        /// and so on. For example, mono-propellant.
+        Stage = 1,
+        /// The resource flows between adjacent parts within the vessel. For example,
+        /// liquid fuel or oxidizer.
+        Adjacent = 2,
+        /// The resource does not flow. For example, solid fuel.
+        None = 3,
+    }
+
+    /// The behavior of the SAS auto-pilot. See <see cref="M:SpaceCenter.AutoPilot.SASMode" />.
+    enum SASMode {
+        /// Stability assist mode. Dampen out any rotation.
+        StabilityAssist = 0,
+        /// Point in the burn direction of the next maneuver node.
+        Maneuver = 1,
+        /// Point in the prograde direction.
+        Prograde = 2,
+        /// Point in the retrograde direction.
+        Retrograde = 3,
+        /// Point in the orbit normal direction.
+        Normal = 4,
+        /// Point in the orbit anti-normal direction.
+        AntiNormal = 5,
+        /// Point in the orbit radial direction.
+        Radial = 6,
+        /// Point in the orbit anti-radial direction.
+        AntiRadial = 7,
+        /// Point in the direction of the current target.
+        Target = 8,
+        /// Point away from the current target.
+        AntiTarget = 9,
+    }
+
+    /// The mode of the speed reported in the navball.
+    /// See <see cref="M:SpaceCenter.Control.SpeedMode" />.
+    enum SpeedMode {
+        /// Speed is relative to the vessel's orbit.
+        Orbit = 0,
+        /// Speed is relative to the surface of the body being orbited.
+        Surface = 1,
+        /// Speed is relative to the current target.
+        Target = 2,
+    }
+
+    /// The situation a vessel is in.
+    /// See <see cref="M:SpaceCenter.Vessel.Situation" />.
+    enum VesselSituation {
+        /// Vessel is awaiting launch.
+        PreLaunch = 0,
+        /// Vessel is orbiting a body.
+        Orbiting = 1,
+        /// Vessel is on a sub-orbital trajectory.
+        SubOrbital = 2,
+        /// Escaping.
+        Escaping = 3,
+        /// Vessel is flying through an atmosphere.
+        Flying = 4,
+        /// Vessel is landed on the surface of a body.
+        Landed = 5,
+        /// Vessel has splashed down in an ocean.
+        Splashed = 6,
+        /// Vessel is docked to another.
+        Docked = 7,
+    }
+
+    /// The type of a vessel.
+    /// See <see cref="M:SpaceCenter.Vessel.Type" />.
+    enum VesselType {
+        /// Base.
+        Base = 0,
+        /// Debris.
+        Debris = 1,
+        /// Lander.
+        Lander = 2,
+        /// Plane.
+        Plane = 3,
+        /// Probe.
+        Probe = 4,
+        /// Relay.
+        Relay = 5,
+        /// Rover.
+        Rover = 6,
+        /// Ship.
+        Ship = 7,
+        /// Station.
+        Station = 8,
+    }
+
+    /// The time warp mode.
+    /// Returned by <see cref="T:SpaceCenter.WarpMode" />
+    enum WarpMode {
+        /// Time warp is active, and in regular "on-rails" mode.
+        Rails = 0,
+        /// Time warp is active, and in physical time warp mode.
+        Physics = 1,
+        /// Time warp is not active.
+        None = 2,
+    }
+
     /// Clears the current target.
     fn ClearTarget();
 
@@ -5237,7 +5982,87 @@ mod SpaceCenter {
 
 }
 
+/// Provides functionality for drawing and interacting with in-game user interface elements.
+/// 
+/// <remarks>
+/// For drawing 3D objects in the flight scene, see the Drawing service.
+/// </remarks>
 mod UI {
+    /// A text label. See <see cref="M:UI.Panel.AddButton" />.
+    struct Button;
+
+    /// A canvas for user interface elements. See <see cref="M:UI.StockCanvas" /> and <see cref="M:UI.AddCanvas" />.
+    struct Canvas;
+
+    /// An input field. See <see cref="M:UI.Panel.AddInputField" />.
+    struct InputField;
+
+    /// A container for user interface elements. See <see cref="M:UI.Canvas.AddPanel" />.
+    struct Panel;
+
+    /// A Unity engine Rect Transform for a UI object.
+    /// See the <a href="https://docs.unity3d.com/Manual/class-RectTransform.html">Unity manual</a> for more details.
+    struct RectTransform;
+
+    /// A text label. See <see cref="M:UI.Panel.AddText" />.
+    struct Text;
+
+    /// Font style.
+    enum FontStyle {
+        /// Normal.
+        Normal = 0,
+        /// Bold.
+        Bold = 1,
+        /// Italic.
+        Italic = 2,
+        /// Bold and italic.
+        BoldAndItalic = 3,
+    }
+
+    /// Message position.
+    enum MessagePosition {
+        /// Bottom center.
+        BottomCenter = 0,
+        /// Top center.
+        TopCenter = 1,
+        /// Top left.
+        TopLeft = 2,
+        /// Top right.
+        TopRight = 3,
+    }
+
+    /// Text alignment.
+    enum TextAlignment {
+        /// Left aligned.
+        Left = 0,
+        /// Right aligned.
+        Right = 1,
+        /// Center aligned.
+        Center = 2,
+    }
+
+    /// Text alignment.
+    enum TextAnchor {
+        /// Lower center.
+        LowerCenter = 0,
+        /// Lower left.
+        LowerLeft = 1,
+        /// Lower right.
+        LowerRight = 2,
+        /// Middle center.
+        MiddleCenter = 3,
+        /// Middle left.
+        MiddleLeft = 4,
+        /// Middle right.
+        MiddleRight = 5,
+        /// Upper center.
+        UpperCenter = 6,
+        /// Upper left.
+        UpperLeft = 7,
+        /// Upper right.
+        UpperRight = 8,
+    }
+
     /// Add a new canvas.
     /// 
     /// <remarks>

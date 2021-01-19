@@ -8,6 +8,7 @@ edition = "2018"
 
 [dependencies]
 protobuf-but-worse = { path = "../protobuf-but-worse" }
+serde = { version = "1.0.120", features = ["derive"] }
 
 [build-dependencies]
 protobuf-but-worse = { path = "../protobuf-but-worse" }

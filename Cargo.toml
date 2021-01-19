@@ -8,7 +8,7 @@ edition = "2018"
 
 [dependencies]
 midir = "0.7.0"
-minifb = "0.19.1"
 ctrlc = "3.1.7"
-thiserror = "1.0.23"
 krpc = { path = "./krpc" }
+serde = "1.0.120"
+bincode = "1.3.1"

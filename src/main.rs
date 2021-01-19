@@ -1,10 +1,11 @@
 use std::{
+    error::Error,
     net::{Ipv4Addr, SocketAddrV4},
     sync::atomic::{AtomicBool, Ordering},
     time::{Duration, Instant},
 };
 
-use krpc::{dump_procs_sigs, KrpcConnection};
+use krpc::{dump_services_info, KrpcConnection};
 use midi::{
     axiom::{AxiomAirController, AxiomMessage, Button},
     cache::Cache,
@@ -24,15 +25,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     })?;
 
     match std::env::args().nth(1).as_deref() {
+        Some("run") => run()?,
         Some("dump_services") => {
             let mut krpc = KrpcConnection::connect("127.0.0.1:50000", "midi")?;
             println!("TCP connected.");
             // Get list of available procedures on server and dump it to file
             let services = krpc.get_services()?.unwrap();
-            std::fs::write("procs.rs", dump_procs_sigs(&services))?;
-            println!("Done.");
+            let file = std::fs::File::create("procs.bin")?;
+            bincode::serialize_into(file, &services)?;
+            println!("Dumping Done.");
         }
-        Some("run") => run()?,
+        Some("process_services") => {
+            let file = std::fs::File::open("procs.bin")?;
+            let services = bincode::deserialize_from(file)?;
+            std::fs::write("procs.rs", dump_services_info(&services))?;
+            println!("Processing Done.");
+        }
         _ => println!("Usage: midi [run|dump_services]"),
     }
 
@@ -49,8 +57,9 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     println!("TCP connected.");
     let (controller, recv) = AxiomAirController::new()?;
     println!("Midi controller connected.");
+    println!("System: [ARMED]");
 
-    let mut throttle = Cache::new(0);
+    let mut state = ControlState::new();
 
     let mut timer = Instant::now();
     while !STOP.load(Ordering::SeqCst) {
@@ -60,24 +69,19 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                     let is_paused: bool = krpc.is_paused()?.unwrap();
                     krpc.pause(!is_paused)?.unwrap();
                 }
-                AxiomMessage::Stop(Button::Pressed) => {
-                    let mut vessel = krpc.get_active_vessel()?.unwrap();
-                    let mut control = vessel.get_control(&mut krpc)?.unwrap();
-                    let throttle = control.get_throttle(&mut krpc)?.unwrap();
-                    println!("Throttle: {}", throttle);
+                AxiomMessage::Knob(1, v) => state.throttle.set(v),
+                AxiomMessage::Pad(1, v) if v != 0 => {
+                    state.gear.update(|v| *v = !*v)
                 }
-                AxiomMessage::Knob(1, v) => throttle.set(v),
                 _ => (),
             }
         }
-        // Batch network calls
+        // Batch network calls every frame
         if timer.elapsed() > Duration::from_secs(1) / 60 {
-            let mut vessel = krpc.get_active_vessel()?.unwrap();
-            let mut control = vessel.get_control(&mut krpc)?.unwrap();
-            if let Some(throttle) = throttle.get() {
-                control
-                    .set_throttle(&mut krpc, throttle as f32 / 127.0)?
-                    .unwrap();
+            if state.any_has_changed() {
+                if let Err(e) = state.update_server(&mut krpc) {
+                    eprintln!("Update error: {:?}", e);
+                }
             }
             timer = Instant::now();
         }
@@ -85,4 +89,44 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
 
     controller.close()?;
     Ok(())
+}
+
+struct ControlState {
+    pub throttle: Cache<u8>,
+    pub gear: Cache<bool>,
+}
+
+impl ControlState {
+    pub fn new() -> Self {
+        Self {
+            throttle: Cache::new(0),
+            gear: Cache::new(false),
+        }
+    }
+
+    pub fn any_has_changed(&self) -> bool {
+        self.throttle.has_changed() || self.gear.has_changed()
+    }
+
+    pub fn update_server(
+        &mut self,
+        krpc: &mut KrpcConnection,
+    ) -> Result<(), Box<dyn Error>> {
+        let vessel =
+            krpc.get_active_vessel()?.map_err(|x| format!("{:?}", x))?;
+        let control =
+            vessel.get_control(krpc)?.map_err(|x| format!("{:?}", x))?;
+        if let Some(throttle) = self.throttle.get() {
+            let throttle = throttle as f32 / 127.0;
+            control
+                .set_throttle(krpc, throttle)?
+                .map_err(|x| format!("{:?}", x))?;
+        }
+        if let Some(gear) = self.gear.get() {
+            control
+                .set_gear(krpc, gear)?
+                .map_err(|x| format!("{:?}", x))?;
+        }
+        Ok(())
+    }
 }

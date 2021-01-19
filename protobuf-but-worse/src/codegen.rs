@@ -69,7 +69,10 @@ pub fn gen_proto(proto: &FileDescriptor) -> syn::Result<String> {
 
     let mut file = quote! {};
 
-    let import = quote! { use protobuf_but_worse::encoding::*; };
+    let import = quote! {
+        use serde::{Serialize, Deserialize};
+        use protobuf_but_worse::encoding::*;
+    };
     file = quote! { #file #import };
 
     for message in &proto.messages {
@@ -122,7 +125,7 @@ fn gen_message(
         fields = quote! { #fields pub #field_name: #field_type, };
     }
     let main_struct = quote! {
-        #[derive(Clone, PartialEq, Debug)]
+        #[derive(Clone, PartialEq, Debug, Serialize, Deserialize)]
         pub struct #struct_name { #fields }
     };
 
@@ -382,7 +385,7 @@ fn gen_enum(e: &Enumeration) -> syn::Result<proc_macro2::TokenStream> {
     }
     Ok(quote! {
         #[repr(u32)]
-        #[derive(Clone, Copy, PartialEq, Debug)]
+        #[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
         pub enum #name {
             #variants
         }
@@ -391,7 +394,9 @@ fn gen_enum(e: &Enumeration) -> syn::Result<proc_macro2::TokenStream> {
                 Varint(*self as u32).size()
             }
 
-            fn encode<W: std::io::Write>(&self, w: W) -> Result<(), EncodingError> {
+            fn encode<W: std::io::Write>(&self, w: W)
+                -> Result<(), EncodingError>
+            {
                 Varint(*self as u32).encode(w)
             }
         }
@@ -399,7 +404,8 @@ fn gen_enum(e: &Enumeration) -> syn::Result<proc_macro2::TokenStream> {
             fn decode<R: std::io::Read>(r: R) -> Result<Self, EncodingError> {
                 match <Varint<u32>>::decode(r)?.0 {
                     #match_variants
-                    e => Err(EncodingError::InvalidEnumValue(stringify!(#name), e)),
+                    e => Err(EncodingError::InvalidEnumValue(
+                        stringify!(#name), e)),
                 }
             }
         }
