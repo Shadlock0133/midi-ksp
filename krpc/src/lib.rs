@@ -1,6 +1,9 @@
-use std::fmt::Write;
+use std::{collections::HashMap, fmt::Write};
 
-use krpc_proto::{Class, Enumeration, EnumerationValue, Procedure, Services};
+use krpc_proto::{
+    r#type::TypeCode, Class, Enumeration, EnumerationValue, Procedure,
+    Services, Type,
+};
 
 mod class;
 pub mod connection;
@@ -16,7 +19,17 @@ fn clean_doc(doc: &Option<String>) -> String {
     doc = doc
         .replace("<returns>", "# Returns\n\n")
         .replace("</returns>", "\n");
-    doc = doc.replace("<see cref=\"M:", "").replace("\" />", "");
+    doc = doc
+        .replace("<remarks>", "# Remarks\n")
+        .replace("</remarks>", "\n");
+    doc = doc
+        .replace("<item><description>", "- ")
+        .replace("</description></item>", "\n");
+    doc = doc
+        .replace("<list type=\"bullet\">", "")
+        .replace("</list>", "");
+    doc = doc.replace("<see cref=\"", "").replace("\" />", "");
+    doc = doc.replace("<c>", "`").replace("</c>", "`");
     let doc = doc.trim();
 
     let mut res = String::new();
@@ -55,24 +68,57 @@ pub fn print_enumeration(enumeration: &Enumeration) -> String {
     res
 }
 
+pub fn print_type(r#type: &Type) -> String {
+    let mut res = String::new();
+    let code = r#type.code.as_ref().unwrap();
+    match code {
+        krpc_proto::r#type::TypeCode::Tuple => {
+            write!(res, "(").unwrap();
+            for t in &r#type.types {
+                write!(res, "{}, ", print_type(&t)).unwrap();
+            }
+            res = res.trim_end().to_string();
+            write!(res, ")").unwrap();
+        }
+        krpc_proto::r#type::TypeCode::List => {
+            assert_eq!(r#type.types.len(), 1);
+            write!(res, "List<").unwrap();
+            let t = r#type.types.first().unwrap();
+            write!(res, "{}", print_type(&t)).unwrap();
+            write!(res, ">").unwrap();
+        }
+        c if !r#type.types.is_empty() => write!(res, "{:?}<>", c).unwrap(),
+        c => write!(res, "{:?}", c).unwrap(),
+    }
+    res
+}
+
 pub fn print_procedure(procedure: &Procedure) -> String {
     let mut res = String::new();
 
     res += &clean_doc(&procedure.documentation);
 
-    write!(res, "fn {}(", procedure.name.as_ref().unwrap()).unwrap();
+    let mut name = procedure.name.as_deref().unwrap();
+    if is_method(procedure) {
+        name = name.split_at(name.find('_').unwrap() + 1).1;
+    }
+    write!(res, "fn {}(", name).unwrap();
     if let Some(param) = &procedure.parameters.first() {
-        let name = match param.name.as_deref().unwrap().trim() {
-            "type" => "r#type",
-            n => n,
-        };
-        write!(
-            res,
-            "{}: {:?}",
-            name,
-            param.r#type.as_ref().unwrap().code.as_ref().unwrap()
-        )
-        .unwrap();
+        if is_method(procedure) {
+            write!(res, "&self").unwrap();
+        } else {
+            let name = match param.name.as_deref().unwrap().trim() {
+                "type" => "r#type",
+                n => n,
+            };
+            write!(
+                res,
+                "{}: {}",
+                name,
+                print_type(param.r#type.as_ref().unwrap())
+            )
+            .unwrap();
+        }
         for param in &procedure.parameters[1..] {
             let name = match param.name.as_deref().unwrap().trim() {
                 "type" => "r#type",
@@ -80,22 +126,21 @@ pub fn print_procedure(procedure: &Procedure) -> String {
             };
             write!(
                 res,
-                ", {}: {:?}",
+                ", {}: {}",
                 name,
-                param.r#type.as_ref().unwrap().code.as_ref().unwrap()
+                print_type(param.r#type.as_ref().unwrap())
             )
             .unwrap();
         }
     }
     write!(res, ")").unwrap();
 
-    if let Some(ret) =
-        procedure.return_type.as_ref().and_then(|x| x.code.as_ref())
-    {
+    if let Some(ret) = procedure.return_type.as_ref() {
+        let ret = print_type(&ret);
         if matches!(procedure.return_is_nullable, Some(true)) {
-            write!(res, " -> Option<{:?}>", ret).unwrap();
+            write!(res, " -> Option<{}>", ret).unwrap();
         } else {
-            write!(res, " -> {:?}", ret).unwrap();
+            write!(res, " -> {}", ret).unwrap();
         }
     }
     if let Some(first) = procedure.game_scenes.first() {
@@ -110,6 +155,37 @@ pub fn print_procedure(procedure: &Procedure) -> String {
     res
 }
 
+fn is_method(p: &Procedure) -> bool {
+    p.parameters
+        .first()
+        .filter(|f| {
+            let name = f.name.as_deref();
+            let code = f.r#type.as_ref().and_then(|t| t.code);
+            name == Some("this") && code == Some(TypeCode::Class)
+        })
+        .is_some()
+}
+
+// Turns list of procedures into list of class impl's + list of free procedures
+fn declasser(
+    procedures: &[Procedure],
+) -> (HashMap<&str, Vec<&Procedure>>, Vec<&Procedure>) {
+    let mut map: HashMap<_, Vec<_>> = HashMap::new();
+    let mut free = vec![];
+
+    for p in procedures {
+        if is_method(p) {
+            let name = p.name.as_ref().unwrap();
+            let (class_name, _) = name.split_at(name.find("_").unwrap());
+            map.entry(class_name).or_default().push(p);
+        } else {
+            free.push(p);
+        }
+    }
+
+    (map, free)
+}
+
 fn wrap_comments(text: String, line_width: usize) -> String {
     let mut res = String::new();
     for line in text.lines() {
@@ -118,16 +194,16 @@ fn wrap_comments(text: String, line_width: usize) -> String {
             let (prefix, mut line) = line.split_at(pos + 4);
             // Correct line width for indent and slashes
             let line_width = line_width - prefix.len();
+            let mut wrapped = false;
             while line.chars().count() > line_width {
-                let last_space = line
-                    .char_indices()
-                    .take(line_width)
-                    .fold(None, |acc, x| {
-                        match x.1 {
-                            ' ' => Some(x.0),
-                            _ => acc,
-                        }
-                    });
+                wrapped = true;
+                let last_space = line.char_indices().take(line_width).fold(
+                    None,
+                    |acc, x| match x.1 {
+                        ' ' => Some(x.0),
+                        _ => acc,
+                    },
+                );
                 if let Some(i) = last_space {
                     let (comment, rest) = line.split_at(i);
                     // Skip space
@@ -138,7 +214,9 @@ fn wrap_comments(text: String, line_width: usize) -> String {
                     line = "";
                 }
             }
-            writeln!(res, "{}{}", prefix, line).unwrap();
+            if !line.is_empty() || !wrapped {
+                writeln!(res, "{}{}", prefix, line).unwrap();
+            }
         } else {
             writeln!(res, "{}", line).unwrap();
         }
@@ -166,11 +244,24 @@ pub fn dump_services_info(services: &Services) -> String {
             }
             writeln!(res).unwrap();
         }
-        for proc in &service.procedures {
+        let (map, free) = declasser(&service.procedures);
+        for proc in &free {
             let text = print_procedure(proc);
             for line in text.lines() {
                 writeln!(res, "    {}", line).unwrap();
             }
+            writeln!(res).unwrap();
+        }
+        for (class, procs) in &map {
+            writeln!(res, "    impl {} {{", class).unwrap();
+            for proc in procs {
+                let text = print_procedure(proc);
+                for line in text.lines() {
+                    writeln!(res, "        {}", line).unwrap();
+                }
+                writeln!(res).unwrap();
+            }
+            writeln!(res, "    }}").unwrap();
             writeln!(res).unwrap();
         }
         writeln!(res, "}}").unwrap();

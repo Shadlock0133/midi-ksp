@@ -41,7 +41,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             std::fs::write("procs.rs", dump_services_info(&services))?;
             println!("Processing Done.");
         }
-        _ => println!("Usage: midi [run|dump_services]"),
+        _ => println!("Usage: midi [run|dump_services|process_services]"),
     }
 
     Ok(())
