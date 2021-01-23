@@ -6,12 +6,12 @@ use std::{
 
 use krpc_proto::{
     connection_request::Type, connection_response::Status, Argument,
-    ConnectionRequest, ConnectionResponse, Error, ProcedureCall, Request,
-    Response, Services,
+    ConnectionRequest, ConnectionResponse, ProcedureCall, Request, Response,
+    Services,
 };
 use protobuf_but_worse::encoding::*;
 
-use crate::vessel::Vessel;
+use crate::{vessel::Vessel, CallResult};
 
 pub struct KrpcConnection {
     stream: TcpStream,
@@ -65,30 +65,26 @@ impl KrpcConnection {
         Ok(Self { stream })
     }
 
-    pub fn get_status(
-        &mut self,
-    ) -> EncodingResult<Result<krpc_proto::Status, Error>> {
+    pub fn get_status(&mut self) -> CallResult<krpc_proto::Status> {
         self.call("KRPC", "GetStatus", &[])
     }
 
-    pub fn get_services(&mut self) -> EncodingResult<Result<Services, Error>> {
+    pub fn get_services(&mut self) -> CallResult<Services> {
         self.call("KRPC", "GetServices", &[])
     }
 
-    pub fn is_paused(&mut self) -> EncodingResult<Result<bool, Error>> {
+    pub fn is_paused(&mut self) -> CallResult<bool> {
         self.call("KRPC", "get_Paused", &[])
     }
 
-    pub fn pause(&mut self, value: bool) -> EncodingResult<Result<(), Error>> {
+    pub fn pause(&mut self, value: bool) -> CallResult {
         self.call("KRPC", "set_Paused", &[&value])
     }
 
-    pub fn get_active_vessel(
-        &mut self,
-    ) -> EncodingResult<Result<Vessel, Error>> {
+    pub fn get_active_vessel(&mut self) -> CallResult<Vessel> {
         self.call("SpaceCenter", "get_ActiveVessel", &[]).map(|r| {
             let class = r?;
-            Ok(Vessel { class })
+            Ok(Vessel::new(class))
         })
     }
 
@@ -102,7 +98,7 @@ impl KrpcConnection {
         service: impl Into<String>,
         procedure: impl Into<String>,
         arguments: &[&dyn EncodeDyn],
-    ) -> EncodingResult<Result<T, Error>> {
+    ) -> CallResult<T> {
         let service = Some(service.into());
         let procedure = Some(procedure.into());
         let arguments = arguments

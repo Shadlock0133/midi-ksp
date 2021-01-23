@@ -1,9 +1,6 @@
 use std::{collections::HashMap, fmt::Write};
 
-use krpc_proto::{
-    r#type::TypeCode, Class, Enumeration, EnumerationValue, Procedure,
-    Services, Type,
-};
+use krpc_proto::{Class, Enumeration, EnumerationValue, Error, Procedure, Services, Type, r#type::TypeCode};
 
 mod class;
 pub mod connection;
@@ -11,6 +8,9 @@ pub mod control;
 pub mod vessel;
 
 pub use connection::KrpcConnection;
+use protobuf_but_worse::encoding::EncodingResult;
+
+type CallResult<T = ()> = EncodingResult<Result<T, Error>>;
 
 fn clean_doc(doc: &Option<String>) -> String {
     let mut doc = doc.as_deref().unwrap_or_default().to_string();
@@ -39,14 +39,14 @@ fn clean_doc(doc: &Option<String>) -> String {
     res
 }
 
-pub fn print_class(class: &Class) -> String {
+fn print_class(class: &Class) -> String {
     let mut res = String::new();
     res += &clean_doc(&class.documentation);
     writeln!(res, "struct {};", class.name.as_ref().unwrap()).unwrap();
     res
 }
 
-pub fn print_enumeration_value(value: &EnumerationValue) -> String {
+fn print_enumeration_value(value: &EnumerationValue) -> String {
     let mut res = String::new();
     res += &clean_doc(&value.documentation);
     let name = value.name.as_deref().unwrap();
@@ -55,7 +55,7 @@ pub fn print_enumeration_value(value: &EnumerationValue) -> String {
     res
 }
 
-pub fn print_enumeration(enumeration: &Enumeration) -> String {
+fn print_enumeration(enumeration: &Enumeration) -> String {
     let mut res = String::new();
     res += &clean_doc(&enumeration.documentation);
     writeln!(res, "enum {} {{", enumeration.name.as_ref().unwrap()).unwrap();
@@ -68,7 +68,7 @@ pub fn print_enumeration(enumeration: &Enumeration) -> String {
     res
 }
 
-pub fn print_type(r#type: &Type) -> String {
+fn print_type(r#type: &Type) -> String {
     let mut res = String::new();
     let code = r#type.code.as_ref().unwrap();
     match code {
@@ -93,18 +93,25 @@ pub fn print_type(r#type: &Type) -> String {
     res
 }
 
-pub fn print_procedure(procedure: &Procedure) -> String {
+fn print_procedure(procedure: &Procedure) -> String {
     let mut res = String::new();
 
     res += &clean_doc(&procedure.documentation);
 
     let mut name = procedure.name.as_deref().unwrap();
-    if is_method(procedure) {
+    writeln!(res, "/// real name: {}", name).unwrap();
+    
+    // We have to do method name stripping here,
+    // because parameters are immutable
+    if is_nonstatic_method(procedure) {
         name = name.split_at(name.find('_').unwrap() + 1).1;
+    } else if is_static_method(procedure) {
+        name = name.split_at(name.find('_').unwrap() + 1).1;
+        name = name.strip_prefix("static_").unwrap();
     }
     write!(res, "fn {}(", name).unwrap();
     if let Some(param) = &procedure.parameters.first() {
-        if is_method(procedure) {
+        if is_nonstatic_method(procedure) {
             write!(res, "&self").unwrap();
         } else {
             let name = match param.name.as_deref().unwrap().trim() {
@@ -155,7 +162,8 @@ pub fn print_procedure(procedure: &Procedure) -> String {
     res
 }
 
-fn is_method(p: &Procedure) -> bool {
+// Checks if first parameter is `this: Class`
+fn is_nonstatic_method(p: &Procedure) -> bool {
     p.parameters
         .first()
         .filter(|f| {
@@ -166,6 +174,10 @@ fn is_method(p: &Procedure) -> bool {
         .is_some()
 }
 
+fn is_static_method(p: &Procedure) -> bool {
+    p.name.as_deref().unwrap().contains("_static_")
+}
+
 // Turns list of procedures into list of class impl's + list of free procedures
 fn declasser(
     procedures: &[Procedure],
@@ -174,7 +186,7 @@ fn declasser(
     let mut free = vec![];
 
     for p in procedures {
-        if is_method(p) {
+        if is_nonstatic_method(p) || is_static_method(p) {
             let name = p.name.as_ref().unwrap();
             let (class_name, _) = name.split_at(name.find("_").unwrap());
             map.entry(class_name).or_default().push(p);
@@ -252,6 +264,8 @@ pub fn dump_services_info(services: &Services) -> String {
             }
             writeln!(res).unwrap();
         }
+        let mut map: Vec<_> = map.into_iter().collect();
+        map.sort_by_key(|&(name, _)| name);
         for (class, procs) in &map {
             writeln!(res, "    impl {} {{", class).unwrap();
             for proc in procs {

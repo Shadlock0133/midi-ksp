@@ -55,6 +55,15 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         "midi",
     )?;
     println!("TCP connected.");
+    let status = krpc.get_status()?;
+    match status {
+        Ok(status) => println!(
+            "Krpc version: {}",
+            status.version.as_deref().unwrap_or("<missing>")
+        ),
+        Err(e) => println!("Error getting status: {:?}", e),
+    }
+
     let (controller, recv) = AxiomAirController::new()?;
     println!("Midi controller connected.");
     println!("System: [ARMED]");

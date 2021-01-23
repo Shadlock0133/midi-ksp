@@ -1,28 +1,29 @@
-use krpc_proto::Error;
-use protobuf_but_worse::encoding::EncodingResult;
-
-use crate::{class::Class, control::Control, KrpcConnection};
+use crate::{CallResult, KrpcConnection, class::Class, control::Control};
 
 pub struct Vessel {
-    pub(crate) class: Class,
+    class: Class,
 }
 
 impl Vessel {
+    pub(crate) fn new(class: Class) -> Self {
+        Self { class }
+    }
+
     pub fn name(
         &self,
         krpc: &mut KrpcConnection,
-    ) -> EncodingResult<Result<String, Error>> {
+    ) -> CallResult<String> {
         krpc.call("SpaceCenter", "Vessel_get_Name", &[&self.class])
     }
 
     pub fn get_control(
         &self,
         krpc: &mut KrpcConnection,
-    ) -> EncodingResult<Result<Control, Error>> {
+    ) -> CallResult<Control> {
         krpc.call("SpaceCenter", "Vessel_get_Control", &[&self.class])
             .map(|r| {
                 let class = r?;
-                Ok(Control { class })
+                Ok(Control::new(class))
             })
     }
 }

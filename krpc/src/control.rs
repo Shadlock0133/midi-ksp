@@ -1,32 +1,15 @@
-use krpc_proto::{Error, List};
-use protobuf_but_worse::encoding::EncodingResult;
+use krpc_proto::List;
+use protobuf_but_worse::encoding::Varint;
 
-use crate::{class::Class, KrpcConnection};
+use crate::{CallResult, KrpcConnection, class::Class};
 
 pub struct Control {
-    pub(crate) class: Class,
+    class: Class,
 }
 
 impl Control {
-    /// The state of the throttle. A value between 0 and 1.
-    pub fn set_throttle(
-        &self,
-        krpc: &mut KrpcConnection,
-        value: f32,
-    ) -> EncodingResult<Result<(), Error>> {
-        krpc.call(
-            "SpaceCenter",
-            "Control_set_Throttle",
-            &[&self.class, &value],
-        )
-    }
-
-    /// The state of the throttle. A value between 0 and 1.
-    pub fn get_throttle(
-        &self,
-        krpc: &mut KrpcConnection,
-    ) -> EncodingResult<Result<f32, Error>> {
-        krpc.call("SpaceCenter", "Control_get_Throttle", &[&self.class])
+    pub(crate) fn new(class: Class) -> Self {
+        Self { class }
     }
 
     /// Activates the next stage. Equivalent to pressing the space bar in-game.
@@ -43,15 +26,53 @@ impl Control {
     pub fn activate_next_stage(
         &self,
         krpc: &mut KrpcConnection,
-    ) -> EncodingResult<Result<List, Error>> {
+    ) -> CallResult<List> {
         krpc.call("SpaceCenter", "Control_ActivateNextStage", &[&self.class])
+    }
+
+    // Toggles the state of the given action group.
+    ///
+    /// `group` is a number between 0 and 9 inclusive,
+    /// or between 0 and 250 inclusive when the Extended Action Groups mod is
+    /// installed.
+    pub fn toggle_action_group(
+        &self,
+        krpc: &mut KrpcConnection,
+        group: u32,
+    ) -> CallResult {
+        krpc.call(
+            "SpaceCenter",
+            "Control_ToggleActionGroup",
+            &[&self.class, &Varint(group)],
+        )
+    }
+
+    /// The state of the throttle. A value between 0 and 1.
+    pub fn set_throttle(
+        &self,
+        krpc: &mut KrpcConnection,
+        value: f32,
+    ) -> CallResult {
+        krpc.call(
+            "SpaceCenter",
+            "Control_set_Throttle",
+            &[&self.class, &value],
+        )
+    }
+
+    /// The state of the throttle. A value between 0 and 1.
+    pub fn get_throttle(
+        &self,
+        krpc: &mut KrpcConnection,
+    ) -> CallResult<f32> {
+        krpc.call("SpaceCenter", "Control_get_Throttle", &[&self.class])
     }
 
     /// The state of the landing gear/legs.
     pub fn get_gear(
         &self,
         krpc: &mut KrpcConnection,
-    ) -> EncodingResult<Result<bool, Error>> {
+    ) -> CallResult<bool> {
         krpc.call("SpaceCenter", "Control_get_Gear", &[&self.class])
     }
 
@@ -60,7 +81,7 @@ impl Control {
         &self,
         krpc: &mut KrpcConnection,
         value: bool,
-    ) -> EncodingResult<Result<(), Error>> {
+    ) -> CallResult {
         krpc.call("SpaceCenter", "Control_set_Gear", &[&self.class, &value])
     }
 }

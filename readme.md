@@ -15,4 +15,6 @@ Caveats:
 `krpc-proto` crate contains generated code from mod-supplied `krpc.proto`
 
 `procs.rs` is not a real rust file, it's just a easier-to-read dump of
-available procedures from server
+available procedures from server. Methods' real names are `Class_Proc`, so
+for `impl Control { fn get_Gear(&self) -> Bool; ]`,
+real sig is `Control_get_Gear(this: Class) -> Bool`

@@ -139,10 +139,10 @@ impl AxiomMessage {
 
 fn get_input_port<'a>(
     midi_in: &MidiInput,
-    name: &str,
+    device: &str,
 ) -> Result<MidiInputPort, PortInfoError> {
     for p in midi_in.ports() {
-        if midi_in.port_name(&p)? == name {
+        if midi_in.port_name(&p)? == device {
             return Ok(p);
         }
     }
@@ -151,10 +151,10 @@ fn get_input_port<'a>(
 
 fn get_output_port<'a>(
     midi_out: &MidiOutput,
-    name: &str,
+    device: &str,
 ) -> Result<MidiOutputPort, PortInfoError> {
     for p in midi_out.ports() {
-        if midi_out.port_name(&p)? == name {
+        if midi_out.port_name(&p)? == device {
             return Ok(p);
         }
     }
@@ -163,6 +163,7 @@ fn get_output_port<'a>(
 
 fn connect_input<F>(
     name: &str,
+    device: &str,
     callback: F,
 ) -> Result<MidiInputConnection<()>, Box<dyn std::error::Error>>
 where
@@ -170,8 +171,8 @@ where
 {
     let mut midi_in = MidiInput::new("test")?;
     midi_in.ignore(Ignore::None);
-    let port = get_input_port(&midi_in, name)?;
-    Ok(midi_in.connect(&port, "midir-input", callback, ())?)
+    let port = get_input_port(&midi_in, device)?;
+    Ok(midi_in.connect(&port, name, callback, ())?)
 }
 
 pub struct AxiomAirController {
@@ -184,7 +185,7 @@ impl AxiomAirController {
     pub fn new(
     ) -> Result<(Self, Receiver<AxiomMessage>), Box<dyn std::error::Error>>
     {
-        let midi_out = MidiOutput::new("test")?;
+        let midi_out = MidiOutput::new("ksp")?;
         let out_port =
             get_output_port(&midi_out, "Axiom AIR Mini 32 HyperCtrl")?;
         let mut conn_out = midi_out.connect(&out_port, "midir-write-output")?;
@@ -196,6 +197,7 @@ impl AxiomAirController {
         let (sender, recv) = std::sync::mpsc::channel();
         let sender2 = sender.clone();
         let midi1 = connect_input(
+            "ksp1",
             "Axiom AIR Mini 32 MIDI In",
             move |_, message, _| {
                 if let Ok(message) = MidiMessage::parse(message) {
@@ -206,6 +208,7 @@ impl AxiomAirController {
             },
         )?;
         let midi2 = connect_input(
+            "ksp2",
             "Axiom AIR Mini 32 HyperCtrl",
             move |_, message, _| {
                 if let Ok(message) = MidiMessage::parse(message) {
