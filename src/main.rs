@@ -6,7 +6,7 @@ use std::{
 };
 
 use krpc::{dump_services_info, KrpcConnection};
-use midi::{
+use midi_ksp::{
     axiom::{AxiomAirController, AxiomMessage, Button},
     cache::Cache,
 };
