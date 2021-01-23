@@ -4,14 +4,16 @@ use krpc_proto::{
     r#type::TypeCode, Class, Enumeration, EnumerationValue, Error, Procedure,
     Services, Type,
 };
+use protobuf_but_worse::encoding::EncodingResult;
 
 mod class;
-pub mod connection;
-pub mod control;
-pub mod vessel;
+mod connection;
+mod control;
+mod vessel;
 
 pub use connection::KrpcConnection;
-use protobuf_but_worse::encoding::EncodingResult;
+pub use control::Control;
+pub use vessel::Vessel;
 
 type CallResult<T = ()> = EncodingResult<Result<T, Error>>;
 
@@ -76,6 +78,7 @@ fn print_type(r#type: &Type) -> String {
     let code = r#type.code.as_ref().unwrap();
     match code {
         krpc_proto::r#type::TypeCode::Tuple => {
+            assert!(r#type.types.len() >= 1);
             write!(res, "(").unwrap();
             for t in &r#type.types {
                 write!(res, "{}, ", print_type(&t)).unwrap();
@@ -86,11 +89,26 @@ fn print_type(r#type: &Type) -> String {
         krpc_proto::r#type::TypeCode::List => {
             assert_eq!(r#type.types.len(), 1);
             write!(res, "List<").unwrap();
-            let t = r#type.types.first().unwrap();
-            write!(res, "{}", print_type(&t)).unwrap();
+            let t = &r#type.types[0];
+            write!(res, "{}", print_type(t)).unwrap();
             write!(res, ">").unwrap();
         }
-        c if !r#type.types.is_empty() => write!(res, "{:?}<>", c).unwrap(),
+        krpc_proto::r#type::TypeCode::Set => {
+            assert_eq!(r#type.types.len(), 1);
+            write!(res, "Set<").unwrap();
+            let t = &r#type.types[0];
+            write!(res, "{}", print_type(t)).unwrap();
+            write!(res, ">").unwrap();
+        }
+        krpc_proto::r#type::TypeCode::Dictionary => {
+            assert_eq!(r#type.types.len(), 2);
+            write!(res, "Dictionary<").unwrap();
+            let k = &r#type.types[0];
+            let v = &r#type.types[1];
+            write!(res, "{}, {}", print_type(k), print_type(v)).unwrap();
+            write!(res, ">").unwrap();
+        }
+        c if !r#type.types.is_empty() => panic!("{:?} has sub-types", c),
         c => write!(res, "{:?}", c).unwrap(),
     }
     res

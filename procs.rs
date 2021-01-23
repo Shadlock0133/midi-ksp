@@ -285,7 +285,7 @@ mod KRPC {
         /// <param name="function">The function to call.</param>
         /// <param name="args">The arguments to call the function with.</param>
         /// real name: Expression_static_Invoke
-        fn Invoke(function: Class, args: Dictionary<>) -> Class;
+        fn Invoke(function: Class, args: Dictionary<String, Class>) -> Class;
 
         /// Construct a tuple.
         /// 
@@ -317,7 +317,7 @@ mod KRPC {
         /// <param name="values">The values. Should all be of the same
         /// type.</param>
         /// real name: Expression_static_CreateSet
-        fn CreateSet(values: Set<>) -> Class;
+        fn CreateSet(values: Set<Class>) -> Class;
 
         /// Construct a dictionary, from a list of corresponding keys and
         /// values.
@@ -2390,7 +2390,7 @@ mod SpaceCenter {
     /// A dictionary of all celestial bodies (planets, moons, etc.) in the game,
     /// keyed by the name of the body.
     /// real name: get_Bodies
-    fn get_Bodies() -> Dictionary<>;
+    fn get_Bodies() -> Dictionary<String, Class>;
 
     /// The currently targeted celestial body.
     /// real name: get_TargetBody
@@ -3338,7 +3338,7 @@ mod SpaceCenter {
 
         /// The biomes present on this body.
         /// real name: CelestialBody_get_Biomes
-        fn get_Biomes(&self) -> Set<>;
+        fn get_Biomes(&self) -> Set<String>;
 
         /// The altitude, in meters, above which a vessel is considered to be
         /// flying "high" when doing science.
@@ -3568,7 +3568,7 @@ mod SpaceCenter {
     impl ContractManager {
         /// A list of all contract types.
         /// real name: ContractManager_get_Types
-        fn get_Types(&self) -> Set<>;
+        fn get_Types(&self) -> Set<String>;
 
         /// A list of all contracts.
         /// real name: ContractManager_get_AllContracts
@@ -4479,7 +4479,7 @@ mod SpaceCenter {
         /// 0.6 units of LiquidFuel that the engine burns, it will burn 0.4
         /// units of Oxidizer.
         /// real name: Engine_get_PropellantRatios
-        fn get_PropellantRatios(&self) -> Dictionary<>;
+        fn get_PropellantRatios(&self) -> Dictionary<String, Float>;
 
         /// Whether the engine has any fuel available.
         /// 
@@ -4535,7 +4535,7 @@ mod SpaceCenter {
         /// The available modes for the engine.
         /// A dictionary mapping mode names to T:SpaceCenter.Engine objects.
         /// real name: Engine_get_Modes
-        fn get_Modes(&self) -> Dictionary<>;
+        fn get_Modes(&self) -> Dictionary<String, Class>;
 
         /// Whether the engine will automatically switch modes.
         /// real name: Engine_get_AutoModeSwitch
@@ -5250,7 +5250,7 @@ mod SpaceCenter {
         /// dictionary.
         /// These are the values visible in the right-click menu of the part.
         /// real name: Module_get_Fields
-        fn get_Fields(&self) -> Dictionary<>;
+        fn get_Fields(&self) -> Dictionary<String, String>;
 
         /// A list of the names of all of the modules events. Events are the
         /// clickable buttons
@@ -6629,7 +6629,7 @@ mod SpaceCenter {
         /// resource names
         /// to the ratios at which they are consumed by the RCS.
         /// real name: RCS_get_PropellantRatios
-        fn get_PropellantRatios(&self) -> Dictionary<>;
+        fn get_PropellantRatios(&self) -> Dictionary<String, Float>;
 
         /// Whether the RCS has fuel available.
         /// 
@@ -7769,7 +7769,7 @@ mod SpaceCenter {
         /// An example map of known color - seed pairs.
         /// Any other integers may be used as seed.
         /// real name: WaypointManager_get_Colors
-        fn get_Colors(&self) -> Dictionary<>;
+        fn get_Colors(&self) -> Dictionary<String, Sint32>;
 
     }
 
