@@ -21,7 +21,7 @@ Caveats:
 None for default values like `false` bool, `0` int or `Foo = 0` enum variant,
 possibly panic on required field
 - contrary to above, we do send default values.
-Specs don't say that's illegal so `¯\_(ツ)_/¯`
+Specs don't say that's illegal so ¯\\\_(ツ)\_/¯
 
 `krpc` wraps generated protobuf code and provides more rusty interface. Very WIP
 
