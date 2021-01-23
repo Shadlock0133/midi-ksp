@@ -1,7 +1,7 @@
 use krpc_proto::List;
 use protobuf_but_worse::encoding::Varint;
 
-use crate::{CallResult, KrpcConnection, class::Class};
+use crate::{class::Class, CallResult, KrpcConnection};
 
 pub struct Control {
     class: Class,
@@ -61,18 +61,12 @@ impl Control {
     }
 
     /// The state of the throttle. A value between 0 and 1.
-    pub fn get_throttle(
-        &self,
-        krpc: &mut KrpcConnection,
-    ) -> CallResult<f32> {
+    pub fn get_throttle(&self, krpc: &mut KrpcConnection) -> CallResult<f32> {
         krpc.call("SpaceCenter", "Control_get_Throttle", &[&self.class])
     }
 
     /// The state of the landing gear/legs.
-    pub fn get_gear(
-        &self,
-        krpc: &mut KrpcConnection,
-    ) -> CallResult<bool> {
+    pub fn get_gear(&self, krpc: &mut KrpcConnection) -> CallResult<bool> {
         krpc.call("SpaceCenter", "Control_get_Gear", &[&self.class])
     }
 

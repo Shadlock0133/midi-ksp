@@ -10,6 +10,8 @@ features, I only implemented what needed for krpc.
 Pure Rust, using crates:
 - `protobuf-parser`, a nom 3 parser, for reading `.proto` files
 - `syn` & co. for codegen
+- `heck` for case conversion
+- `thiserror` for derive(Error)
 
 Caveats:
 - doesn't handle unknown fields, currently they just get ignored

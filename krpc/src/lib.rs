@@ -1,6 +1,9 @@
 use std::{collections::HashMap, fmt::Write};
 
-use krpc_proto::{Class, Enumeration, EnumerationValue, Error, Procedure, Services, Type, r#type::TypeCode};
+use krpc_proto::{
+    r#type::TypeCode, Class, Enumeration, EnumerationValue, Error, Procedure,
+    Services, Type,
+};
 
 mod class;
 pub mod connection;
@@ -100,7 +103,7 @@ fn print_procedure(procedure: &Procedure) -> String {
 
     let mut name = procedure.name.as_deref().unwrap();
     writeln!(res, "/// real name: {}", name).unwrap();
-    
+
     // We have to do method name stripping here,
     // because parameters are immutable
     if is_nonstatic_method(procedure) {

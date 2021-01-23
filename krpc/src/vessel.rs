@@ -1,4 +1,4 @@
-use crate::{CallResult, KrpcConnection, class::Class, control::Control};
+use crate::{class::Class, control::Control, CallResult, KrpcConnection};
 
 pub struct Vessel {
     class: Class,
@@ -9,10 +9,7 @@ impl Vessel {
         Self { class }
     }
 
-    pub fn name(
-        &self,
-        krpc: &mut KrpcConnection,
-    ) -> CallResult<String> {
+    pub fn name(&self, krpc: &mut KrpcConnection) -> CallResult<String> {
         krpc.call("SpaceCenter", "Vessel_get_Name", &[&self.class])
     }
 
