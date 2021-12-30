@@ -1,5 +1,4 @@
 use std::{
-    error::Error,
     io,
     path::{Path, PathBuf},
 };
@@ -9,7 +8,7 @@ pub use protobuf_parser;
 pub mod codegen;
 pub mod encoding;
 
-pub fn generate(proto_file: impl AsRef<Path>) -> Result<(), Box<dyn Error>> {
+pub fn generate(proto_file: impl AsRef<Path>) -> Result<(), io::Error> {
     let proto_file = proto_file.as_ref();
     let bytes = std::fs::read(proto_file).map_err(|e| {
         let msg = format!("Error reading {}: {}", proto_file.display(), e);
@@ -30,7 +29,11 @@ pub fn generate(proto_file: impl AsRef<Path>) -> Result<(), Box<dyn Error>> {
     })?;
 
     let rs_file = proto_file.with_extension("rs");
-    let out_path = PathBuf::from(std::env::var("OUT_DIR")?).join(rs_file);
+    let out_dir = std::env::var_os("OUT_DIR").ok_or_else(|| {
+        let msg = format!("Missing \"OUT_DIR\" env var");
+        io::Error::new(io::ErrorKind::Other, msg)
+    })?;
+    let out_path = PathBuf::from(out_dir).join(rs_file);
     std::fs::write(out_path, code)?;
     Ok(())
 }
