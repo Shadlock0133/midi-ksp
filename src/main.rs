@@ -5,17 +5,15 @@ use std::{
     time::{Duration, Instant},
 };
 
+use axiom_midi::{AxiomAirController, AxiomMessage, Button};
 use krpc::{dump_services_info, KrpcConnection};
-use midi_ksp::{
-    axiom::{AxiomAirController, AxiomMessage, Button},
-    cache::Cache,
-};
+use ksp_midi::cache::Cache;
 
 // WORKAROUND: When using Ctrl+C without handler,
 // `midir` crate for some reason hangs program for long time
 static STOP: AtomicBool = AtomicBool::new(false);
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     ctrlc::set_handler(|| {
         // On first Ctrl+C it will signal program to properly close down
         // On second Ctrl+C it will forcefully exit process
@@ -47,7 +45,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn run() -> Result<(), Box<dyn std::error::Error>> {
+fn run() -> Result<(), Box<dyn Error>> {
     let socket_addr = SocketAddrV4::new(Ipv4Addr::LOCALHOST, 50000).into();
     let mut krpc = KrpcConnection::connect_timeout(
         &socket_addr,
