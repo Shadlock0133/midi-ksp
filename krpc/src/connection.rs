@@ -24,21 +24,8 @@ impl KrpcConnection {
         addr: A,
         name: impl Into<String>,
     ) -> Result<Self, EncodingError> {
-        let mut stream = TcpStream::connect(addr)?;
-        let crq = ConnectionRequest {
-            r#type: Some(Type::Rpc),
-            client_name: Some(name.into()),
-            client_identifier: None,
-        };
-        crq.encode_with_len(&mut stream)?;
-        stream.flush()?;
-        let crp = ConnectionResponse::decode_with_len(&mut stream)?;
-        if !matches!(crp.status, Some(Status::Ok) | None) {
-            let io_error = std::io::ErrorKind::ConnectionRefused.into();
-            return Err(EncodingError::Io(io_error)
-                .context(crp.message.unwrap_or_default()));
-        }
-        Ok(Self { stream })
+        let stream = TcpStream::connect(addr)?;
+        Self::_connect(stream, name.into())
     }
 
     /// Connects to KRPC server, sends connection request,
@@ -48,10 +35,17 @@ impl KrpcConnection {
         timeout: Duration,
         name: impl Into<String>,
     ) -> Result<Self, EncodingError> {
-        let mut stream = TcpStream::connect_timeout(addr, timeout)?;
+        let stream = TcpStream::connect_timeout(addr, timeout)?;
+        Self::_connect(stream, name.into())
+    }
+
+    fn _connect(
+        mut stream: TcpStream,
+        name: String,
+    ) -> Result<Self, EncodingError> {
         let crq = ConnectionRequest {
             r#type: Some(Type::Rpc),
-            client_name: Some(name.into()),
+            client_name: Some(name),
             client_identifier: None,
         };
         crq.encode_with_len(&mut stream)?;
