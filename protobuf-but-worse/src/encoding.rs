@@ -123,67 +123,52 @@ impl<T> From<T> for Fixed<T> {
     }
 }
 
-impl Encode for Varint<u32> {
-    fn size(&self) -> u32 {
-        ((32 - self.0.leading_zeros()) + 7) / 7
-    }
-
-    fn encode<W: Write>(&self, mut w: W) -> Result<(), EncodingError> {
-        let mut i = self.0;
-        while i > 127 {
-            let value = (i as u8 & 0x7f) | 0x80;
-            w.write_all(&[value])?;
-            i >>= 7;
-        }
-        w.write_all(&[i as u8 & 0x7f])?;
-        Ok(())
-    }
-}
-
-impl Decode for Varint<u32> {
-    fn decode<R: Read>(mut r: R) -> Result<Self, EncodingError> {
-        let mut res = 0;
-        for i in 0..5 {
-            let mut byte = 0;
-            r.read_exact(std::slice::from_mut(&mut byte))?;
-            res |= (byte as u32 & 0x7f) << i * 7;
-            if byte & 0x80 == 0 {
-                return Ok(Varint(res));
+macro_rules! impl_encode_varint {
+    ($t:ty) => {
+        impl Encode for Varint<$t> {
+            fn size(&self) -> u32 {
+                // round up to multiply off 7 because varints
+                ((<$t>::BITS - self.0.leading_zeros()) + 7) / 7
+            }
+        
+            fn encode<W: Write>(&self, mut w: W) -> Result<(), EncodingError> {
+                let mut i = self.0;
+                while i > 127 {
+                    let value = (i as u8 & 0x7f) | 0x80;
+                    w.write_all(&[value])?;
+                    i >>= 7;
+                }
+                w.write_all(&[i as u8 & 0x7f])?;
+                Ok(())
             }
         }
-        Err(EncodingError::VarintTooLong)
-    }
+    };
 }
 
-impl Encode for Varint<u64> {
-    fn size(&self) -> u32 {
-        ((64 - self.0.leading_zeros()) + 7) / 7
-    }
+impl_encode_varint!(u32);
+impl_encode_varint!(u64);
 
-    fn encode<W: Write>(&self, mut w: W) -> Result<(), EncodingError> {
-        let mut i = self.0;
-        while i > 0 {
-            w.write_all(&[i as u8 & 0x7f])?;
-            i >>= 7;
-        }
-        Ok(())
-    }
-}
-
-impl Decode for Varint<u64> {
-    fn decode<R: Read>(mut r: R) -> Result<Self, EncodingError> {
-        let mut res = 0;
-        for i in 0..10 {
-            let mut byte = 0;
-            r.read_exact(std::slice::from_mut(&mut byte))?;
-            res |= (byte as u64 & 0x7f) << i * 7;
-            if byte & 0x80 == 0 {
-                return Ok(Varint(res));
+macro_rules! impl_decode_varint {
+    ($t:ty : $varsize:literal) => {
+        impl Decode for Varint<$t> {
+            fn decode<R: Read>(mut r: R) -> Result<Self, EncodingError> {
+                let mut res = 0;
+                for i in 0..$varsize {
+                    let mut byte = 0;
+                    r.read_exact(std::slice::from_mut(&mut byte))?;
+                    res |= (byte as $t & 0x7f) << i * 7;
+                    if byte & 0x80 == 0 {
+                        return Ok(Varint(res));
+                    }
+                }
+                Err(EncodingError::VarintTooLong)
             }
         }
-        Err(EncodingError::VarintTooLong)
-    }
+    };
 }
+
+impl_decode_varint!(u32: 5);
+impl_decode_varint!(u64: 10);
 
 impl Encode for Varint<i32> {
     fn size(&self) -> u32 {
