@@ -124,7 +124,7 @@ fn print_procedure(procedure: &Procedure) -> String {
 
     // We have to do method name stripping here,
     // because parameters are immutable
-    if is_nonstatic_method(procedure) {
+    if has_this_parameter(procedure) {
         name = name.split_at(name.find('_').unwrap() + 1).1;
     } else if is_static_method(procedure) {
         name = name.split_at(name.find('_').unwrap() + 1).1;
@@ -132,7 +132,7 @@ fn print_procedure(procedure: &Procedure) -> String {
     }
     write!(res, "fn {}(", name).unwrap();
     if let Some(param) = &procedure.parameters.first() {
-        if is_nonstatic_method(procedure) {
+        if has_this_parameter(procedure) {
             write!(res, "&self").unwrap();
         } else {
             let name = match param.name.as_deref().unwrap().trim() {
@@ -184,7 +184,7 @@ fn print_procedure(procedure: &Procedure) -> String {
 }
 
 // Checks if first parameter is `this: Class`
-fn is_nonstatic_method(p: &Procedure) -> bool {
+fn has_this_parameter(p: &Procedure) -> bool {
     p.parameters
         .first()
         .filter(|f| {
@@ -207,7 +207,7 @@ fn declasser(
     let mut free = vec![];
 
     for p in procedures {
-        if is_nonstatic_method(p) || is_static_method(p) {
+        if has_this_parameter(p) || is_static_method(p) {
             let name = p.name.as_ref().unwrap();
             let (class_name, _) = name.split_at(name.find("_").unwrap());
             map.entry(class_name).or_default().push(p);
