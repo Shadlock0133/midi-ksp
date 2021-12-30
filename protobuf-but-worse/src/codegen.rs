@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use heck::{CamelCase, SnakeCase};
+use proc_macro2::TokenStream;
 use quote::quote;
 
 use protobuf_parser::{
@@ -67,63 +68,61 @@ pub fn gen_proto(proto: &FileDescriptor) -> syn::Result<String> {
     let mut type_info = TypeInfoMap::new();
     type_info.populate(&proto.messages, &proto.enums);
 
-    let mut file = quote! {};
-
     let import = quote! {
         use serde::{Serialize, Deserialize};
         use protobuf_but_worse::encoding::*;
     };
-    file = quote! { #file #import };
 
-    for message in &proto.messages {
-        let code = gen_message(&type_info, message)?;
-        file = quote! { #file #code };
-    }
+    let messages: TokenStream = proto
+        .messages
+        .iter()
+        .map(|message| gen_message(&type_info, message))
+        .collect::<syn::Result<_>>()?;
 
-    for e in &proto.enums {
-        let code = gen_enum(e)?;
-        file = quote! { #file #code };
-    }
+    let enums: TokenStream = proto
+        .enums
+        .iter()
+        .map(|e| gen_enum(e))
+        .collect::<syn::Result<_>>()?;
+
+    let file = quote! {
+        #import
+        #messages
+        #enums
+    };
     Ok(file.to_string())
 }
 
 fn gen_message(
     type_info: &TypeInfoMap,
     message: &Message,
-) -> syn::Result<proc_macro2::TokenStream> {
+) -> syn::Result<TokenStream> {
     let mut type_info = TypeInfoMap::wrap(type_info);
     type_info.populate(&message.messages, &message.enums);
 
     let struct_name: Ident = syn::parse_str(&message.name.to_camel_case())?;
     let module_name_str = message.name.to_snake_case();
     let module_name_str = escape_rust_keyword(&module_name_str);
-    let module_name: Ident = syn::parse_str(&module_name_str)?;
+    let module_name: Ident = syn::parse_str(module_name_str)?;
 
     // TODO: deduplicate all fields loops
-    let mut fields = quote! {};
-    for field in &message.fields {
-        let field_name: Ident =
-            syn::parse_str(escape_rust_keyword(&field.name))?;
-        let field_type = match field.rule {
-            Rule::Required => {
-                to_rust_type(&field.typ, &module_name_str, &type_info)
-            }
-            Rule::Repeated => {
-                format!(
-                    "Vec<{}>",
-                    to_rust_type(&field.typ, &module_name_str, &type_info)
-                )
-            }
-            Rule::Optional => {
-                format!(
-                    "Option<{}>",
-                    to_rust_type(&field.typ, &module_name_str, &type_info)
-                )
-            }
-        };
-        let field_type: Type = syn::parse_str(&field_type)?;
-        fields = quote! { #fields pub #field_name: #field_type, };
-    }
+    let fields: TokenStream = message
+        .fields
+        .iter()
+        .map(|field| {
+            let field_name: Ident =
+                syn::parse_str(escape_rust_keyword(&field.name))?;
+            let as_rust_type =
+                to_rust_type(&field.typ, &module_name_str, &type_info);
+            let field_type = match field.rule {
+                Rule::Required => as_rust_type,
+                Rule::Repeated => format!("Vec<{}>", as_rust_type),
+                Rule::Optional => format!("Option<{}>", as_rust_type),
+            };
+            let field_type: Type = syn::parse_str(&field_type)?;
+            Ok(quote! { pub #field_name: #field_type, })
+        })
+        .collect::<syn::Result<_>>()?;
     let main_struct = quote! {
         #[derive(Clone, PartialEq, Debug, Serialize, Deserialize)]
         pub struct #struct_name { #fields }
@@ -227,40 +226,29 @@ fn gen_message(
             module_name_str,
             &type_info,
         ))?;
-        match field.rule {
-            Rule::Repeated => {
-                decode_init_fields = quote! {
-                    #decode_init_fields
-                    let mut #field_name = vec![];
-                }
-            }
-            _ => {
-                decode_init_fields = quote! {
-                    #decode_init_fields
-                    let mut #field_name = None;
-                }
-            }
-        }
-        match field.rule {
-            Rule::Required => {
-                decode_fields = quote! {
-                    #decode_fields
-                    #field_name: #field_name.ok_or(EncodingError::MissingField(number))?,
-                }
-            }
-            _ => {
-                decode_fields = quote! {
-                    #decode_fields
-                    #field_name: #field_name,
-                }
-            }
-        }
-        match (field.rule, uses_wrapper(&field.typ)) {
+
+        let field_init = match field.rule {
+            Rule::Repeated => quote! { let mut #field_name = vec![]; },
+            _ => quote! { let mut #field_name = None; },
+        };
+        decode_init_fields = quote! { #decode_init_fields #field_init };
+
+        let field_assignment = match field.rule {
+            Rule::Required => quote! {
+                #field_name: #field_name
+                    .ok_or(EncodingError::MissingField(number))?,
+            },
+            _ => quote! { #field_name: #field_name, },
+        };
+        decode_fields = quote! { #decode_fields #field_assignment };
+
+        let decode_result =
+            quote! { <#encoding_type>::decode_as_field(&mut r)? };
+        let field_match = match (field.rule, uses_wrapper(&field.typ)) {
             (Rule::Repeated, false) => {
-                decode_match = quote! {
-                    #decode_match
+                quote! {
                     #number => if __wire_type == #wire_type {
-                        #field_name.push(<#encoding_type>::decode_as_field(&mut r)?);
+                        #field_name.push(#decode_result);
                     } else if __wire_type == 2 {
                         #field_name.append(
                             &mut decode_packed::<_, #encoding_type>(&mut r)?);
@@ -271,10 +259,9 @@ fn gen_message(
                 }
             }
             (Rule::Repeated, true) => {
-                decode_match = quote! {
-                    #decode_match
+                quote! {
                     #number => if __wire_type == #wire_type {
-                        #field_name.push(<#encoding_type>::decode_as_field(&mut r)?.0);
+                        #field_name.push(#decode_result.0);
                     } else if __wire_type == 2 {
                         #field_name.extend(
                             decode_packed::<_, #encoding_type>(&mut r)?
@@ -288,10 +275,9 @@ fn gen_message(
                 }
             }
             (_, false) => {
-                decode_match = quote! {
-                    #decode_match
+                quote! {
                     #number => if __wire_type == #wire_type {
-                        #field_name = Some(<#encoding_type>::decode_as_field(&mut r)?);
+                        #field_name = Some(#decode_result);
                     } else {
                         return Err(EncodingError::WrongWireType(
                             stringify!(#struct_name.#field_name), __wire_type))
@@ -299,17 +285,17 @@ fn gen_message(
                 }
             }
             (_, true) => {
-                decode_match = quote! {
-                    #decode_match
+                quote! {
                     #number => if __wire_type == #wire_type {
-                        #field_name = Some(<#encoding_type>::decode_as_field(&mut r)?.0);
+                        #field_name = Some(#decode_result.0);
                     } else {
                         return Err(EncodingError::WrongWireType(
                             stringify!(#struct_name.#field_name), __wire_type))
                     }
                 }
             }
-        }
+        };
+        decode_match = quote! { #decode_match #field_match };
     }
     let decode_impl = quote! {
         impl Decode for #struct_name {
@@ -335,12 +321,12 @@ fn gen_message(
         }
     };
 
-    let sub_messages: proc_macro2::TokenStream = message
+    let sub_messages: TokenStream = message
         .messages
         .iter()
         .map(|m| gen_message(&type_info, m))
         .collect::<Result<_, _>>()?;
-    let sub_enums: proc_macro2::TokenStream = message
+    let sub_enums: TokenStream = message
         .enums
         .iter()
         .map(|e| gen_enum(e))
@@ -348,18 +334,18 @@ fn gen_message(
 
     // subtypes
     let emit_mod = !message.messages.is_empty() || !message.enums.is_empty();
-    let sub_mod = if emit_mod {
-        quote! {
-            pub mod #module_name {
-                #[allow(unused_imports)]
-                use super::*;
-                #sub_messages
-                #sub_enums
+    let sub_mod = emit_mod
+        .then(|| {
+            quote! {
+                pub mod #module_name {
+                    #[allow(unused_imports)]
+                    use super::*;
+                    #sub_messages
+                    #sub_enums
+                }
             }
-        }
-    } else {
-        quote! {}
-    };
+        })
+        .unwrap_or_default();
 
     Ok(quote! {
         #main_struct
@@ -369,20 +355,28 @@ fn gen_message(
     })
 }
 
-fn gen_enum(e: &Enumeration) -> syn::Result<proc_macro2::TokenStream> {
+fn gen_enum(e: &Enumeration) -> syn::Result<TokenStream> {
+    let variants: TokenStream = e
+        .values
+        .iter()
+        .map(|f| {
+            let name: Ident = syn::parse_str(&f.name.to_camel_case())?;
+            let number: LitInt = syn::parse_str(&f.number.to_string())?;
+            Ok(quote! { #name = #number, })
+        })
+        .collect::<syn::Result<_>>()?;
+
+    let match_variants: TokenStream = e
+        .values
+        .iter()
+        .map(|f| {
+            let name: Ident = syn::parse_str(&f.name.to_camel_case())?;
+            let number: LitInt = syn::parse_str(&f.number.to_string())?;
+            Ok(quote! { #number => Ok(Self::#name), })
+        })
+        .collect::<syn::Result<_>>()?;
+
     let name: Ident = syn::parse_str(&e.name.to_camel_case())?;
-    let mut variants = quote! {};
-    for f in e.values.iter() {
-        let name: Ident = syn::parse_str(&f.name.to_camel_case())?;
-        let number: LitInt = syn::parse_str(&f.number.to_string())?;
-        variants = quote! { #variants #name = #number, };
-    }
-    let mut match_variants = quote! {};
-    for f in e.values.iter() {
-        let name: Ident = syn::parse_str(&f.name.to_camel_case())?;
-        let number: LitInt = syn::parse_str(&f.number.to_string())?;
-        match_variants = quote! { #match_variants #number => Ok(Self::#name), };
-    }
     Ok(quote! {
         #[repr(u32)]
         #[derive(Clone, Copy, PartialEq, Debug, Serialize, Deserialize)]
