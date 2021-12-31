@@ -150,6 +150,7 @@ version = "0.1.0"
 dependencies = [
  "krpc-proto",
  "protobuf-but-worse",
+ "thiserror",
 ]
 
 [[package]]

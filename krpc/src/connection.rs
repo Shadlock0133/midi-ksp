@@ -76,10 +76,8 @@ impl KrpcConnection {
     }
 
     pub fn get_active_vessel(&mut self) -> CallResult<Vessel> {
-        self.call("SpaceCenter", "get_ActiveVessel", &[]).map(|r| {
-            let class = r?;
-            Ok(Vessel::new(class))
-        })
+        self.call("SpaceCenter", "get_ActiveVessel", &[])
+            .map(Vessel::new)
     }
 
     /// Performs a remote procedure call
@@ -115,17 +113,17 @@ impl KrpcConnection {
         let request = Request { calls: vec![call] };
 
         request.encode_with_len(&mut self.stream)?;
-        self.stream.flush()?;
+        self.stream.flush().map_err(EncodingError::from)?;
         let Response { error, mut results } =
             Decode::decode_with_len(&mut self.stream)?;
 
-        if let Some(error) = error {
-            return Ok(Err(error));
+            if let Some(error) = error {
+            return Err(error.into());
         }
         let result = results.remove(0);
         if let Some(error) = result.error {
-            return Ok(Err(error));
+            return Err(error.into());
         }
-        T::decode(result.value.as_deref().unwrap_or_default()).map(Ok)
+        Ok(T::decode(result.value.as_deref().unwrap_or_default())?)
     }
 }

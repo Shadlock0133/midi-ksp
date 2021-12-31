@@ -28,7 +28,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             let mut krpc = KrpcConnection::connect("127.0.0.1:50000", "midi")?;
             println!("TCP connected.");
             // Get list of available procedures on server and dump it to file
-            let services = krpc.get_services()?.unwrap();
+            let services = krpc.get_services()?;
             let file = std::fs::File::create("procs.bin")?;
             bincode::serialize_into(file, &services)?;
             println!("Dumping Done.");
@@ -53,7 +53,7 @@ fn run() -> Result<(), Box<dyn Error>> {
         "midi",
     )?;
     println!("TCP connected.");
-    let status = krpc.get_status()?;
+    let status = krpc.get_status();
     match status {
         Ok(status) => println!(
             "Krpc version: {}",
@@ -73,8 +73,8 @@ fn run() -> Result<(), Box<dyn Error>> {
         for e in recv.try_iter() {
             match e {
                 AxiomMessage::Sustain(Button::Pressed) => {
-                    let is_paused: bool = krpc.is_paused()?.unwrap();
-                    krpc.pause(!is_paused)?.unwrap();
+                    let is_paused: bool = krpc.is_paused()?;
+                    krpc.pause(!is_paused)?;
                 }
                 AxiomMessage::Knob(1, v) => state.throttle.set(v),
                 AxiomMessage::Pad(1, v) if v != 0 => {
@@ -119,20 +119,14 @@ impl ControlState {
         &mut self,
         krpc: &mut KrpcConnection,
     ) -> Result<(), Box<dyn Error>> {
-        let vessel =
-            krpc.get_active_vessel()?.map_err(|x| format!("{:?}", x))?;
-        let control =
-            vessel.get_control(krpc)?.map_err(|x| format!("{:?}", x))?;
+        let vessel = krpc.get_active_vessel()?;
+        let control = vessel.get_control(krpc)?;
         if let Some(throttle) = self.throttle.get() {
             let throttle = throttle as f32 / 127.0;
-            control
-                .set_throttle(krpc, throttle)?
-                .map_err(|x| format!("{:?}", x))?;
+            control.set_throttle(krpc, throttle)?;
         }
         if let Some(gear) = self.gear.get() {
-            control
-                .set_gear(krpc, gear)?
-                .map_err(|x| format!("{:?}", x))?;
+            control.set_gear(krpc, gear)?;
         }
         Ok(())
     }

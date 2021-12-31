@@ -18,9 +18,6 @@ impl Vessel {
         krpc: &mut KrpcConnection,
     ) -> CallResult<Control> {
         krpc.call("SpaceCenter", "Vessel_get_Control", &[&self.class])
-            .map(|r| {
-                let class = r?;
-                Ok(Control::new(class))
-            })
+            .map(Control::new)
     }
 }
